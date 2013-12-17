@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="app_name">BITS App</string>
+<string name="portmortem_report_emailmsg">Please help by sending this email. No personal information is being sent (you can check by reading the rest of the email).</string>
+
+</resources>
