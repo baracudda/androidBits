@@ -36,7 +36,7 @@ public class ThreadTask extends ThreadInterruptable {
 	 * Execute the task, name the thread, and supply it with a non-normal priority.
 	 * Usually only long tasks are given such treatment.
 	 * @param aTask - runnable task to perform once
-	 * @param aName - used to the name the thread (debugger friendly!)
+	 * @param aName - used to set the name the thread (debugger friendly!)
 	 * @param aPriority - sets the priority of the thread
 	 * @see java.lang.Thread.MIN_PRIORITY MIN_PRIORITY = 1
 	 * @see java.lang.Thread.NORM_PRIORITY NORM_PRIORITY = 5

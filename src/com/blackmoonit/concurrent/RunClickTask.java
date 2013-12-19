@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 /**
- * Runnable/OnClick drop-in replacement handler that utilizes a background task for its heavy work.
+ * Runnable/OnClick drop-in replacement handler that utilizes AsyncTask for its non-trivial work.
  * Non-trivial tasks should use this class instead of a typical inline Runnable/OnClickListener so that 
  * UI response time is not disrupted on potentially slow jobs - which would cause multiple click
  * events while the user keeps pressing the button/widget trying to make the UI respond. 
@@ -46,6 +46,7 @@ import android.view.View.OnClickListener;
  *   ... implement interface methods here ...
  * })
  * </pre>
+ * @see OnClickThreadTask
  * @author Ryan Fischbach
  */
 public class RunClickTask extends AsyncTask<View, Object, Object> implements OnClickListener, Runnable {
