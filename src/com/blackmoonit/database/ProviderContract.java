@@ -85,7 +85,7 @@ public class ProviderContract {
 		 * @return Returns the Authority part of the Uri used to access your provider.
 		 */
 		public String getAuthority() {
-			return "com.istresearch.provider."+mDbContract.getDbName();
+			return "com.blackmoonit.provider."+mDbContract.getDbName();
 		}
 
 		/**
@@ -94,7 +94,7 @@ public class ProviderContract {
 		 * in this contract to help ensure unique MIME types for our provider results.
 		 */
 		public String getBaseMIMEsubtype() {
-			return "vnd.istresearch."+mDbContract.getDbName();
+			return "vnd.blackmoonit."+mDbContract.getDbName();
 		}
 		
 	}
