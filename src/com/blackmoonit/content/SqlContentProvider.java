@@ -28,7 +28,7 @@ public abstract class SqlContentProvider extends ContentProvider {
     /**
      * Data provider scheme strictly restricted to insert specific actions.
      */
-	static public final String INSERT_SCHEME = "content-inserted";
+	static public final String INSERT_SCHEME = "inserted";
 	
     /**
      * Data provider scheme strictly restricted to update specific actions.

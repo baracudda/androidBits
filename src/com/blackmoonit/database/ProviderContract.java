@@ -47,7 +47,7 @@ public class ProviderContract {
 	    /**
 	     * Data provider scheme strictly restricted to insert specific actions.
 	     */
-		static public final String INSERT_SCHEME = "content-inserted";
+		static public final String INSERT_SCHEME = "inserted";
 		
 	    /**
 	     * Data provider scheme strictly restricted to update specific actions.
@@ -235,7 +235,8 @@ public class ProviderContract {
 		 * be returned, leaving the ID path segment out.
 		 */
 		public Uri getContentUri(String aIDstring, String aScheme) {
-			Uri theBaseUri = Uri.withAppendedPath(mDbContract.getDbInfo().getDataUri(null),
+			Uri theBaseUri = mDbContract.getDbInfo().getDataUri(null);
+			theBaseUri = Uri.withAppendedPath(theBaseUri.buildUpon().scheme(aScheme).build(),
 					mTableContract.getTableName());
 			if (aIDstring!=null) {
 				return Uri.withAppendedPath(theBaseUri,aIDstring);
