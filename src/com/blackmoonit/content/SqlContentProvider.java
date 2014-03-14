@@ -3,6 +3,7 @@ package com.blackmoonit.content;
 import java.util.Arrays;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -24,6 +25,21 @@ import android.text.TextUtils;
 public abstract class SqlContentProvider extends ContentProvider {
 	static public final String QUERY_LIMIT = "limit";
 	static public final String QUERY_OFFSET = "offset";
+    /**
+     * Data provider scheme strictly restricted to insert specific actions.
+     */
+	static public final String INSERT_SCHEME = "content-inserted";
+	
+    /**
+     * Data provider scheme strictly restricted to update specific actions.
+     */
+	static public final String UPDATE_SCHEME = "content-updated";
+
+    /**
+     * Data provider scheme strictly restricted to delete specific actions.
+     */
+	static public final String DELETE_SCHEME = "content-deleted";
+
 
 	protected SQLiteOpenHelper mDb;
 	protected UriMatcher mUriMatcher;
@@ -154,7 +170,10 @@ public abstract class SqlContentProvider extends ContentProvider {
 	protected abstract Uri getContentIdBaseUri(int aMatchId);
 	
 	protected void notifyInsert(int aMatchId, Uri aInsertResult) {
-		getContext().getContentResolver().notifyChange(aInsertResult,null);
+		ContentResolver cr = getContext().getContentResolver();
+		cr.notifyChange(aInsertResult,null);
+		Uri theActionUri = aInsertResult.buildUpon().scheme(INSERT_SCHEME).build();
+		cr.notifyChange(theActionUri,null);
 	}
 	
 	@Override
@@ -187,7 +206,10 @@ public abstract class SqlContentProvider extends ContentProvider {
 	}
 
 	protected void notifyDelete(int aMatchId, Uri aUri, int aNumDeleted) {
-		getContext().getContentResolver().notifyChange(aUri,null);
+		ContentResolver cr = getContext().getContentResolver();
+		cr.notifyChange(aUri,null);
+		Uri theActionUri = aUri.buildUpon().scheme(DELETE_SCHEME).build();
+		cr.notifyChange(theActionUri,null);
 	}
 	
 	@Override
@@ -202,7 +224,10 @@ public abstract class SqlContentProvider extends ContentProvider {
 	}
 
 	protected void notifyUpdate(int aMatchId, Uri aUri, int aNumUpdated) {
-		getContext().getContentResolver().notifyChange(aUri,null);
+		ContentResolver cr = getContext().getContentResolver();
+		cr.notifyChange(aUri,null);
+		Uri theActionUri = aUri.buildUpon().scheme(UPDATE_SCHEME).build();
+		cr.notifyChange(theActionUri,null);
 	}
 	
 	@Override

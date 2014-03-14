@@ -7,6 +7,12 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 
+/**
+ * Self-data-change-registering class used for auto-populating display widgets when
+ * data changes.
+ *
+ * @author Ryan Fischbach
+ */
 public abstract class BaseContentObserver extends ContentObserver {
 	private Context mContext = null; //force descendants to use get and swap methods
 	protected ContentResolver mCR = null;
@@ -54,18 +60,21 @@ public abstract class BaseContentObserver extends ContentObserver {
 	}
 
 	/**
-	 * Default Uri used by {@link #getNewCursor()}.
+	 * Default Uri used by {@link #getNewCursor()}. If you don't know what to return here, just
+	 * return the parameter aUri.
+	 * @param Uri aUri - modern Android may include the onChange Uri.
 	 * @return Returns the default query Uri.
 	 */
-	protected abstract Uri getUri();
+	protected abstract Uri getUri(Uri aUri);
 
 	/**
 	 * Perform the query, default method calls query(getUri(),null,null,null,null);<br>
 	 * Do not bother calling super.getNewCursor if you override this method.
+	 * @param Uri aUri - modern Android may include the onChange Uri.
 	 * @return Returns the query cursor result.
 	 */
-	protected Cursor getNewCursor() {
-		return mCR.query(getUri(),null,null,null,null);
+	protected Cursor getNewCursor(Uri aUri) {
+		return mCR.query(getUri(aUri),null,null,null,null);
 	}
 	
 	public Cursor getCursor() {
@@ -86,12 +95,12 @@ public abstract class BaseContentObserver extends ContentObserver {
 	@SuppressLint("NewApi")
 	@Override
 	public void onChange(boolean bSelfChange) {
-		onChange(bSelfChange,getUri());
+		onChange(bSelfChange,getUri(null));
 	}
 	
 	@Override
 	public void onChange(boolean bSelfChange, Uri aUri) {
-		swapCursor(getNewCursor());
+		swapCursor(getNewCursor(aUri));
 		if (mOnChangeListener!=null) {
 			mOnChangeListener.onChange(mCursor,mObserverId,bSelfChange,aUri);
 		}
@@ -99,8 +108,8 @@ public abstract class BaseContentObserver extends ContentObserver {
 
 	@SuppressLint("NewApi")
 	public void start() {
-		mCR.registerContentObserver(getUri(),getIncludeDescendants(),this);
-		onChange(true,getUri());
+		mCR.registerContentObserver(getUri(null),getIncludeDescendants(),this);
+		onChange(true,getUri(null));
 	}
 
 }

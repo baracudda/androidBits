@@ -42,8 +42,23 @@ public class ProviderContract {
 	    /**
 	     * Data provider scheme is traditionally "content".
 	     */
-		static public final String SCHEME = "content";
+		static public final String DATA_SCHEME = "content";
 		
+	    /**
+	     * Data provider scheme strictly restricted to insert specific actions.
+	     */
+		static public final String INSERT_SCHEME = "content-inserted";
+		
+	    /**
+	     * Data provider scheme strictly restricted to update specific actions.
+	     */
+		static public final String UPDATE_SCHEME = "content-updated";
+
+	    /**
+	     * Data provider scheme strictly restricted to delete specific actions.
+	     */
+		static public final String DELETE_SCHEME = "content-deleted";
+
 		/**
 		 * MIME category used for returning a set of records.
 		 */
@@ -102,7 +117,23 @@ public class ProviderContract {
 		 * @return MIME type string
 		 */
 		public String getMIMEtype() {
-			return "vnd.android.cursor.dir/" + getBaseMIMEsubtype();
+			return Database.MIME_CATEGORY_RESULT_SET + "/" + getBaseMIMEsubtype();
+		}
+
+		/**
+		 * Returns the Database provider's Uri if NULL is passed in. Otherwise, the 
+		 * passed in Uri is converted from Action-specific Uri to a Data Uri. If your
+		 * ContentObserver registers for an Action-specific Uri, you need this function
+		 * to convert it into a Data Uri so you can use it with the Provider again.
+		 * @param aUri - an Action Uri or NULL
+		 * @return Returns the aUri param converted to a Data Uri, or this Database's Uri if NULL.
+		 */
+		public Uri getDataUri(Uri aUri) {
+			if (aUri!=null) {
+				return aUri.buildUpon().scheme(Database.DATA_SCHEME).build();
+			} else {
+				return Uri.parse(Database.DATA_SCHEME+"://"+mDbContract.getDbInfo().getAuthority());
+			}
 		}
 	}
 	
@@ -186,8 +217,25 @@ public class ProviderContract {
 		 * be returned, leaving the ID path segment out.
 		 */
 		public Uri getContentUri(String aIDstring) {
-			Uri theBaseUri = Uri.parse(Database.SCHEME+"://"+
-					mDbContract.getDbInfo().getAuthority()+"/"+
+			return getContentUri(aIDstring,Database.DATA_SCHEME);
+		}
+		
+		/**
+		 * The content Uri for this table. If NULL is passed in as the ID parameter, 
+		 * the "result set" Uri is returned with no ID path segment appended.<br>
+		 * NOTE: a value of "#" for the ID parameter is reserved as the  
+		 * {@link #getContentUriWithIdPattern() path pattern}.<br>
+		 * NOTE on NULL IDs: if NULL is desired as an ID value... unknown how to support it. 
+		 * Tests will need to be conducted and the results should replace this text.
+		 * @param aIDstring - ID parameter already converted to String to place on the Uri.
+		 * If NULL is passed in, the standard "result set" Uri is returned.
+		 * @param aScheme - one of %your-db-name%.SCHEME or .INSERT_SCHEME or .UPDATE_SCHEME or .DELETE_SCHEME
+		 * @return Returns the Uri to be used to interact with this table. 
+		 * If NULL is passed as the ID value, then the "result set" Uri will
+		 * be returned, leaving the ID path segment out.
+		 */
+		public Uri getContentUri(String aIDstring, String aScheme) {
+			Uri theBaseUri = Uri.withAppendedPath(mDbContract.getDbInfo().getDataUri(null),
 					mTableContract.getTableName());
 			if (aIDstring!=null) {
 				return Uri.withAppendedPath(theBaseUri,aIDstring);
@@ -253,14 +301,14 @@ public class ProviderContract {
 		 * @return Returns the full MIME type for result sets.
 		 */
 		public String getMIMEtypeForResultSet() {
-			return Database.MIME_CATEGORY_RESULT_SET+getMIMEsubtype();
+			return Database.MIME_CATEGORY_RESULT_SET+"/"+getMIMEsubtype();
 		}
 		
 		/**
 		 * The provider will use this method to return the MIME type for singular results.
 		 */
 		public String getMIMEtypeForSingularResult() {
-			return Database.MIME_CATEGORY_RESULT_ONE+getMIMEsubtype();
+			return Database.MIME_CATEGORY_RESULT_ONE+"/"+getMIMEsubtype();
 		}
 	
 	}
