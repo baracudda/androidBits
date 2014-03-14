@@ -97,6 +97,13 @@ public class ProviderContract {
 			return "vnd.blackmoonit."+mDbContract.getDbName();
 		}
 		
+		/**
+		 * Full MIME type for use with Intents
+		 * @return MIME type string
+		 */
+		public String getMIMEtype() {
+			return "vnd.android.cursor.dir/" + getBaseMIMEsubtype();
+		}
 	}
 	
 	//==================================================================================
