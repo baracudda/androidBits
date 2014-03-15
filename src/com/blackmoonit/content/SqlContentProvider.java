@@ -3,7 +3,6 @@ package com.blackmoonit.content;
 import java.util.Arrays;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -25,21 +24,6 @@ import android.text.TextUtils;
 public abstract class SqlContentProvider extends ContentProvider {
 	static public final String QUERY_LIMIT = "limit";
 	static public final String QUERY_OFFSET = "offset";
-    /**
-     * Data provider scheme strictly restricted to insert specific actions.
-     */
-	static public final String INSERT_SCHEME = "inserted";
-	
-    /**
-     * Data provider scheme strictly restricted to update specific actions.
-     */
-	static public final String UPDATE_SCHEME = "content-updated";
-
-    /**
-     * Data provider scheme strictly restricted to delete specific actions.
-     */
-	static public final String DELETE_SCHEME = "content-deleted";
-
 
 	protected SQLiteOpenHelper mDb;
 	protected UriMatcher mUriMatcher;
@@ -81,8 +65,18 @@ public abstract class SqlContentProvider extends ContentProvider {
 	public void shutdown() {
 		if (mDb!=null) {
 			mDb.close();
+			mDb = null;
 		}
 		super.shutdown();
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		if (mDb!=null) {
+			mDb.close();
+			mDb = null;
+		}
+		super.finalize();
 	}
 
 	protected abstract String getTableName(int aMatchId);
@@ -170,10 +164,7 @@ public abstract class SqlContentProvider extends ContentProvider {
 	protected abstract Uri getContentIdBaseUri(int aMatchId);
 	
 	protected void notifyInsert(int aMatchId, Uri aInsertResult) {
-		ContentResolver cr = getContext().getContentResolver();
-		cr.notifyChange(aInsertResult,null);
-		Uri theActionUri = aInsertResult.buildUpon().scheme(INSERT_SCHEME).build();
-		cr.notifyChange(theActionUri,null);
+		getContext().getContentResolver().notifyChange(aInsertResult,null);
 	}
 	
 	@Override
@@ -206,10 +197,7 @@ public abstract class SqlContentProvider extends ContentProvider {
 	}
 
 	protected void notifyDelete(int aMatchId, Uri aUri, int aNumDeleted) {
-		ContentResolver cr = getContext().getContentResolver();
-		cr.notifyChange(aUri,null);
-		Uri theActionUri = aUri.buildUpon().scheme(DELETE_SCHEME).build();
-		cr.notifyChange(theActionUri,null);
+		getContext().getContentResolver().notifyChange(aUri,null);
 	}
 	
 	@Override
@@ -219,27 +207,28 @@ public abstract class SqlContentProvider extends ContentProvider {
 		aSelection = appendSelection(aUri, theMatchId, aSelection);
 		aSelectionArgs = appendSelArgs(aUri, theMatchId, aSelectionArgs);
 		theNumDel = mDb.getWritableDatabase().delete(getTableName(theMatchId),aSelection,aSelectionArgs);
-		notifyDelete(theMatchId, aUri, theNumDel);
+		if (theNumDel>0) {
+			notifyDelete(theMatchId, aUri, theNumDel);
+		}
 		return theNumDel;
 	}
 
 	protected void notifyUpdate(int aMatchId, Uri aUri, int aNumUpdated) {
-		ContentResolver cr = getContext().getContentResolver();
-		cr.notifyChange(aUri,null);
-		Uri theActionUri = aUri.buildUpon().scheme(UPDATE_SCHEME).build();
-		cr.notifyChange(theActionUri,null);
+		getContext().getContentResolver().notifyChange(aUri,null);
 	}
 	
 	@Override
 	public int update(Uri aUri, ContentValues aValues, String aSelection, String[] aSelectionArgs) {
 		int theMatchId = mUriMatcher.match(aUri);
-		int theNumEdit = 0;
+		int theNumUpdated = 0;
 		aSelection = appendSelection(aUri, theMatchId, aSelection);
 		aSelectionArgs = appendSelArgs(aUri, theMatchId, aSelectionArgs);
 		String theTableName = getTableName(theMatchId);
-		theNumEdit = mDb.getWritableDatabase().update(theTableName,aValues,aSelection,aSelectionArgs);
-		notifyUpdate(theMatchId,aUri,theNumEdit);
-		return theNumEdit;
+		theNumUpdated = mDb.getWritableDatabase().update(theTableName,aValues,aSelection,aSelectionArgs);
+		if (theNumUpdated>0) {
+			notifyUpdate(theMatchId,aUri,theNumUpdated);
+		}
+		return theNumUpdated;
 	}
 	
 	

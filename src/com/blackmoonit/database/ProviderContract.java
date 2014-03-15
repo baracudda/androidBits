@@ -1,5 +1,6 @@
 package com.blackmoonit.database;
 
+import android.content.ContentResolver;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -40,24 +41,45 @@ public class ProviderContract {
 		public String getDbName();
 
 	    /**
-	     * Data provider scheme is traditionally "content".
+	     * Data actions are specified in the username@authority section of an
+	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
+	     * @see TableProviderInfo#getObserverUri(String)
+	     * @see Database#DATA_ACTION_INSERT
+	     * @see Database#DATA_ACTION_UPDATE
+	     * @see Database#DATA_ACTION_DELETE
+	     * @see DbProviderInfo#ensureContentUri(Uri)
 	     */
-		static public final String DATA_SCHEME = "content";
-		
+		static public final String DATA_ACTION_NULL = "";
 	    /**
-	     * Data provider scheme strictly restricted to insert specific actions.
+	     * Data actions are specified in the username@authority section of an
+	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
+	     * @see TableProviderInfo#getObserverUri(String)
+	     * @see Database#DATA_ACTION_NULL
+	     * @see Database#DATA_ACTION_UPDATE
+	     * @see Database#DATA_ACTION_DELETE
+	     * @see DbProviderInfo#ensureContentUri(Uri)
 	     */
-		static public final String INSERT_SCHEME = "inserted";
-		
+		static public final String DATA_ACTION_INSERT = "insert@";
 	    /**
-	     * Data provider scheme strictly restricted to update specific actions.
+	     * Data actions are specified in the username@authority section of an
+	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
+	     * @see TableProviderInfo#getObserverUri(String)
+	     * @see Database#DATA_ACTION_NULL
+	     * @see Database#DATA_ACTION_INSERT
+	     * @see Database#DATA_ACTION_DELETE
+	     * @see DbProviderInfo#ensureContentUri(Uri)
 	     */
-		static public final String UPDATE_SCHEME = "content-updated";
-
+		static public final String DATA_ACTION_UPDATE = "update@";
 	    /**
-	     * Data provider scheme strictly restricted to delete specific actions.
+	     * Data actions are specified in the username@authority section of an
+	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
+	     * @see TableProviderInfo#getObserverUri(String)
+	     * @see Database#DATA_ACTION_NULL
+	     * @see Database#DATA_ACTION_INSERT
+	     * @see Database#DATA_ACTION_UPDATE
+	     * @see DbProviderInfo#ensureContentUri(Uri)
 	     */
-		static public final String DELETE_SCHEME = "content-deleted";
+		static public final String DATA_ACTION_DELETE = "delete@";
 
 		/**
 		 * MIME category used for returning a set of records.
@@ -113,28 +135,39 @@ public class ProviderContract {
 		}
 		
 		/**
-		 * Full MIME type for use with Intents
+		 * MIME type used for the database itself. Specific table rows should use 
+		 * MyDbContract.MyTableContract.mTableInfo.getMIMEsubtype().
 		 * @return MIME type string
+		 * @see TableProviderInfo#getMIMEsubtype()
+		 * @see TableProviderInfo#getMIMEtypeForResultSet()
+		 * @see TableProviderInfo#getMIMEtypeForSingularResult() 
 		 */
 		public String getMIMEtype() {
 			return Database.MIME_CATEGORY_RESULT_SET + "/" + getBaseMIMEsubtype();
 		}
 
 		/**
-		 * Returns the Database provider's Uri if NULL is passed in. Otherwise, the 
-		 * passed in Uri is converted from Action-specific Uri to a Data Uri. If your
-		 * ContentObserver registers for an Action-specific Uri, you need this function
-		 * to convert it into a Data Uri so you can use it with the Provider again.
-		 * @param aUri - an Action Uri or NULL
-		 * @return Returns the aUri param converted to a Data Uri, or this Database's Uri if NULL.
+		 * The passed in Uri is converted from a potentially DataAction-specific ObserverUri 
+		 * to a standard ContentUri. Use this function in your ContentObserver's onChange
+		 * method to convert the returned Uri back into a ContentUri so you can use it with 
+		 * the Provider again. It is safe to pass in either an ObserverUri or ContentUri.
+		 * @param aUri - either an ObserverUri or ContentUri.
+		 * @return Returns a ContentUri.
+		 * @see TableProviderInfo#ensureContentUri(Uri)
 		 */
-		public Uri getDataUri(Uri aUri) {
+		static public Uri ensureContentUri(Uri aUri) {
 			if (aUri!=null) {
-				return aUri.buildUpon().scheme(Database.DATA_SCHEME).build();
-			} else {
-				return Uri.parse(Database.DATA_SCHEME+"://"+mDbContract.getDbInfo().getAuthority());
+				String theAuthority = aUri.getAuthority();
+				if (theAuthority!=null) {
+					int idx = theAuthority.indexOf("@");
+					if (idx>=0) {
+						aUri = aUri.buildUpon().encodedAuthority(theAuthority.substring(idx+1)).build();
+					}
+				}
 			}
+			return aUri;
 		}
+
 	}
 	
 	//==================================================================================
@@ -202,7 +235,7 @@ public class ProviderContract {
 		public Table getTableContract() {
 			return mTableContract;
 		}
-
+		
 		/**
 		 * The content Uri for this table. If NULL is passed in as the ID parameter, 
 		 * the "result set" Uri is returned with no ID path segment appended.<br>
@@ -217,39 +250,63 @@ public class ProviderContract {
 		 * be returned, leaving the ID path segment out.
 		 */
 		public Uri getContentUri(String aIDstring) {
-			return getContentUri(aIDstring,Database.DATA_SCHEME);
+			Uri theUri = getObserverUri(Database.DATA_ACTION_NULL);
+			if (aIDstring!=null) {
+				theUri = Uri.withAppendedPath(theUri,aIDstring);
+			}
+			return theUri;
 		}
 		
 		/**
-		 * The content Uri for this table. If NULL is passed in as the ID parameter, 
-		 * the "result set" Uri is returned with no ID path segment appended.<br>
-		 * NOTE: a value of "#" for the ID parameter is reserved as the  
-		 * {@link #getContentUriWithIdPattern() path pattern}.<br>
-		 * NOTE on NULL IDs: if NULL is desired as an ID value... unknown how to support it. 
-		 * Tests will need to be conducted and the results should replace this text.
-		 * @param aIDstring - ID parameter already converted to String to place on the Uri.
-		 * If NULL is passed in, the standard "result set" Uri is returned.
-		 * @param aScheme - one of %your-db-name%.SCHEME or .INSERT_SCHEME or .UPDATE_SCHEME or .DELETE_SCHEME
-		 * @return Returns the Uri to be used to interact with this table. 
-		 * If NULL is passed as the ID value, then the "result set" Uri will
-		 * be returned, leaving the ID path segment out.
+		 * ContentObservers that wish to know what kind of action caused the onChange to 
+		 * fire would need to register their Uri using this function with the appropriate
+		 * Database.DATA_ACTION_* constant passed in.
+		 * @param aDataAction - one of {@link Database#DATA_ACTION_INSERT} or 
+		 * {@link DATA_ACTION_UPDATE} or {@link DATA_ACTION_DELETE} or {@link Database#DATA_ACTION_NULL}
+		 * @return Returns the Uri to register to observe particular Provider actions.
 		 */
-		public Uri getContentUri(String aIDstring, String aScheme) {
-			Uri theBaseUri = mDbContract.getDbInfo().getDataUri(null);
-			theBaseUri = Uri.withAppendedPath(theBaseUri.buildUpon().scheme(aScheme).build(),
+		public Uri getObserverUri(String aDataAction) {
+			Uri theUri = Uri.parse(ContentResolver.SCHEME_CONTENT+"://"+aDataAction+
+					mDbContract.getDbInfo().getAuthority()+"/"+
 					mTableContract.getTableName());
-			if (aIDstring!=null) {
-				return Uri.withAppendedPath(theBaseUri,aIDstring);
-			} else {
-				return theBaseUri;
-			}
+			return theUri;
 		}
+
+		/**
+		 * This method is used internally by the SqlContractProvider to convert the 
+		 * standard Observer notification ContentUri into a specific data action Uri
+		 * whose term I have coined as an ObserverUri.
+		 * @param aUri - ContentUri to convert to an ObserverUri for a specific data action.
+		 * @param aDataAction - encode this data action within the Uri passed in.
+		 * @return Returns an ObserverUri encoded for a specific data action.
+		 * @author Ryan Fischbach
+		 */
+		static public Uri cnvContentUriToObserverUri(Uri aUri, String aDataAction) {
+			if (aUri!=null) {
+				return aUri.buildUpon().encodedAuthority(aDataAction+aUri.getAuthority()).build();
+			}
+			return aUri;
+		}
+		
+		/**
+		 * The passed in Uri is converted from a potentially DataAction-specific ObserverUri 
+		 * to a standard ContentUri. Use this function in your ContentObserver's onChange
+		 * method to convert the returned Uri back into a ContentUri so you can use it with 
+		 * the Provider again. It is safe to pass in either an ObserverUri or ContentUri.
+		 * @param aUri - either an ObserverUri or ContentUri.
+		 * @return Returns a ContentUri.
+		 * @see DbProviderInfo#ensureContentUri(Uri)
+		 */
+		public Uri ensureContentUri(Uri aUri) {
+			return DbProviderInfo.ensureContentUri(aUri);
+		}
+
 		
 		/**
 		 * Defines which segment of the Uri path is the ID portion.
 		 * Base 0 position of an ID path segment means that our basic Uri path of
-		 * "content://authority/tablename/ID" will return a result of 1 (0 being 
-		 * that of "tablename").
+		 * "content://authority/tablename/ID" will return a result of 1
+		 * (0 being that of "tablename").
 		 * @return Returns the segment number (base 0) of the ID portion of the Uri
 		 * returned in {@link #getContentUri(String)}.
 		 */

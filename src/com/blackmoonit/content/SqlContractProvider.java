@@ -8,13 +8,24 @@ import android.annotation.SuppressLint;
 import android.content.UriMatcher;
 import android.net.Uri;
 
+import com.blackmoonit.database.ProviderContract.Database;
+import com.blackmoonit.database.ProviderContract.DbProviderInfo;
 import com.blackmoonit.database.ProviderContract.TableProviderInfo;
 
 /**
  * The {@link #ProviderContract} class provides a mechanism for the provider
  * to query the contract itself for various simple tasks, especially Uri
  * and MIME types required by the provider and can be automated (less 
- * developer attention required).
+ * developer attention required). Another compelling reason to use a
+ * SqlContractProvider is that ContentObservers have to option to listen
+ * for specific data actions (insert/update/delete) rather than just
+ * any kind of change.
+ * @see Database#DATA_ACTION_INSERT
+ * @see Database#DATA_ACTION_UPDATE
+ * @see Database#DATA_ACTION_DELETE
+ * @see TableProviderInfo#getObserverUri(String)
+ * @see TableProviderInfo#ensureContentUri(Uri)
+ * @see DbProviderInfo#ensureContentUri(Uri)
  *
  * @author Ryan Fischbach
  */
@@ -156,6 +167,33 @@ abstract public class SqlContractProvider extends SqlContentProvider {
 		} else {
 			throw new UnsupportedOperationException();
 		}
+	}
+
+	@Override
+	protected void notifyInsert(int aMatchId, Uri aInsertResult) {
+		// Note, written with different local vars so that multi-core processors
+		// do not have to execute the code in sequence, parallel would be nice.
+		super.notifyInsert(aMatchId, aInsertResult);
+		Uri theObserverUri = TableProviderInfo.cnvContentUriToObserverUri(aInsertResult,Database.DATA_ACTION_INSERT);
+		getContext().getContentResolver().notifyChange(theObserverUri,null);
+	}
+
+	@Override
+	protected void notifyDelete(int aMatchId, Uri aUri, int aNumDeleted) {
+		// Note, written with different local vars so that multi-core processors
+		// do not have to execute the code in sequence, parallel would be nice.
+		super.notifyDelete(aMatchId, aUri, aNumDeleted);
+		Uri theObserverUri = TableProviderInfo.cnvContentUriToObserverUri(aUri,Database.DATA_ACTION_DELETE);
+		getContext().getContentResolver().notifyChange(theObserverUri,null);
+	}
+	
+	@Override
+	protected void notifyUpdate(int aMatchId, Uri aUri, int aNumUpdated) {
+		// Note, written with different local vars so that multi-core processors
+		// do not have to execute the code in sequence, parallel would be nice.
+		super.notifyUpdate(aMatchId, aUri, aNumUpdated);
+		Uri theObserverUri = TableProviderInfo.cnvContentUriToObserverUri(aUri,Database.DATA_ACTION_UPDATE);
+		getContext().getContentResolver().notifyChange(theObserverUri,null);
 	}
 
 }
