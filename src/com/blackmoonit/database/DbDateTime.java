@@ -42,11 +42,11 @@ public class DbDateTime {
 	 * @return Returns the string as used by SQL.
 	 */
 	static public String toDbStr(Calendar aCal) {
-		return (String)DateFormat.format("yyyy-MM-dd hh:mm:ss",aCal);
+		return (String)DateFormat.format("yyyy-MM-dd kk:mm:ss",aCal);
 	}
 	
 	/**
-	 * Conver the SQL date time string into a Calendar object.
+	 * Convert the SQL date time string into a Calendar object.
 	 * @param aStr - SQL date time string.
 	 * @return Returns the Calendar representation of the db SQL string.
 	 * @throws DateParseException
@@ -62,6 +62,14 @@ public class DbDateTime {
 			//means we do not modify the calendar at all, leaves it as "now"
 		}
 		return theCurrentDay;
+	}
+	
+	/**
+	 * Returns the current time in the proper SQL Date format
+	 * @return Returns the String representation of the current datetime
+	 */
+	static public String getTodayAsDbStr() {
+		return toDbStr(getNow());
 	}
 	
 	/**
