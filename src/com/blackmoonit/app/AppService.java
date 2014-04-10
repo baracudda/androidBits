@@ -15,7 +15,7 @@ import android.util.Log;
  * @author Ryan Fischbach
  */
 public abstract class AppService extends Service {
-	private static final String TAG = "BITS.lib.app.BitsService";
+	private static final String TAG = "androidBits.app.AppService";
 	protected NotificationManager mNotificationMgr = null;
 	private static final Class<?>[] mSetForegroundSignature = new Class[] {boolean.class};
 	private static final Class<?>[] mStartForegroundSignature = new Class[] {int.class, Notification.class};
