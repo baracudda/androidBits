@@ -54,7 +54,7 @@ public class DbDateTime {
 		String theResult = (String)DateFormat.format("yyyy-MM-dd'T'kk:mm:ss", aCal);
 		int theMs = aCal.get(Calendar.MILLISECOND);
 		if (theMs>0) {
-			theResult = theResult + "."+String.valueOf(theMs)+"000";
+			theResult = theResult + "."+String.format(Locale.US,"%3d",theMs)+"000";
 		}
 		return theResult+"Z";
 	}

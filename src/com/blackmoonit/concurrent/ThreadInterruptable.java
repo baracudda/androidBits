@@ -54,14 +54,16 @@ public abstract class ThreadInterruptable extends Thread {
 	abstract public void runTask() throws InterruptedException;
 
 	/**
-	 * Stops this thread from running, interrupting it if necessary.
+	 * Stops this thread if running, interrupting it if necessary.
 	 */
 	public void halt() {
-        Thread tmpBreakman = mBreakman;
-        mBreakman = null;
-        if (tmpBreakman != null) {
-           tmpBreakman.interrupt();
-        }
+		if (this.isAlive()) {
+			Thread tmpBreakman = mBreakman;
+			mBreakman = null;
+			if (tmpBreakman != null) {
+				tmpBreakman.interrupt();
+			}
+		}
     }
 
 	/**
