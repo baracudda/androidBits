@@ -3,7 +3,7 @@ package com.blackmoonit.database;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.http.impl.cookie.DateParseException;
@@ -25,6 +25,15 @@ public class DbDateTime {
 	}
 	
 	/**
+	 * Current UTC date and time to the millisecond.
+	 * @return Returns the current date and time to the millisecond.
+	 */
+	static public Calendar getNowMs() {
+		Calendar theCurrentDay = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		return theCurrentDay;
+	}
+	
+	/**
 	 * Current UTC date without time.
 	 * @return Returns the current date, but no time.
 	 */
@@ -42,7 +51,12 @@ public class DbDateTime {
 	 * @return Returns the string as used by SQL.
 	 */
 	static public String toDbStr(Calendar aCal) {
-		return (String)DateFormat.format("yyyy-MM-dd kk:mm:ss",aCal);
+		String theResult = (String)DateFormat.format("yyyy-MM-dd'T'kk:mm:ss", aCal);
+		int theMs = aCal.get(Calendar.MILLISECOND);
+		if (theMs>0) {
+			theResult = theResult + "."+String.valueOf(theMs)+"000";
+		}
+		return theResult+"Z";
 	}
 	
 	/**
@@ -53,11 +67,14 @@ public class DbDateTime {
 	 */
 	static public Calendar fromDbStr(String aStr) {
 		Calendar theCurrentDay = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date theDate = null;
+		SimpleDateFormat iso8601Format;
+		if (aStr!=null && aStr.contains("000Z")) {
+			iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss.S000'Z'",Locale.US);
+		} else {
+			iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss'Z'",Locale.US);
+		}
 		try {
-			theDate = iso8601Format.parse(aStr);
-			theCurrentDay.setTime(theDate);
+			theCurrentDay.setTime(iso8601Format.parse(aStr));
 		} catch (ParseException e) {
 			//means we do not modify the calendar at all, leaves it as "now"
 		}
@@ -67,9 +84,14 @@ public class DbDateTime {
 	/**
 	 * Returns the current time in the proper SQL Date format
 	 * @return Returns the String representation of the current datetime
+	 * @param bNowMs - boolean for getNow with Milliseconds or seconds
 	 */
-	static public String getTodayAsDbStr() {
-		return toDbStr(getNow());
+	static public String getNowAsDbStr(boolean bNowMs) {
+		if (bNowMs) {
+			return toDbStr(getNowMs());
+		} else {
+			return toDbStr(getNow());
+		}
 	}
 	
 	/**
