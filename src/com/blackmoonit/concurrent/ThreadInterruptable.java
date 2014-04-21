@@ -122,10 +122,11 @@ public abstract class ThreadInterruptable extends Thread {
 	
 	/**
 	 * Checks to see if the thread is not alive before calling start().
+	 * @param aDelayInMilliseconds - start task after a delay (in milliseconds).
 	 */
-	public ThreadInterruptable executeDelayed(long aDelayInMiliseconds) {
+	public ThreadInterruptable executeDelayed(long aDelayInMilliseconds) {
 		if (!isAlive()) {
-			mDelayTask = aDelayInMiliseconds;
+			mDelayTask = aDelayInMilliseconds;
 			start();
 		}
 		return this;

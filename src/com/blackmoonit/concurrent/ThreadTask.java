@@ -59,4 +59,8 @@ public class ThreadTask extends ThreadInterruptable {
 		return (ThreadTask)new ThreadTask(aTask).execute();
 	}
 	
+	public static ThreadTask runThisTask(Runnable aTask, Long aDelayInMilliseconds) {
+		return (ThreadTask)new ThreadTask(aTask).executeDelayed(aDelayInMilliseconds);
+	}
+	
 }
