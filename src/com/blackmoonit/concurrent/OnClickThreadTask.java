@@ -9,7 +9,7 @@ import android.view.View.OnClickListener;
 
 /**
  * OnClick drop-in replacement handler that utilizes a background task for its heavy work.
- * Non-trivial tasks should use this class instead of a typical inline OnClickListener so that 
+ * Non-trivial tasks should use this class instead of a typical inline OnClickListener so that
  * UI response time is not disrupted on potentially slow jobs - which would cause multiple click
  * events while the user keeps pressing the button/widget trying to make the UI respond.
  * Useful if you want interruptable slow tasks performed in the background.
@@ -22,7 +22,7 @@ public class OnClickThreadTask extends ThreadInterruptable implements OnClickLis
 		/**
 		 * Portion of onClick that needs to be done on UI thread prior to doTask().
 		 * @param v - the View that is firing the onClick event.
-		 * @return The return value is passed into doTask() as a param. 
+		 * @return The return value is passed into doTask() as a param.
 		 */
 		public Object beforeTask(View v);
 		
@@ -30,7 +30,7 @@ public class OnClickThreadTask extends ThreadInterruptable implements OnClickLis
 		 * Actual work to be done is performed off the UI thread.
 		 * @param v - the View that is firing the onClick event.
 		 * @param aBeforeTaskResult - result of beforeTask().
-		 * @return Returns an Object which will be passed as a param into afterTask(). 
+		 * @return Returns an Object which will be passed as a param into afterTask().
 		 */
 	    public Object doTask(View v, Object aBeforeTaskResult);
 	    
@@ -126,6 +126,10 @@ public class OnClickThreadTask extends ThreadInterruptable implements OnClickLis
 			mBeforeTaskResult = mTask.beforeTask(mClickedView);
 		}
 		return super.execute();
+	}
+	
+	static public OnClickThreadTask runThisTask(TaskDef aTask) {
+		return (OnClickThreadTask)new OnClickThreadTask(aTask).execute();
 	}
 	
 }
