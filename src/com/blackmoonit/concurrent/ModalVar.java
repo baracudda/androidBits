@@ -9,11 +9,11 @@ import android.app.Activity;
 /**
  * Sometimes interaction is required in the middle of a task. Automate the
  * process of interrupting the task and waiting for a result to be
- * obtained from the user (and/or another thread). 
- * Once obtained, it can be remembered for future occurances (default) 
+ * obtained from the user (and/or another thread).
+ * Once obtained, it can be remembered for future occurances (default)
  * or it can be reset after the first read so that any future
  * read will cause the value to be obtained again.<br>
- * NULL is used as the wait condition, so it is the only value that cannot be 
+ * NULL is used as the wait condition, so it is the only value that cannot be
  * represented by this variable.
  *
  * @param <V> - class of the value desired
@@ -32,7 +32,7 @@ public class ModalVar<V> {
 	/**
 	 * Blocking condition that will block any read attempt until a {@link #setValue()} has been executed.
 	 */
-	protected final Condition mObtainDecision  = mCheckDecision.newCondition(); 
+	protected final Condition mObtainDecision  = mCheckDecision.newCondition();
 	/**
 	 * Variable used to store the actual value of the ModalVar.
 	 */
@@ -82,7 +82,7 @@ public class ModalVar<V> {
 	/**
 	 * Constructor to use if you want to also specify isResetOnRead to TRUE.
 	 * @param aAct - Activity used to run the UI events on the UI thread. May be NULL.
-	 * @param aResetOnRead - boolean value to initialize isResetOnRead.
+	 * @param aResetOnRead - if TRUE, resets value to NULL after a successful {@link #getValue()}.
 	 */
 	public ModalVar(Activity aAct, boolean aResetOnRead) {
 		this(aAct);
@@ -209,7 +209,7 @@ public class ModalVar<V> {
 	
 	/**
 	 * Sets the value of this variable and signals those waiting to read it.
-	 * @param aValue - value of the variable. Note that if the value is NULL, it will 
+	 * @param aValue - value of the variable. Note that if the value is NULL, it will
 	 * cause a false positive and force a wait for another value to be set.
 	 */
 	public void setValue(V aValue) {

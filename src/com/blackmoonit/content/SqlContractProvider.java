@@ -15,7 +15,7 @@ import com.blackmoonit.database.ProviderContract.TableProviderInfo;
 /**
  * The {@link #ProviderContract} class provides a mechanism for the provider
  * to query the contract itself for various simple tasks, especially Uri
- * and MIME types required by the provider and can be automated (less 
+ * and MIME types required by the provider and can be automated (less
  * developer attention required). Another compelling reason to use a
  * SqlContractProvider is that ContentObservers have to option to listen
  * for specific data actions (insert/update/delete) rather than just
@@ -33,16 +33,16 @@ import com.blackmoonit.database.ProviderContract.TableProviderInfo;
 abstract public class SqlContractProvider extends SqlContentProvider {
 
 	/**
-	 * Contains a map of integer Match Codes to TableProviderInfo for all 
+	 * Contains a map of integer Match Codes to TableProviderInfo for all
 	 * tables the provider will respond to with set results.
 	 */
-	static protected final ConcurrentHashMap<Integer, TableProviderInfo> mTableInfoMapSets = 
+	static protected final ConcurrentHashMap<Integer, TableProviderInfo> mTableInfoMapSets =
 			new ConcurrentHashMap<Integer, TableProviderInfo>();
 	/**
-	 * Contains a map of integer Match Codes to TableProviderInfo for all 
+	 * Contains a map of integer Match Codes to TableProviderInfo for all
 	 * tables the provider will respond to with single row results.
 	 */
-	static protected final ConcurrentHashMap<Integer, TableProviderInfo> mTableInfoMapRows = 
+	static protected final ConcurrentHashMap<Integer, TableProviderInfo> mTableInfoMapRows =
 			new ConcurrentHashMap<Integer, TableProviderInfo>();
 
 	/**

@@ -128,8 +128,8 @@ public class OnClickThreadTask extends ThreadInterruptable implements OnClickLis
 		return super.execute();
 	}
 	
-	static public OnClickThreadTask runThisTask(TaskDef aTask) {
-		return (OnClickThreadTask)new OnClickThreadTask(aTask).execute();
+	static public OnClickThreadTask runThisTask(TaskDef aTask, String aName) {
+		return (OnClickThreadTask)new OnClickThreadTask(aTask, aName, Thread.NORM_PRIORITY).execute();
 	}
 	
 }

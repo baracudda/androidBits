@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,6 +24,8 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.blackmoonit.androidBits.R;
 
 /**
  * Exception report delivery via email and user interaction.  Avoids giving an app the
@@ -56,7 +59,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	private boolean bEnabled = true;
  
 	public ReportAnExceptionHandler(Context aContext) {
-		this(aContext,0);
+		this(aContext,R.string.portmortem_report_emailmsg);
 	}
 
 	public ReportAnExceptionHandler(Context aContext, int aMsgResID) {
@@ -108,7 +111,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 				} catch (NameNotFoundException e) {
 					//should never happen, if so, assume debuggable
 				}
-			}	
+			}
 		}
 		sendDebugReportToAuthor(); //in case a previous error did not get sent to the email app
 		Thread.setDefaultUncaughtExceptionHandler(this);
@@ -116,7 +119,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	}
 	
 	/**
-	 * Call this method as a part of onDestroy to ensure the handler chain is restored 
+	 * Call this method as a part of onDestroy to ensure the handler chain is restored
 	 * correctly and in a timely manner.
 	 */
 	public void cleanup() {
@@ -124,7 +127,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	}
 	
 	/**
-	 * Temporarily suspend report creation/submission w/o removing the handler. 
+	 * Temporarily suspend report creation/submission w/o removing the handler.
 	 * Useful for launching external Activities which might generate exceptions we have no control over.
 	 */
 	public void suspend() {
@@ -209,7 +212,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			aTrace = ((ReportAnExceptionHandler)mDefaultUEH).getActivityTrace(aTrace);
 		}
 		return aTrace;
-	}	
+	}
 	
 	public String getDebugReport(Throwable aException) {
 		String theErrReport = "";
@@ -227,7 +230,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			}
 			
 
-			theErrReport += Utils.getDebugInstructionTrace(aException);				
+			theErrReport += Utils.getDebugInstructionTrace(aException);
 		}
 		theErrReport += Utils.getDeviceEnvironment(getContext());
 		theErrReport += "END REPORT.";
@@ -277,7 +280,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			// avoid infinite recursion
 		} catch (Error err) {
 			// avoid infinite recursion
-		}		
+		}
 	}
 	
 	/**
@@ -295,7 +298,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			try {
 				mMsgBody = (mMsgBodyResID!=0)?theContext.getString(mMsgBodyResID):MSG_BODY;
 			} catch (Resources.NotFoundException e) {
-				mMsgBody = MSG_BODY; 
+				mMsgBody = MSG_BODY;
 			}
 			String theBody = "\n"+mMsgBody+"\n\n"+aReport+"\n\n"+mMsgBody+"\n\n";
 			theIntent.putExtra(Intent.EXTRA_EMAIL,new String[] {MSG_SENDTO});
@@ -373,7 +376,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 				pi.versionCode = 69;
 			}
 			Resources theResources = aContext.getResources();
-			SimpleDateFormat theDateFormat = new SimpleDateFormat("yyyy.MM.dd_HH.mm.ss_zzz");
+			SimpleDateFormat theDateFormat = new SimpleDateFormat("yyyy.MM.dd_HH.mm.ss_zzz",Locale.US);
 			String s = "-------- Environment --------\n";
 			s += "Time\t= "+theDateFormat.format(new Date())+"\n";
 			s += "Device\t= "+Build.FINGERPRINT+"\n";
@@ -439,7 +442,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			String theErrReport = "";
 			if (aException!=null) {
 				theErrReport += getDebugHeader(aContext,aException)+"\n";
-				theErrReport += getDebugInstructionTrace(aException)+"\n";				
+				theErrReport += getDebugInstructionTrace(aException)+"\n";
 			}
 			theErrReport += getDeviceEnvironment(aContext)+"\n";
 			theErrReport += "END REPORT.";

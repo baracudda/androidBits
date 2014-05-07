@@ -55,12 +55,12 @@ public class ThreadTask extends ThreadInterruptable {
 		}
 	}
 	
-	public static ThreadTask runThisTask(Runnable aTask) {
-		return (ThreadTask)new ThreadTask(aTask).execute();
+	static public ThreadTask runThisTask(Runnable aTask, String aName) {
+		return (ThreadTask)new ThreadTask(aTask, aName, Thread.NORM_PRIORITY).execute();
 	}
 	
-	public static ThreadTask runThisTask(Runnable aTask, Long aDelayInMilliseconds) {
-		return (ThreadTask)new ThreadTask(aTask).executeDelayed(aDelayInMilliseconds);
+	static public ThreadTask runThisTask(Runnable aTask, String aName, Long aDelayInMilliseconds) {
+		return (ThreadTask)new ThreadTask(aTask, aName, Thread.NORM_PRIORITY).executeDelayed(aDelayInMilliseconds);
 	}
 	
 }
