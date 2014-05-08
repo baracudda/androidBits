@@ -1,6 +1,7 @@
 package com.blackmoonit.concurrent;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -62,6 +63,23 @@ public class ModalVar<V> {
 	 * The event will be run on the UI thread.
 	 */
 	protected Runnable mOnSetValueUI = null;
+	
+	/**
+	 * If a timeout is desired, set the TimeOut.UNITS.
+	 */
+	public TimeUnit mTimeOutUnits = null;
+	/**
+	 * If a timeout is desired, set the amount of time to wait.
+	 */
+	public Long mTimeOutAmount = null;
+	/**
+	 * If a timeout is desired, optionally provide a runnable to fire on timeout.
+	 */
+	public Runnable mTimeOutEvent = null;
+	/**
+	 * If a timeout is desired, optionally set the desired ModalVar value.
+	 */
+	public V mTimeOutValue = null;
 
 	
 	/**
@@ -193,7 +211,16 @@ public class ModalVar<V> {
 			//wait for value to be obtained
 			while (mDecisionValue==null) {
 				//false positive signalling may occur, so a while loop is used to be absolutely sure
-				mObtainDecision.await();
+				if (mTimeOutUnits==null) {
+					mObtainDecision.await();
+				} else {
+					if (!mObtainDecision.await(mTimeOutAmount, mTimeOutUnits)) {
+						if (mTimeOutEvent!=null)
+							mTimeOutEvent.run();
+						if (mTimeOutValue!=null)
+							mDecisionValue = mTimeOutValue;
+					}
+				}
 			}
 			//we have a value, return it
 			V theResult = mDecisionValue;
