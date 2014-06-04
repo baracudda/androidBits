@@ -2,6 +2,7 @@ package com.blackmoonit.app;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -16,7 +17,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
 /**
- * Standard application preference class. v11+ defines a preference-headers xml file that references the 
+ * Standard application preference class. v11+ defines a preference-headers xml file that references the
  * other preference xml files.<br>
  * <br>
  * REQUIRED RESOURCES (listed as Parameters):
@@ -32,9 +33,10 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 	protected Method mLoadHeaders = null;
 	protected Method mHasHeaders = null;
 	protected Method mRecreate = null;
+	static protected ArrayList<String> mAllowedFragments = new ArrayList<String>();
 	
 	protected static int getResId(Context aContext, String aResType, String aResName) {
-		return aContext.getApplicationContext().getResources().getIdentifier(aResName, 
+		return aContext.getApplicationContext().getResources().getIdentifier(aResName,
 				aResType, aContext.getPackageName());
 	}
 	
@@ -128,7 +130,7 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 		} catch (IllegalArgumentException e) {
 		} catch (IllegalAccessException e) {
 		} catch (InvocationTargetException e) {
-		}		
+		}
 	}
 
 	protected abstract void setup();
@@ -176,6 +178,77 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 		setup();
 	}
 	
+	/**
+	 * PreferencePane (or its like) push what needs to be allowed.
+	 * @param aFragmentName - name of fragment
+	 */
+	static public synchronized void addAllowedFragment(String aFragmentName) {
+		mAllowedFragments.add(aFragmentName);
+	}
+	
+	/**
+	 * Get all currently allowed fragments.
+	 * @return Returns the list of allowed fragment names.
+	 */
+	static public synchronized ArrayList<String> getAllowedFragments() {
+		return mAllowedFragments;
+	}
+	
+	/**
+	 * Remove a fragment from the list of allowed fragments.
+	 * @param aFragmentName - name of fragment
+	 */
+	static public synchronized void removeAllowedFragment(String aFragmentName) {
+		int i = mAllowedFragments.indexOf(aFragmentName);
+		if (i>=0)
+			mAllowedFragments.remove(i);
+	}
+	
+	/**
+	 * Determine if the fragment name is allowed based on the internal allowed list.
+	 * @param aFragmentName - name of fragment.
+	 * @return Returns TRUE if the fragment name is in the allowed list.
+	 */
+	static public synchronized boolean isFragmentAllowed(String aFragmentName) {
+		return (mAllowedFragments.indexOf(aFragmentName)>=0);
+	}
+
+/**
+	 * Introduced in API 19, either override this method or
+	 * use the PreferencePane class defined below as PrefHeaders.
+	 * REASON: Security fix for Android.<br>
+	 * Subclasses should override this method and verify that the given fragment
+	 * is a valid type to be attached to this activity. The default implementation
+	 * returns true for apps built for android:targetSdkVersion older than KITKAT.
+	 * For later versions, it will throw an exception.
+	 * @param aFragmentName - fragment about to be loaded
+	 * @return Returns TRUE if allowed.
+	 */
+	@Override
+	protected boolean isValidFragment(String aFragmentName) {
+		//no need to call the super method as it will throw an exception.
+		boolean b;
+		//if you are using the built-in PreferencePane, it only loads app defined
+		//  fragments; anything defined in our own app is trusted by default.
+		b = "com.blackmoonit.app.AppPreferenceBase$PreferencePane".equals(aFragmentName);
+		//if the fragment name is not our built-in PreferenceFragment, check
+		//  the static list of allowed fragments.
+		return b || isFragmentAllowed(aFragmentName);
+	}
+
+	/**
+	 * Generic preference fragment that will load up layouts defined in
+	 * "layout" or "XML" res folders. e.g. <pre>
+	 * &lt;header android:fragment="com.blackmoonit.app.AppPreferenceBase$PreferencePane"
+	 * 	 android:title="@string/prefs_category_area1"&gt;
+	 *     &lt;extra android:name="layout-res" android:value="prefs_settings_area_1" /&gt;
+	 * &lt;/header&gt;
+	 * </pre> will load up the resource named "prefs_settings_area_1" from R.layout or
+	 * R.xml if it fails to find it there.<br>
+	 * <br>
+	 * Added benefit is that these PreferenceFragments will be auto-allowed when using a
+	 * descendent of AppPreferenceBase and targetting API 19+.
+	 */
 	static public class PreferencePane extends PreferenceFragment {
 
 		@Override
