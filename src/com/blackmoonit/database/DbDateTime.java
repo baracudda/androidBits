@@ -74,7 +74,7 @@ public class DbDateTime {
 		} else {
 			iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ",Locale.US);
 		}
-		try {
+		if (aStr!=null && !"".equals(aStr)) try {
 			//Java doesn't parse ISO dates correctly. We need to convert "Z" into +0000
 			String theStr = aStr.replaceAll("Z$","+0000");
 			//additionally, we do not have microsecond resolution, so keep .### and remove .###xxx

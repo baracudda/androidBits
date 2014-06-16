@@ -1,0 +1,120 @@
+package com.blackmoonit.net;
+
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import android.util.Base64;
+import android.util.Log;
+
+import com.google.bits_gson.Gson;
+import com.google.bits_gson.JsonSyntaxException;
+
+/**
+ * JSON utility functions utilizing GSON library (Google's JSON library).
+ * @author Ryan Fischbach
+ */
+public final class WebUtils {
+	static private final String TAG = "androidBits."+WebUtils.class.getSimpleName();
+
+	static public final String WEB_CHARSET = "UTF-8";
+	
+	private WebUtils() {}
+	
+	/**
+	 * Convert an instanced object to a JSON string.
+	 * @param aObject - object instance with data to convert to string.
+	 * @param aTypeOfObject - type of aObject (usually aObject's class).
+	 * @return Returns aObject converted to a JSON string.
+	 */
+	static public String toJson(Object aObject, Type aTypeOfObject) {
+		Gson gson = new Gson();
+		return gson.toJson(aObject,aTypeOfObject);
+	}
+	
+	/**
+	 * Convert an instanced object to a JSON string.
+	 * @param aObject - object instance with data to convert to string.
+	 * @return Returns aObject converted to a JSON string.
+	 */
+	static public String toJson(Object aObject) {
+		Gson gson = new Gson();
+		return gson.toJson(aObject,aObject.getClass());
+	}
+	
+	/**
+	 * Convert a JSON string to a particular Java class.
+	 * @param aJsonStr - string used as the JSON source.
+	 * @param aResultClass - resulting object class.
+	 * @return Returns the result object class with data filled in from JSON string.
+	 * Returns NULL on parsing failure.
+	 */
+	static public <T> T fromJson(String aJsonStr, Class<T> aResultClass) {
+		Gson gson = new Gson();
+		try {
+			return gson.fromJson(aJsonStr,aResultClass);
+		} catch (JsonSyntaxException jse) {
+			Log.e(TAG,"fromJson",jse);
+		}
+		return null;
+	}
+
+	/**
+	 * In order to send up POST variables, you need to create a list of name=value pairs.
+	 * This helper method lets you chain calls together to create a simple POST var list.
+	 * @param aParamList - if NULL, will create a new list.
+	 * @param aName - POST variable name.
+	 * @param aValue - POST variable value.
+	 * @return Returns the aParamList for chaining purposes.
+	 */
+	static public List<NameValuePair> addParam(List<NameValuePair> aParamList, String aName, String aValue) {
+		List<NameValuePair> theParams = (aParamList!=null) ? aParamList : new ArrayList<NameValuePair>();
+		theParams.add(new BasicNameValuePair(aName,aValue));
+		return theParams;
+	}
+	
+	/**
+	 * Convert a parameter list of NameValuePairs into the string used to POST to a URL.
+	 * @param aParamList - POST variable param list.
+	 * @return
+	 */
+	static public String cnvPostParamsToString(List<NameValuePair> aParamList) {
+		String theResult = "";
+		if (aParamList.size()>0) try {
+			for (NameValuePair thePair : aParamList) {
+				theResult = theResult + URLEncoder.encode(thePair.getName(),WEB_CHARSET)+"="+
+						URLEncoder.encode(thePair.getValue(),WEB_CHARSET)+"&";
+			}
+			theResult = theResult.substring(0,theResult.length()-1);
+		} catch (UnsupportedEncodingException e) {
+			Log.e(TAG,"cnvPostParamsToString",e);
+		}
+		return theResult;
+	}
+
+	/**
+	 * Get the standard "Basic" http auth string used with the standard "Authorization" header.
+	 * @param aUserPwString - "user:pw" style string.
+	 * @return Returns the Base64 encoded string to be used with the "Authorization" header.
+	 */
+	static public String getBasicAuthString(String aUserPwString) {
+		return "Basic "+Base64.encodeToString(aUserPwString.getBytes(), Base64.NO_WRAP);
+	}
+
+	/**
+	 * Get the standard "Basic" http auth string used with the standard "Authorization" header.
+	 * @param aUserName - the user name
+	 * @param aPasswordEntry - the password to use
+	 * @return Returns the Base64 encoded string to be used with the "Authorization" header.
+	 * @see WebUtils#getBasicAuthString(String)
+	 */
+	static public String getBasicAuthString(String aUserName, String aPasswordEntry) {
+		return getBasicAuthString(aUserName+":"+aPasswordEntry);
+	}
+
+}

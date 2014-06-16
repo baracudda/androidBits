@@ -4,8 +4,8 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -117,25 +117,27 @@ public class CustomSSLTrustManager {
 		}
 		return mSSLContext;
 	}
+	
+	public URLConnection getUrlConnection(URL aUrl) throws SSLContextException {
+		HttpsURLConnection theUrlConnection = null;
+		try {
+			theUrlConnection = (HttpsURLConnection)aUrl.openConnection();
+			theUrlConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+		} catch (IOException ioe) {
+			throw new SSLContextException(ioe);
+		}
+		return theUrlConnection;
+	}
 
 	public InputStream getInputStream(URL aUrl) throws SSLContextException {
 		try {
-			HttpsURLConnection theUrlConnection = (HttpsURLConnection)aUrl.openConnection();
-			theUrlConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+			URLConnection theUrlConnection = getUrlConnection(aUrl);
 			return theUrlConnection.getInputStream();
 		} catch (IOException ioe) {
 			throw new SSLContextException(ioe);
 		}
 	}
 
-	public InputStream getInputStream(String aUrl) throws SSLContextException {
-		try {
-			return getInputStream(new URL(aUrl));
-		} catch (MalformedURLException mue) {
-			throw new SSLContextException(mue);
-		}
-	}
-	
 	static public InputStream getInputStream(Context aContext, Uri aCrtResource, URL aUrl) throws SSLContextException {
 		CustomSSLTrustManager theManager = new CustomSSLTrustManager(aContext, aCrtResource);
 		return theManager.getInputStream(aUrl);
