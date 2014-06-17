@@ -34,11 +34,18 @@ import com.blackmoonit.net.ssl.CustomSSLTrustManager.SSLContextException;
 public class WebConn {
 	static private final String TAG = "androidBits."+WebConn.class.getSimpleName();
 	protected WeakReference<Context> mContext = null;
-	public URL mUrl = null;
-	public String mUrlKey = null;
+	protected URL mUrl = null;
+	protected String mUrlKey = null;
 	protected Uri mCAResource = null;
 	protected SSLContext mSSLContext = null;
 	public String myUserAgent = null;
+	
+	static public class WebConnInfo {
+		public URL url = null;
+		public String auth_key = null;
+		public Uri custom_ca_uri = null;
+		public Boolean is_polling_expected = null;
+	}
 	
 	public WebConn(Context aContext) {
 		mContext = new WeakReference<Context>(aContext);
@@ -49,8 +56,19 @@ public class WebConn {
 		setUrl(aUrl);
 	}
 	
+	public WebConn(Context aContext, WebConnInfo aInfo) {
+		mContext = new WeakReference<Context>(aContext);
+		setUrl(aInfo.url);
+		setAuthKey(aInfo.auth_key);
+		setCertAuthResource(aInfo.custom_ca_uri);
+	}
+	
 	public Context getContext() {
 		return (mContext!=null) ? mContext.get() : null;
+	}
+	
+	public URL getUrl() {
+		return mUrl;
 	}
 	
 	/**
@@ -73,6 +91,10 @@ public class WebConn {
 		return setUrl(new URL(aUrlStr));
 	}
 	
+	public String getAuthKey() {
+		return mUrlKey;
+	}
+	
 	/**
 	 * Basically a password needed to connect to the URL.
 	 * @param aAuthKey - string
@@ -81,6 +103,10 @@ public class WebConn {
 	public WebConn setAuthKey(String aAuthKey) {
 		mUrlKey = aAuthKey;
 		return this;
+	}
+	
+	public Uri getCertAuthResource() {
+		return mCAResource;
 	}
 	
 	/**
