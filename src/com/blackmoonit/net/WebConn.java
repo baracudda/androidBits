@@ -45,6 +45,22 @@ public class WebConn {
 		public String auth_key = null;
 		public Uri custom_ca_uri = null;
 		public Boolean is_polling_expected = null;
+		
+		public void setUrl(String aUrl) {
+			try {
+				url = new URL(aUrl);
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public void setCustomCaUri(String aCCU) {
+			custom_ca_uri = Uri.parse(aCCU);
+		}
+		
+		public void setAuth(String aUser, String aPass) {
+			auth_key = aUser+":"+aPass;
+		}
 	}
 	
 	public WebConn(Context aContext) {
