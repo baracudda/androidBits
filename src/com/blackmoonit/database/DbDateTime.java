@@ -8,7 +8,6 @@ import java.util.TimeZone;
 
 import org.apache.http.impl.cookie.DateParseException;
 
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
@@ -52,7 +51,17 @@ public class DbDateTime {
 	 * @return Returns the string as used by SQL.
 	 */
 	static public String toDbStr(Calendar aCal) {
+		/* DateFormat did not support H at all < API18 and additionally k was intentionally broken
 		String theResult = (String)DateFormat.format("yyyy-MM-dd'T'HH:mm:ss", aCal);
+		int theMs = aCal.get(Calendar.MILLISECOND);
+		if (theMs>0) {
+			theResult = theResult + "."+String.format(Locale.US,"%03d",theMs)+"000";
+		}
+		return theResult+"Z";
+		*/
+		SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss",Locale.US);
+		iso8601Format.setCalendar(aCal); //O.o; needed, idk why, but w/e.
+		String theResult = iso8601Format.format(aCal.getTime());
 		int theMs = aCal.get(Calendar.MILLISECOND);
 		if (theMs>0) {
 			theResult = theResult + "."+String.format(Locale.US,"%03d",theMs)+"000";
