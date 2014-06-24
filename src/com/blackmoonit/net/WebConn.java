@@ -17,7 +17,9 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.blackmoonit.io.StreamUtils;
@@ -38,13 +40,23 @@ public class WebConn {
 	protected String mUrlKey = null;
 	protected Uri mCAResource = null;
 	protected SSLContext mSSLContext = null;
+
 	public String myUserAgent = null;
+	public Integer expect_spontaneous_packages = null; //should poll URL or not for incoming data.
 	
 	static public class WebConnInfo {
+		static public final String EXTRA_URL = "webconn.url";
+		static public final String EXTRA_URL_BASIC_AUTH = "webconn.auth_key";
+		static public final String EXTRA_CUSTOM_CA_URI = "webconn.custom_ca_uri";
+		static public final String EXTRA_EXPECT_SPONTANEOUS_PACKGES = "webconn.expect_spontaneous_packages";
+		
+		static public int EXPECT_SPONTANEOUS_PACKGES_NEVER = 0;
+		static public int EXPECT_SPONTANEOUS_PACKGES_APP_SETTING = 1;
+
 		public URL url = null;
 		public String auth_key = null;
 		public Uri custom_ca_uri = null;
-		public Boolean is_polling_expected = null;
+		public Integer expect_spontaneous_packages = null;
 		
 		public void setUrl(String aUrl) {
 			try {
@@ -55,11 +67,61 @@ public class WebConn {
 		}
 		
 		public void setCustomCaUri(String aCCU) {
-			custom_ca_uri = Uri.parse(aCCU);
+			custom_ca_uri = (aCCU!=null && !"".equals(aCCU)) ? Uri.parse(aCCU) : null;
 		}
 		
 		public void setAuth(String aUser, String aPass) {
 			auth_key = aUser+":"+aPass;
+		}
+		
+		public WebConnInfo setFromBundle(Bundle aBundle) {
+			if (aBundle!=null && aBundle.containsKey(EXTRA_URL)) {
+				Object theValue;
+	
+				theValue = aBundle.get(EXTRA_URL);
+				if (theValue!=null)
+					setUrl((String)theValue);
+				
+				theValue = aBundle.get(EXTRA_URL_BASIC_AUTH);
+				if (theValue!=null)
+					auth_key = (String)theValue;
+				
+				theValue = aBundle.get(EXTRA_CUSTOM_CA_URI);
+				if (theValue!=null)
+					setCustomCaUri((String)theValue);
+				
+				theValue = aBundle.get(EXTRA_EXPECT_SPONTANEOUS_PACKGES);
+				if (theValue!=null)
+					expect_spontaneous_packages = (Integer)theValue;
+			}
+			return this;
+		}
+		
+		public Bundle toBundle(Bundle aBundle) {
+			Bundle theResults = (aBundle!=null) ? aBundle : new Bundle();
+			if (url!=null) {
+				theResults.putString(EXTRA_URL, url.toString());
+				theResults.putString(EXTRA_URL_BASIC_AUTH, auth_key);
+				if (custom_ca_uri!=null)
+					theResults.putString(EXTRA_CUSTOM_CA_URI, custom_ca_uri.toString());
+				if (expect_spontaneous_packages!=null)
+					theResults.putInt(EXTRA_EXPECT_SPONTANEOUS_PACKGES, expect_spontaneous_packages);
+			}
+			return theResults;
+		}
+		
+		public WebConnInfo setFromIntent(Intent aIntent) {
+			if (aIntent!=null)
+				setFromBundle(aIntent.getExtras());
+			return this;
+		}
+		
+		static public WebConnInfo fromBundle(Bundle aBundle) {
+			return new WebConnInfo().setFromBundle(aBundle);
+		}
+		
+		public boolean isEmpty() {
+			return (url==null || "".equals(url));
 		}
 	}
 	
@@ -77,6 +139,7 @@ public class WebConn {
 		setUrl(aInfo.url);
 		setAuthKey(aInfo.auth_key);
 		setCertAuthResource(aInfo.custom_ca_uri);
+		expect_spontaneous_packages = aInfo.expect_spontaneous_packages;
 	}
 	
 	public Context getContext() {
@@ -138,6 +201,22 @@ public class WebConn {
 	}
 	
 	/**
+	 * Return web connection info via WebConnInfo class.
+	 * @return WebConnInfo Returns the information about this connection.
+	 * Returns NULL if the URL is null.
+	 */
+	public WebConnInfo getWebConnInfo() {
+		if (mUrl!=null) {
+			WebConnInfo theInfo = new WebConnInfo();
+			theInfo.url = mUrl;
+			theInfo.auth_key = mUrlKey;
+			theInfo.custom_ca_uri = mCAResource;
+			return theInfo;
+		} else
+			return null;
+	}
+	
+	/**
 	 * When using custom CAs, the custom CA chain needs to be loaded and used.
 	 * @return Returns the SSLContext with all the certificate magic already loaded.
 	 * @throws SSLContextException
@@ -189,7 +268,10 @@ public class WebConn {
 		try {
 			theUrlConn.setDoInput(true);
 			theUrlConn.setDoOutput(true);
-			((HttpURLConnection)theUrlConn).setRequestMethod("POST");
+			if (theUrlConn instanceof HttpURLConnection)
+				((HttpURLConnection)theUrlConn).setRequestMethod("POST");
+			if (theUrlConn instanceof HttpsURLConnection)
+				((HttpsURLConnection)theUrlConn).setRequestMethod("POST");
 			OutputStream theOutStream = null;
 			try {
 				theOutStream = theUrlConn.getOutputStream();
@@ -219,12 +301,24 @@ public class WebConn {
 	 * @throws IOException
 	 */
 	public String readResponseFromUrl(URLConnection aUrlConn) throws IOException {
-		InputStream theInStream = aUrlConn.getInputStream();
-		try {
-			return StreamUtils.inputStreamToString(theInStream);
-		} finally {
-			theInStream.close();
-		}
+		/*
+		Integer theResponseCode = null;
+		if (aUrlConn instanceof HttpURLConnection)
+			theResponseCode = ((HttpURLConnection) aUrlConn).getResponseCode();
+		if (aUrlConn instanceof HttpsURLConnection)
+			theResponseCode = ((HttpsURLConnection) aUrlConn).getResponseCode();
+		if (theResponseCode!=null && theResponseCode>=400 && theResponseCode <= 499) {
+		    throw new IOException("Bad response code: "+theResponseCode);
+	    } else {
+	    */
+			InputStream theInStream = aUrlConn.getInputStream();
+			
+			try {
+				return StreamUtils.inputStreamToString(theInStream);
+			} finally {
+				theInStream.close();
+			}
+	    //}
 	}
 	
 	/**
