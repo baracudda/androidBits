@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="version_name">Version %1$s</string>
+<string name="app_about_menu_label">Über</string>
+<string name="app_about_button_changelog">Änderungen</string>
+<string name="app_about_button_faq">FAQ</string>
+<string name="app_about_button_email">E-Mail</string>
+</resources>

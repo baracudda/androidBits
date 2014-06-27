@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="version_name">Версия %1$s</string>
+<string name="app_about_menu_label">О программе</string>
+<string name="app_about_button_changelog">изменения</string>
+<string name="app_about_button_faq">ЧаВо</string>
+<string name="app_about_button_email">email</string>
+</resources>

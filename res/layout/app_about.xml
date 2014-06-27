@@ -5,74 +5,74 @@
   tools:ignore="HardcodedText" >
 <RelativeLayout
   android:layout_width="wrap_content" android:layout_height="wrap_content">
-    <TextView android:id="@+id/dialog_about_app_version" 
+    <TextView android:id="@+id/app_about_app_version" 
       android:layout_height="wrap_content" android:layout_width="fill_parent" 
       android:layout_alignParentTop="true" 
       android:layout_marginBottom="6dip" 
       android:text="@string/version_name" 
       android:gravity="center_horizontal" >
     </TextView>
-    <LinearLayout android:id="@+id/dialog_about_layout_links"
+    <LinearLayout android:id="@+id/app_about_layout_links"
       android:layout_height="wrap_content" android:layout_width="wrap_content" 
-      android:layout_below="@+id/dialog_about_app_version" 
+      android:layout_below="@+id/app_about_app_version" 
       android:layout_centerHorizontal="true" >
-	    <Button android:id="@+id/dialog_about_button_changelog" 
+	    <Button android:id="@+id/app_about_button_changelog" 
 	      android:layout_height="wrap_content" android:layout_width="wrap_content" 
 	      android:drawableTop="@drawable/icon_notice" 
-	      android:text="@string/dialog_about_button_changelog">
+	      android:text="@string/app_about_button_changelog">
 	    </Button>
-	    <Button android:id="@+id/dialog_about_button_faq" 
+	    <Button android:id="@+id/app_about_button_faq" 
 	      android:layout_height="wrap_content" android:layout_width="wrap_content" 
-	      android:text="@string/dialog_about_button_faq" 
+	      android:text="@string/app_about_button_faq" 
 	      android:drawableTop="@drawable/icon_question">
 	    </Button>
-	    <Button android:id="@+id/dialog_about_button_email" 
+	    <Button android:id="@+id/app_about_button_email" 
 	      android:layout_height="wrap_content" android:layout_width="wrap_content" 
-	      android:text="@string/dialog_about_button_email" 
+	      android:text="@string/app_about_button_email" 
 	      android:drawableTop="@drawable/icon_mail" >
 	    </Button>
     </LinearLayout>
-	<TextView android:id="@+id/dialog_about_text_thanks" 
+	<TextView android:id="@+id/app_about_text_thanks" 
 	  android:layout_width="wrap_content" android:layout_height="wrap_content" 
-      android:layout_below="@+id/dialog_about_layout_links" 
-      android:text="@string/dialog_about_text_thanks" 
+      android:layout_below="@+id/app_about_layout_links" 
+      android:text="@string/app_about_text_thanks" 
       android:layout_marginTop="6dip" 
       android:layout_marginLeft="6dip" 
       android:layout_marginRight="6dip" >
 	</TextView>
-    <TextView android:id="@+id/dialog_about_text_author" 
+    <TextView android:id="@+id/app_about_text_author" 
       android:layout_height="wrap_content" android:layout_width="fill_parent" 
-      android:layout_alignRight="@id/dialog_about_text_thanks" 
-      android:layout_below="@id/dialog_about_text_thanks" 
+      android:layout_alignRight="@id/app_about_text_thanks" 
+      android:layout_below="@id/app_about_text_thanks" 
       android:text="Ryan Fischbach" 
       android:gravity="right" 
       android:typeface="serif" 
       android:textStyle="italic" 
       android:layout_marginBottom="12dip" android:layout_marginRight="12dip">
     </TextView>
-    <FrameLayout android:id="@+id/dialog_about_decision_bar" 
+    <FrameLayout android:id="@+id/app_about_decision_bar" 
       android:layout_height="wrap_content" android:layout_width="wrap_content" 
-      android:layout_below="@+id/dialog_about_text_author" 
+      android:layout_below="@+id/app_about_text_author" 
       android:layout_centerInParent="true" 
     >
-	    <include android:id="@+id/dialog_about_button_positive" 
+	    <include android:id="@+id/app_about_button_positive" 
     	  layout="@layout/button_positive" 
     	/>
     </FrameLayout>
-    <RelativeLayout android:id="@+id/dialog_about_layout_bits"
+    <RelativeLayout android:id="@+id/app_about_layout_bits"
    	  android:layout_height="wrap_content" android:layout_width="fill_parent"  
-	  android:layout_below="@+id/dialog_about_decision_bar" 
+	  android:layout_below="@+id/app_about_decision_bar" 
       android:layout_marginTop="12dip"
 	  android:gravity="center_horizontal" >
-    	<ImageView android:id="@+id/dialog_about_bits_logo" 
+    	<ImageView android:id="@+id/app_about_bits_logo" 
     	  android:layout_height="wrap_content" android:layout_width="wrap_content" 
     	  android:src="@drawable/biz_logo" 
-    	  android:contentDescription="@string/dialog_about_imgdesc_logo" />
-    	<TextView android:id="@+id/dialog_about_text_copyright" 
+    	  android:contentDescription="@string/app_about_imgdesc_logo" />
+    	<TextView android:id="@+id/app_about_text_copyright" 
 	      android:layout_height="wrap_content" android:layout_width="wrap_content" 
-    	  android:layout_toRightOf="@+id/dialog_about_bits_logo" 
+    	  android:layout_toRightOf="@+id/app_about_bits_logo" 
     	  android:layout_marginLeft="4dip" 
-	      android:text="@string/dialog_about_copyright" />
+	      android:text="@string/app_about_copyright" />
 	</RelativeLayout>
 </RelativeLayout>
 </ScrollView>

@@ -8,7 +8,7 @@
 <string name="app_about_link_faq" tools:ignore="MissingTranslation">http://</string>
 <string name="app_about_link_email" tools:ignore="MissingTranslation">androidapps@blackmoonit.com</string>
 <!-- TRANSLATE -->
-<string name="app_about_menu_item">About</string>
+<string name="app_about_menu_label">About</string>
 <string name="app_about_button_changelog">changelog</string>
 <string name="app_about_button_faq">FAQ</string>
 <string name="app_about_button_email">email</string>
