@@ -1,6 +1,7 @@
 package com.blackmoonit.net;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -268,10 +269,11 @@ public class WebConn {
 		try {
 			theUrlConn.setDoInput(true);
 			theUrlConn.setDoOutput(true);
-			if (theUrlConn instanceof HttpURLConnection)
-				((HttpURLConnection)theUrlConn).setRequestMethod("POST");
-			if (theUrlConn instanceof HttpsURLConnection)
+			if (theUrlConn instanceof HttpsURLConnection) {
 				((HttpsURLConnection)theUrlConn).setRequestMethod("POST");
+			} else if (theUrlConn instanceof HttpURLConnection) {
+				((HttpURLConnection)theUrlConn).setRequestMethod("POST");
+			}
 			OutputStream theOutStream = null;
 			try {
 				theOutStream = theUrlConn.getOutputStream();
@@ -311,13 +313,25 @@ public class WebConn {
 		    throw new IOException("Bad response code: "+theResponseCode);
 	    } else {
 	    */
+		try {
 			InputStream theInStream = aUrlConn.getInputStream();
-			
 			try {
 				return StreamUtils.inputStreamToString(theInStream);
 			} finally {
 				theInStream.close();
 			}
+		} catch (FileNotFoundException fnfe) {
+			Integer theResponseCode = null;
+			String theResponseMsg = null;
+			if (aUrlConn instanceof HttpsURLConnection) {
+				theResponseCode = ((HttpsURLConnection) aUrlConn).getResponseCode();
+				theResponseMsg = ((HttpsURLConnection) aUrlConn).getResponseMessage();
+			} else if (aUrlConn instanceof HttpURLConnection) {
+				theResponseCode = ((HttpURLConnection) aUrlConn).getResponseCode();
+				theResponseMsg = ((HttpURLConnection) aUrlConn).getResponseMessage();
+			}
+		    throw new IOException("Bad response: ("+theResponseCode+") "+theResponseMsg);
+		}
 	    //}
 	}
 	
