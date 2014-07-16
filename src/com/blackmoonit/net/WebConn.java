@@ -239,7 +239,7 @@ public class WebConn {
 		URLConnection theUrlConn = null;
 		try {
 			theUrlConn = mUrl.openConnection();
-			if (mCAResource!=null) {
+			if (mCAResource!=null && (theUrlConn instanceof HttpsURLConnection)) {
 				//use custom CA
 				SSLContext theSSLContext = getCustomSSLContext();
 				((HttpsURLConnection)theUrlConn).setSSLSocketFactory(theSSLContext.getSocketFactory());
@@ -291,8 +291,15 @@ public class WebConn {
 					theOutStream.close();
 			}
 		} catch (ProtocolException pe) {
-			Log.e(TAG,"writeToUri",pe);
-			throw new IOException(pe);
+			Log.e(TAG,"writeToUrl",pe);
+			/* since we want min SDK as 7, cannot use the preferred constructor.
+			if (Build.VERSION.SDK_INT>=9)
+				throw new IOException(pe);
+			else
+				throw new IOException(pe.getMessage());
+			*/
+			IOException ioe = new IOException();
+			ioe.initCause(pe);
 		}
 	}
 	
@@ -303,16 +310,6 @@ public class WebConn {
 	 * @throws IOException
 	 */
 	public String readResponseFromUrl(URLConnection aUrlConn) throws IOException {
-		/*
-		Integer theResponseCode = null;
-		if (aUrlConn instanceof HttpURLConnection)
-			theResponseCode = ((HttpURLConnection) aUrlConn).getResponseCode();
-		if (aUrlConn instanceof HttpsURLConnection)
-			theResponseCode = ((HttpsURLConnection) aUrlConn).getResponseCode();
-		if (theResponseCode!=null && theResponseCode>=400 && theResponseCode <= 499) {
-		    throw new IOException("Bad response code: "+theResponseCode);
-	    } else {
-	    */
 		try {
 			InputStream theInStream = aUrlConn.getInputStream();
 			try {
@@ -332,7 +329,6 @@ public class WebConn {
 			}
 		    throw new IOException("Bad response: ("+theResponseCode+") "+theResponseMsg);
 		}
-	    //}
 	}
 	
 	/**
