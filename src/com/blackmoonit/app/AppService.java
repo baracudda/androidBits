@@ -68,7 +68,7 @@ public abstract class AppService extends Service {
 			invokeMethod(mStopForeground,mStopForegroundArgs);
 		} else if (mSetForeground!=null) {
 			// Fall back on the old API (deprecated in 2.0, gone in 3.0)
-			// Note to cancel BEFORE changing the foreground state, 
+			// Note to cancel BEFORE changing the foreground state,
 			//   since we could be killed at that point.
 			mNotificationMgr.cancel(id);
 			mSetForegroundArgs[0] = Boolean.FALSE;
@@ -94,14 +94,19 @@ public abstract class AppService extends Service {
 		}
 	}
 
-	// This is the old onStart method that will be called on the pre-2.0
-	// platform.  On 2.0 or later we override onStartCommand() so this
-	// method will not be called.
+	/**
+	 * This is the old onStart method that will be called on the pre-2.0
+	 * platform.  On 2.0 or later we override onStartCommand() so this
+	 * method will not be called.
+	 */
 	@Override
 	public void onStart(Intent aIntent, int startId) {
 		handleCommand(aIntent);
 	}
 
+	/**
+	 * Android 2.0+ calls this method instead of the old onStart(Intent, in) method.
+	 */
 	//@Override - we need to work with Android 1.5 which doesn't have this method
 	public int onStartCommand(Intent aIntent, int aFlags, int startId) {
 		handleCommand(aIntent);

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -33,50 +34,37 @@ import com.blackmoonit.androidBits.R;
  * case the handler stays around long after the activity that created it, only a tiny memory leak
  * will result.
  * 
+ * UPDATE 2014.07: Android SDK has progressed to a point where referencing library resource strings
+ * is safe and easy to do.  Code revamp removed static strings and referenced Context.getString()
+ * instead. A benefit to updating this code is that different apps can send emails to different
+ * addresses instead of relying on one statically defined email address.
+ * 
  * @author Ryan Fischbach
  * 
  *  Source has been released to the public as is and without any warranty.
  */
 public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler, Runnable {
+	//static private final String TAG = "BITS.lib.app."+ReportAnExceptionHandler.class.getSimpleName();
 	/**
 	 * Debug report filename.
 	 */
-	public static final String ExceptionReportFilename = "istrStack.trace";
+	static public final String ExceptionReportFilename = "bitsAppStack.trace";
 
-	/**
-	 * Email address of where to send the debug report.
-	 */
-	private static final String MSG_SENDTO = "istr.bugsighting@blackmoonit.com";
-	/**
-	 * Note to user in the email.
-	 */
-	private static final String MSG_BODY = "Please help by sending this email. "+
-		"No personal information is being sent (you can check by reading the rest of the email).";
-	
 	private final Thread.UncaughtExceptionHandler mDefaultUEH;
 	private WeakReference<Context> mContext;
-	private final int mMsgBodyResID;
 	private boolean bEnabled = true;
- 
+	private String mContextClassName = null;
+	
 	public ReportAnExceptionHandler(Context aContext) {
-		this(aContext,R.string.portmortem_report_emailmsg);
-	}
-
-	public ReportAnExceptionHandler(Context aContext, int aMsgResID) {
 		mDefaultUEH = Thread.getDefaultUncaughtExceptionHandler();
 		mContext = new WeakReference<Context>(aContext);
-		mMsgBodyResID = aMsgResID;
+		if (aContext!=null) {
+			mContextClassName = aContext.getClass().getName();
+		}
 	}
 	
 	public Context getContext() {
 		return mContext.get();
-	}
-	
-	public Activity getActivity() {
-		if (mContext.get() instanceof Activity)
-			return (Activity)mContext.get();
-		else
-			return null;
 	}
 	
 	/**
@@ -105,6 +93,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 		if (bOnlyIfDebuggable) {
 			if ((theContext.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)!=ApplicationInfo.FLAG_DEBUGGABLE) {
 				try {
+					//app is not debuggable, check to see if version name contains "beta" before ignoring
 					String theVersionName = theContext.getPackageManager().getPackageInfo(theContext.getPackageName(),0).versionName;
 					if (theVersionName!=null && !theVersionName.contains("beta"))
 						return this;
@@ -179,8 +168,14 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	public LinkedList<CharSequence> getActivityTrace(LinkedList<CharSequence> aTrace) {
 		if (aTrace==null)
 			aTrace = new LinkedList<CharSequence>();
-		Activity theAct = getActivity();
-		if (theAct!=null) {
+		Context theContext = getContext();
+		if (theContext==null) {
+			if (mContextClassName!=null)
+				aTrace.add("null (was "+mContextClassName+")");
+			else //no context to load strings, must use fixed string here.
+				aTrace.add("null (this context has been destroyed already)");
+		} else if (theContext!=null && theContext instanceof Activity) {
+			Activity theAct = (Activity) theContext;
 			aTrace.add(theAct.getLocalClassName()+" ("+theAct.getTitle()+")");
 			if (theAct.getCallingActivity()!=null || theAct.getCallingPackage()!=null) {
 				String theTraceLine;
@@ -203,10 +198,11 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 				}
 				aTrace.add(theTraceLine);
 			}
-		} else if (getContext()!=null) {
-			aTrace.add(getContext().getClass().getName());
+		} else if (theContext instanceof Service) {
+			Service theService = (Service) theContext;
+			aTrace.add("Service "+theContext.getClass().getName()+" of "+theService.getApplication().getPackageName());
 		} else {
-			aTrace.add("null (this context has been destroyed already)");
+			aTrace.add(theContext.getClass().getName()+" of "+theContext.getApplicationContext().getPackageName());
 		}
 		if (mDefaultUEH!=null && mDefaultUEH instanceof ReportAnExceptionHandler) {
 			aTrace = ((ReportAnExceptionHandler)mDefaultUEH).getActivityTrace(aTrace);
@@ -214,32 +210,56 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 		return aTrace;
 	}
 	
-	public String getDebugReport(Throwable aException) {
-		String theErrReport = "";
-		if (aException!=null) {
-			theErrReport += Utils.getDebugHeader(getContext(),aException)+"\n";
-			
-			//activity trace
-			List<CharSequence> theActivityTrace = getActivityTrace(null);
-			if (theActivityTrace!=null && theActivityTrace.size()>0) {
-				theErrReport += "--------- Activity Stack Trace ---------\n";
-				for (int i=0; i<theActivityTrace.size(); i++) {
-					theErrReport += Utils.formatStackTraceLine(i+1,theActivityTrace.get(i));
-				}//for
-				theErrReport += "----------------------------------------\n\n";
-			}
-			
-
-			theErrReport += Utils.getDebugInstructionTrace(aException);
+	/**
+	 * Given an Exception, construct a string of the stack and cause traces.
+	 * @param aContext - the context to use.
+	 * @param anActivityTrace - list of activity/service/context trace strings.
+	 * @return Returns the string of the activity trace separated by newlines.
+	 */
+	public String getDebugActivityTrace(Context aContext, List<CharSequence> anActivityTrace) {
+		String theResult = "";
+		Context theContext = aContext;
+		List<CharSequence> theActivityTrace = anActivityTrace;
+		if (theActivityTrace!=null && theActivityTrace.size()>0) {
+			theResult += theContext.getString(R.string.postmortem_report_act_trace_header)+"\n";
+			for (int i=0; i<theActivityTrace.size(); i++) {
+				theResult += Utils.formatStackTraceLine(i+1,theActivityTrace.get(i));
+			}//for
+			theResult += theContext.getString(R.string.postmortem_report_act_trace_footer)+"\n";
+			theResult += "\n";
 		}
-		theErrReport += Utils.getDeviceEnvironment(getContext());
-		theErrReport += "END REPORT.";
+		return theResult;
+	}
+	
+	/**
+	 * Compiles the debug information and returns it as a string. The report
+	 * consists of {@link #Utils.getDebugHeader(Context,Throwable)} followed by
+	 * {@link #getDebugActivityTrace(Context,List)} followed by
+	 * {@link #Utils.getDebugInstructionTrace(Context,Throwable)} followed by
+	 * {@link #Utils.getDeviceEnvironment(Context)}.
+	 * @param aException - the exception to report.
+	 * @return Returns the exception report as a string.
+	 * @see #Utils.getDebugHeader(Context,Throwable)
+	 * @see #getDebugActivityTrace(Context,List)
+	 * @see #Utils.getDebugInstructionTrace(Context, Throwable)
+	 * @see #Utils.getDeviceEnvironment(Context)
+	 */
+	public String getDebugReport(Throwable aException) {
+		Context theContext = getContext();
+		String theErrReport = "";
+		if (aException!=null && theContext!=null) {
+			theErrReport += Utils.getDebugHeader(getContext(),aException)+"\n";
+			theErrReport += getDebugActivityTrace(theContext, getActivityTrace(null))+"\n";
+			theErrReport += Utils.getDebugInstructionTrace(theContext, aException)+"\n";
+		}
+		theErrReport += Utils.getDeviceEnvironment(theContext)+"\n";
+		if (theContext!=null)
+			theErrReport += theContext.getString(R.string.postmortem_report_footer_text);
 		return theErrReport;
 	}
 	
 	/**
 	 * Write the given debug report to external storage.
-	 * 
 	 * @param aReport - the debug report
 	 */
 	protected void saveDebugReport(String aReport) {
@@ -263,51 +283,49 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	 */
 	public void sendDebugReportToAuthor() {
 		Context theContext = getContext();
-		if (theContext==null)
-			return;
-		String theLine = "";
-		String theTrace = "";
-		try {
-			BufferedReader theReader = new BufferedReader(
-					new InputStreamReader(theContext.openFileInput(ExceptionReportFilename)));
-			while ((theLine = theReader.readLine())!=null) {
-				theTrace += theLine+"\n";
+		if (theContext!=null) {
+			String theLine = "";
+			String theTrace = "";
+			try {
+				BufferedReader theReader = new BufferedReader(new InputStreamReader(
+						theContext.openFileInput(ExceptionReportFilename)));
+				while ((theLine = theReader.readLine())!=null) {
+					theTrace += theLine+"\n";
+				}
+				if (sendDebugReportToAuthor(theTrace)) {
+					theContext.deleteFile(ExceptionReportFilename);
+				}
+			} catch (Exception e) {
+				// avoid infinite recursion
+			} catch (Error err) {
+				// avoid infinite recursion
 			}
-			if (sendDebugReportToAuthor(theTrace)) {
-				theContext.deleteFile(ExceptionReportFilename);
-			}
-		} catch (Exception e) {
-			// avoid infinite recursion
-		} catch (Error err) {
-			// avoid infinite recursion
 		}
 	}
 	
 	/**
-	 * Send the given report to email app.
-	 *
+	 * Send the given report to email app via Intent mechanism.
 	 * @param aReport - the debug report to send
-	 * @return Returns true if the email app was launched regardless if the email was sent.
+	 * @return Returns TRUE if no context to use, no report to send, or
+	 * if the email app was launched regardless if the email was sent.
 	 */
-	public Boolean sendDebugReportToAuthor(String aReport) {
+	public boolean sendDebugReportToAuthor(String aReport) {
 		Context theContext = getContext();
 		if (theContext!=null && aReport!=null) {
 			Intent theIntent = new Intent(Intent.ACTION_SEND);
-			String theSubject = Utils.getAppName(getContext())+" Exception Report";
-			String mMsgBody;
-			try {
-				mMsgBody = (mMsgBodyResID!=0)?theContext.getString(mMsgBodyResID):MSG_BODY;
-			} catch (Resources.NotFoundException e) {
-				mMsgBody = MSG_BODY;
-			}
-			String theBody = "\n"+mMsgBody+"\n\n"+aReport+"\n\n"+mMsgBody+"\n\n";
-			theIntent.putExtra(Intent.EXTRA_EMAIL,new String[] {MSG_SENDTO});
+			if (!(theContext instanceof Activity))
+				theIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			String theSubject = theContext.getString(R.string.postmortem_report_email_subject,
+					Utils.getAppName(getContext()));
+			String theMsg = theContext.getString(R.string.postmortem_report_email_msg);
+			String theBody = "\n"+theMsg+"\n\n"+aReport+"\n\n"+theMsg+"\n\n";
+			String theRecipients = theContext.getString(R.string.postmortem_report_email_recipients);
+			theIntent.putExtra(Intent.EXTRA_EMAIL,theRecipients.split(";"));
 			theIntent.putExtra(Intent.EXTRA_TEXT, theBody);
 			theIntent.putExtra(Intent.EXTRA_SUBJECT, theSubject);
 			theIntent.setType("message/rfc822");
-			//theIntent.setType("vnd.android.cursor.dir/email");
 			List<?> theList = theContext.getPackageManager().queryIntentActivities(theIntent,0);
-			Boolean hasSendRecipients = (theList!=null && theList.size()>0);
+			boolean hasSendRecipients = (theList!=null && theList.size()>0);
 			if (hasSendRecipients) {
 				theContext.startActivity(theIntent);
 				return true;
@@ -332,25 +350,30 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	public void submit(Throwable e) {
 		String theErrReport = getDebugReport(e);
 		saveDebugReport(theErrReport);
-		Activity theAct = getActivity();
-		if (theAct!=null) {
+		Context theContext = getContext();
+		if (theContext instanceof Activity) {
 			//try to send file contents via email (need to do so via the UI thread)
-			theAct.runOnUiThread(this);
+			((Activity) theContext).runOnUiThread(this);
+		} else {
+			run();
 		}
 	}
 	
+	/**
+	 * Utility function used by the report class, but may be useful for other reasons.
+	 */
 	static public class Utils {
 		private Utils() {}; //do not instantiate
 		
 		/**
 		 * Format used to display the stack number at beginning of line.
 		 */
-		static public NumberFormat TraceStackNumberFormat = new DecimalFormat("#0.");
+		static public final NumberFormat TraceStackNumberFormat = new DecimalFormat("#0.");
 		
 		/**
 		 * Return the application's friendly name.
-		 * @param aContext - the context.
-		 * @return Returns the application name as defined by the android:name attribute.
+		 * @param aContext - the context to use.
+		 * @return Returns the application name as defined by the android:label attribute.
 		 */
 		static public CharSequence getAppName(Context aContext) {
 			return aContext.getString(aContext.getApplicationInfo().labelRes);
@@ -358,7 +381,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 		
 		/**
 		 * Return a string containing the device environment.
-		 * @param aContext - the context.
+		 * @param aContext - the context to use.
 		 * @return Returns a string with the device info used for debugging.
 		 */
 		static public String getDeviceEnvironment(Context aContext) {
@@ -376,55 +399,74 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 				pi.versionCode = 69;
 			}
 			Resources theResources = aContext.getResources();
-			SimpleDateFormat theDateFormat = new SimpleDateFormat("yyyy.MM.dd_HH.mm.ss_zzz",Locale.US);
-			String s = "-------- Environment --------\n";
-			s += "Time\t= "+theDateFormat.format(new Date())+"\n";
-			s += "Device\t= "+Build.FINGERPRINT+"\n";
-			s += "Make\t= "+Build.MANUFACTURER+"\n";
-			s += "Model\t= "+Build.MODEL+"\n";
-			s += "Product\t= "+Build.PRODUCT+"\n";
-			s += "App\t\t= "+pi.packageName+", version "+pi.versionName+" (build "+pi.versionCode+")\n";
-			s += "Locale\t= "+theResources.getConfiguration().locale.getDisplayName()+"\n";
-			s += "Res\t\t= "+theResources.getDisplayMetrics().toString()+"\n";
-			s += "-----------------------------\n";
+			SimpleDateFormat theDateFormat = new SimpleDateFormat(
+					aContext.getString(R.string.postmortem_report_env_ts_format),Locale.US);
+			String s = aContext.getString(R.string.postmortem_report_env_header)+"\n";
+			s += aContext.getString(R.string.postmortem_report_env_time,	theDateFormat.format(new Date()))+"\n";
+			s += aContext.getString(R.string.postmortem_report_env_device,	Build.FINGERPRINT)+"\n";
+			s += aContext.getString(R.string.postmortem_report_env_make,	Build.MANUFACTURER)+"\n";
+			s += aContext.getString(R.string.postmortem_report_env_model,	Build.MODEL)+"\n";
+			s += aContext.getString(R.string.postmortem_report_env_product,	Build.PRODUCT)+"\n";
+			s += aContext.getString(R.string.postmortem_report_env_app,
+					pi.packageName, pi.versionName, pi.versionCode )+"\n";
+			s += aContext.getString(R.string.postmortem_report_env_locale,
+					theResources.getConfiguration().locale.getDisplayName() )+"\n";
+			s += aContext.getString(R.string.postmortem_report_env_display,
+					theResources.getDisplayMetrics().toString() )+"\n";
+			s += aContext.getString(R.string.postmortem_report_env_footer)+"\n";
 			return s;
 		}
 		
 		/**
-		 * @param aContext - the context.
-		 * @param aException - the exception.
-		 * @return Returns the package name and exception message.
+		 * Construct the report header string.
+		 * @param aContext - the context to use.
+		 * @param aException - the exception from which to format a message.
+		 * @return Returns the AppName and exception message.
 		 */
 		static public String getDebugHeader(Context aContext, Throwable aException) {
 			String theResult = "";
 			if (aContext!=null && aException!=null) {
-				theResult += getAppName(aContext)+" generated the following exception:\n";
-				theResult += aException.toString()+"\n";
+				theResult = aContext.getString(R.string.postmortem_report_header_text,
+						getAppName(aContext), aException.toString() );
+				theResult += "\n";
 			}
 			return theResult;
 		}
 		
+		/**
+		 * Return a string formatted like a stack trace debug printout.
+		 * @param aLineNum - line number.
+		 * @param aLine - text of the line.
+		 * @return Return the string formatted like a single line in a stack trace.
+		 */
 		static public CharSequence formatStackTraceLine(int aLineNum, CharSequence aLine) {
 			return TraceStackNumberFormat.format(aLineNum)+"\t"+aLine+"\n";
 		}
-		
-		static public String getDebugInstructionTrace(Throwable aException) {
+
+		/**
+		 * Given an Exception, construct a string of the stack and cause traces.
+		 * @param aContext - the context to use.
+		 * @param aException - an exception to trace out.
+		 * @return Returns the string of the stack trace separated by newlines.
+		 */
+		static public String getDebugInstructionTrace(Context aContext, Throwable aException) {
 			String theResult = "";
 			if (aException!=null) {
 				//stack trace
 				StackTraceElement[] theStackTrace = aException.getStackTrace();
 				if (theStackTrace!=null && theStackTrace.length>0) {
-					theResult += "-------- Instruction Stack Trace -------\n";
+					theResult += aContext.getString(R.string.postmortem_report_stack_trace_header)+"\n";
 					for (int i=0; i<theStackTrace.length; i++) {
 						theResult += formatStackTraceLine(i+1,theStackTrace[i].toString());
 					}
-					theResult += "----------------------------------------\n\n";
+					theResult += aContext.getString(R.string.postmortem_report_stack_trace_footer)+"\n";
+					theResult += "\n";
 				}
 				//if the exception was thrown in a background thread inside
 				//AsyncTask, then the actual exception can be found with getCause
 				Throwable theCause = aException.getCause();
 				if (theCause!=null) {
-					theResult += "----------- Cause -----------\n";
+					theResult += aContext.getString(R.string.postmortem_report_cause_trace_header)+"\n";
 					theResult += theCause.toString() + "\n\n";
 					theStackTrace = theCause.getStackTrace();
 					if (theStackTrace!=null && theStackTrace.length>0) {
@@ -432,20 +474,33 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 							theResult += formatStackTraceLine(i+1,theStackTrace[i].toString());
 						}
 					}
-					theResult += "-----------------------------\n";
+					theResult += aContext.getString(R.string.postmortem_report_cause_trace_footer)+"\n";
+					theResult += "\n";
 				}
 			}
 			return theResult;
 		}
 		
+		/**
+		 * Compiles the debug information and returns it as a string. The report
+		 * consists of {@link #getDebugHeader(Context,Throwable)} followed by
+		 * {@link #getDebugInstructionTrace(Context,Throwable)} followed by
+		 * {@link #getDeviceEnvironment(Context)}.
+		 * @param aContext - the context to use.
+		 * @param aException - the exception to report.
+		 * @return Returns the exception report as a string.
+		 * @see #getDebugHeader(Context,Throwable)
+		 * @see #getDebugInstructionTrace(Context, Throwable)
+		 * @see #getDeviceEnvironment(Context)
+		 */
 		static public String getDebugReport(Context aContext, Throwable aException) {
 			String theErrReport = "";
 			if (aException!=null) {
 				theErrReport += getDebugHeader(aContext,aException)+"\n";
-				theErrReport += getDebugInstructionTrace(aException)+"\n";
+				theErrReport += getDebugInstructionTrace(aContext,aException)+"\n";
 			}
 			theErrReport += getDeviceEnvironment(aContext)+"\n";
-			theErrReport += "END REPORT.";
+			theErrReport += aContext.getString(R.string.postmortem_report_footer_text);
 			return theErrReport;
 		}
 		
@@ -467,7 +522,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 		 */
 		static public void logDebugBundle(String aTag, Bundle aBundle) {
 			if (aBundle==null) {
-				Log.d(aTag,"is null");
+				Log.d(aTag,"= null");
 			}
 			ArrayList<String> theEntries = new ArrayList<String>(aBundle.size());
 			Iterator<String> theKeys = aBundle.keySet().iterator();

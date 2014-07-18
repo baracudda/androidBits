@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- STANDARD TRANSLATABLE STRINGS -->
+<string name="postmortem_report_email_subject">%1$s Exception Report</string>
+<string name="postmortem_report_email_msg">Please help by sending this email. No personal information is being sent (you can check by reading the rest of the email).</string>
+<string name="postmortem_report_header_text">%1$s generated the following exception:\n%2$s"</string>
+<string name="postmortem_report_footer_text">END REPORT.</string>
+<string name="postmortem_report_stack_trace_header">-------- Instruction Stack Trace -------</string>
+<string name="postmortem_report_stack_trace_footer">----------------------------------------</string>
+<string name="postmortem_report_cause_trace_header">----------- Cause -----------</string>
+<string name="postmortem_report_cause_trace_footer">-----------------------------</string>
+<string name="postmortem_report_env_ts_format">yyyy.MM.dd HH.mm.ss zzz</string>
+<string name="postmortem_report_env_header">-------- Environment --------</string>
+<string name="postmortem_report_env_footer">-----------------------------</string>
+<string name="postmortem_report_env_time"   >Time\t= %1$s</string>
+<string name="postmortem_report_env_device" >Device\t= %1$s</string>
+<string name="postmortem_report_env_make"   >Make\t= %1$s</string>
+<string name="postmortem_report_env_model"  >Model\t= %1$s</string>
+<string name="postmortem_report_env_product">Product\t= %1$s</string>
+<string name="postmortem_report_env_app"    >App\t\t= %1$s, version %2$s (build %3$s)</string>
+<string name="postmortem_report_env_locale" >Locale\t= %1$s</string>
+<string name="postmortem_report_env_display">Res\t\t= %1$s</string>
+<string name="postmortem_report_act_trace_header">--------- Activity Stack Trace ---------</string>
+<string name="postmortem_report_act_trace_footer">----------------------------------------</string>
+
+<!-- MUST OVERRIDE THESE IN APP -->
+<string name="postmortem_report_email_recipients">my.feedback.email@examlple.com</string><!-- Separate multiple addresses with ";" -->
+
+</resources>
