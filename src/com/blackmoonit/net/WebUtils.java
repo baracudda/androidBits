@@ -9,6 +9,8 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
 
@@ -116,5 +118,37 @@ public final class WebUtils {
 	static public String getBasicAuthString(String aUserName, String aPasswordEntry) {
 		return getBasicAuthString(aUserName+":"+aPasswordEntry);
 	}
+	
+	/**
+	 * Create a new email Intent based on single recipient vs multiple recipients.
+	 * @param aToLine - single string of emails separated by "," or ";" or " ".
+	 * @return Returns the Intent to use.
+	 */
+	static public Intent newEmailIntent(String aToLine) {
+		String[] theRecipients = null;
+		String theToLine = aToLine+"";
+		String[] theSplitters = { ", ", "; ", " ", "," };
+		for (String theSplitter : theSplitters) {
+			if (theToLine.contains(theSplitter)) {
+				theRecipients = theToLine.split(theSplitter);
+				break;
+			}
+		}
+		if (theRecipients==null) {
+			theRecipients = theToLine.split(";");
+		}
+		Intent theIntent;
+		if (theRecipients.length==1 && !theRecipients[0].equals("")) {
+			theIntent = new Intent(android.content.Intent.ACTION_SENDTO);
+			theIntent.setData(Uri.fromParts("mailto", theRecipients[0], null));
+		} else {
+			theIntent = new Intent(android.content.Intent.ACTION_SEND);
+			theIntent.setType("message/rfc822");
+			theIntent.putExtra(android.content.Intent.EXTRA_EMAIL,theRecipients);
+		}
+		return theIntent;
+	}
+	
+
 
 }

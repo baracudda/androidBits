@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.blackmoonit.androidBits.R;
+import com.blackmoonit.net.WebUtils;
 
 /**
  * Exception report delivery via email and user interaction.  Avoids giving an app the
@@ -312,18 +313,20 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	public boolean sendDebugReportToAuthor(String aReport) {
 		Context theContext = getContext();
 		if (theContext!=null && aReport!=null) {
-			Intent theIntent = new Intent(Intent.ACTION_SEND);
+			Intent theIntent = WebUtils.newEmailIntent(theContext.getString(R.string.postmortem_report_email_recipients));
+			
 			if (!(theContext instanceof Activity))
 				theIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			
 			String theSubject = theContext.getString(R.string.postmortem_report_email_subject,
 					Utils.getAppName(getContext()));
+			
 			String theMsg = theContext.getString(R.string.postmortem_report_email_msg);
-			String theBody = "\n"+theMsg+"\n\n"+aReport+"\n\n"+theMsg+"\n\n";
-			String theRecipients = theContext.getString(R.string.postmortem_report_email_recipients);
-			theIntent.putExtra(Intent.EXTRA_EMAIL,theRecipients.split(";"));
-			theIntent.putExtra(Intent.EXTRA_TEXT, theBody);
 			theIntent.putExtra(Intent.EXTRA_SUBJECT, theSubject);
-			theIntent.setType("message/rfc822");
+			
+			String theBody = "\n"+theMsg+"\n\n"+aReport+"\n\n"+theMsg+"\n\n";
+			theIntent.putExtra(Intent.EXTRA_TEXT, theBody);
+			
 			List<?> theList = theContext.getPackageManager().queryIntentActivities(theIntent,0);
 			boolean hasSendRecipients = (theList!=null && theList.size()>0);
 			if (hasSendRecipients) {

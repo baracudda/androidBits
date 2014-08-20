@@ -16,6 +16,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.blackmoonit.net.WebUtils;
+
 
 /**
  * The About dialog for an app.
@@ -23,19 +25,15 @@ import android.widget.TextView;
  * @author Ryan Fischbach
  */
 public class AppAbout extends Activity implements android.view.View.OnClickListener {
-	private static final String TAG = "BITS.lib.app.AppAbout";
+	static private final String TAG = "BITS.lib.app."+AppAbout.class.getSimpleName();
 
 	public Context getContext() {
 		return this;
 	}
 	
-	protected static int getResId(Context aContext, String aResType, String aResName) {
-		return aContext.getApplicationContext().getResources().getIdentifier(aResName,aResType,
-				aContext.getPackageName());
-	}
-	
 	protected int getResId(String aResType, String aResName) {
-		return getResId(getContext(),aResType,aResName);
+		Context theContext = getContext();
+		return theContext.getResources().getIdentifier(aResName,aResType,theContext.getPackageName());
 	}
 	
 	private int R_layout_app_about = 0;
@@ -88,7 +86,7 @@ public class AppAbout extends Activity implements android.view.View.OnClickListe
 		requestWindowFeature(Window.FEATURE_LEFT_ICON);
 		setContentView(R_layout_app_about);
 		setFeatureDrawableResource(Window.FEATURE_LEFT_ICON,R_drawable_app_icon);
-
+		
 		getPrefs(AppPreferenceBase.getPrefs(getContext()));
 		setup();
 	}
@@ -135,32 +133,35 @@ public class AppAbout extends Activity implements android.view.View.OnClickListe
 		v = findViewById(R_id_app_about_button_positive);
 		v.setOnClickListener(this);
 	}
+	
+	protected void openUrl(String aUrl) {
+		Context theContext = getContext();
+		Uri theUri = Uri.parse(aUrl);
+		Intent theIntent = new Intent(android.content.Intent.ACTION_VIEW,theUri);
+		theContext.startActivity(theIntent);
+	}
 
+	protected void openEmailComposer(CharSequence aChooserText) {
+		Context theContext = getContext();
+		Intent theIntent = WebUtils.newEmailIntent(theContext.getString(R_string_app_about_link_email));
+		
+		String theDefaultSubject = "~"+theContext.getString(R_string_app_name)+"~";
+		theIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,theDefaultSubject);
+		
+		theContext.startActivity(theIntent);//Intent.createChooser(theIntent,aChooserText));
+	}
+	
 	@Override
 	public void onClick(View v) {
-		Uri theUri = null;
-		Intent theIntent;
+		Context theContext = getContext();
 		int theButtonId = v.getId();
 		try {
 			if (theButtonId==R_id_app_about_button_changelog) {
-				theIntent = new Intent(android.content.Intent.ACTION_VIEW);
-				theUri = Uri.parse(getContext().getString(R_string_app_about_link_changelog));
-				theIntent.setData(theUri);
-				getContext().startActivity(theIntent);
+				openUrl(theContext.getString(R_string_app_about_link_changelog));
 			} else if (theButtonId==R_id_app_about_button_faq) {
-				theIntent = new Intent(android.content.Intent.ACTION_VIEW);
-				theUri = Uri.parse(getContext().getString(R_string_app_about_link_faq));
-				theIntent.setData(theUri);
-				getContext().startActivity(theIntent);
+				openUrl(theContext.getString(R_string_app_about_link_faq));
 			} else if (theButtonId==R_id_app_about_button_email) {
-				theIntent = new Intent(android.content.Intent.ACTION_SEND);
-				theIntent.setType("text/plain");
-				theIntent.putExtra(android.content.Intent.EXTRA_EMAIL, 
-						new String[] { getContext().getString(R_string_app_about_link_email) });
-				theIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-						"~"+getContext().getString(R_string_app_name)+"~");
-				getContext().startActivity(Intent.createChooser(theIntent,
-						((Button)findViewById(R_id_app_about_button_email)).getText()));
+				openEmailComposer(((Button)v).getText());
 			}
 		} catch (Exception e) {
 			Log.w(TAG,e.getMessage());
