@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
  * order to handle common definitions and helper methods. These classes and
  * interfaces were designed to work together and mimic static contracts as
  * well as provide access to common definitions and helper methods. The end
- * goal is to make it easier to create ContentProvider contracts, which in 
+ * goal is to make it easier to create ContentProvider contracts, which in
  * turn allow use of a generic ContentProvider such as {@link ContractedProvider}.
  *
  * @author Ryan Fischbach
@@ -20,9 +20,9 @@ public class ProviderContract {
 	/**
 	 * Database meta information definitions required by the ProviderContract.
 	 */
-	static public interface Database {		
+	static public interface Database {
 		/**
-		 * Gets your statically created {@link #DbProviderInfo} object (simple singleton). 
+		 * Gets your statically created {@link #DbProviderInfo} object (simple singleton).
 		 * Please create your static object like the sample code provided.<br><code>
 		 * static public YourDatabaseContract mDbContract = new YourDatabaseContract();<br>
 		 * static public DbProviderInfo mDbInfo = new DbProviderInfo(mDbContract);<br>
@@ -33,9 +33,9 @@ public class ProviderContract {
 		public DbProviderInfo getDbInfo();
 		
 		/**
-		 * The name of this Data Dictionary. By default, this name will be used 
-		 * to augment the {@link DbProviderInfo#getAuthority() provider authority} and 
-		 * {@link DbProviderInfo#getBaseMIMEsubtype() MIME subtype} strings to help 
+		 * The name of this Data Dictionary. By default, this name will be used
+		 * to augment the {@link DbProviderInfo#getAuthority() provider authority} and
+		 * {@link DbProviderInfo#getBaseMIMEsubtype() MIME subtype} strings to help
 		 * ensure their global namespace uniqueness.
 		 */
 		public String getDbName();
@@ -92,7 +92,7 @@ public class ProviderContract {
 		static public final String MIME_CATEGORY_RESULT_ONE = "vnd.android.cursor.item";
 		
 		/**
-		 * Convenience ascending constant for use in ORDER_BY clause of query strings. 
+		 * Convenience ascending constant for use in ORDER_BY clause of query strings.
 		 */
 		static public final String SORT_LoHi = " ASC";
 		
@@ -105,6 +105,8 @@ public class ProviderContract {
 	
 	static public class DbProviderInfo {
 		protected final ProviderContract.Database mDbContract;
+		protected String mAuthorityPrefix = "com.blackmoonit.provider";
+		protected String mBaseMIMEsubtypePrefix = "vnd.blackmoonit";
 		
 		public DbProviderInfo(Database aDbContract) {
 			mDbContract = aDbContract;
@@ -116,13 +118,33 @@ public class ProviderContract {
 		public ProviderContract.Database getDbContract() {
 			return mDbContract;
 		}
+		
+		/**
+		 * Define the prefix part of your provider's authority which will be appended with "."+getDbName()
+		 * @param aAuthorityPrefix - string prefix to the dbname.
+		 * @return Returns this class instance for chaining purposes.
+		 */
+		public DbProviderInfo setAuthorityPrefix(String aAuthorityPrefix) {
+			mAuthorityPrefix = aAuthorityPrefix;
+			return this;
+		}
 
 		/**
 		 * Defines the authority that will be used to access your provider.
 		 * @return Returns the Authority part of the Uri used to access your provider.
 		 */
 		public String getAuthority() {
-			return "com.blackmoonit.provider."+mDbContract.getDbName();
+			return mAuthorityPrefix+"."+mDbContract.getDbName();
+		}
+
+		/**
+		 * Define the prefix part of your provider's authority which will be appended with "."+getDbName()
+		 * @param aBaseMIMEsubtypePrefix - string prefix to the dbname.
+		 * @return Returns this class instance for chaining purposes.
+		 */
+		public DbProviderInfo setBaseMIMEsubtypePrefix(String aBaseMIMEsubtypePrefix) {
+			mBaseMIMEsubtypePrefix = aBaseMIMEsubtypePrefix;
+			return this;
 		}
 
 		/**
@@ -131,25 +153,25 @@ public class ProviderContract {
 		 * in this contract to help ensure unique MIME types for our provider results.
 		 */
 		public String getBaseMIMEsubtype() {
-			return "vnd.blackmoonit."+mDbContract.getDbName();
+			return mBaseMIMEsubtypePrefix+"."+mDbContract.getDbName();
 		}
 		
 		/**
-		 * MIME type used for the database itself. Specific table rows should use 
+		 * MIME type used for the database itself. Specific table rows should use
 		 * MyDbContract.MyTableContract.mTableInfo.getMIMEsubtype().
 		 * @return MIME type string
 		 * @see TableProviderInfo#getMIMEsubtype()
 		 * @see TableProviderInfo#getMIMEtypeForResultSet()
-		 * @see TableProviderInfo#getMIMEtypeForSingularResult() 
+		 * @see TableProviderInfo#getMIMEtypeForSingularResult()
 		 */
 		public String getMIMEtype() {
 			return Database.MIME_CATEGORY_RESULT_SET + "/" + getBaseMIMEsubtype();
 		}
 
 		/**
-		 * The passed in Uri is converted from a potentially DataAction-specific ObserverUri 
+		 * The passed in Uri is converted from a potentially DataAction-specific ObserverUri
 		 * to a standard ContentUri. Use this function in your ContentObserver's onChange
-		 * method to convert the returned Uri back into a ContentUri so you can use it with 
+		 * method to convert the returned Uri back into a ContentUri so you can use it with
 		 * the Provider again. It is safe to pass in either an ObserverUri or ContentUri.
 		 * @param aUri - either an ObserverUri or ContentUri.
 		 * @return Returns a ContentUri.
@@ -177,7 +199,7 @@ public class ProviderContract {
 	 */
 	static public interface Table extends BaseColumns {
 		/**
-		 * Gets your statically created {@link #TableProviderInfo} object (simple singleton). 
+		 * Gets your statically created {@link #TableProviderInfo} object (simple singleton).
 		 * Please create your static object like the sample code provided.<br><code>
 		 * static public YourTableContract mTableContract = new YourTableContract();<br>
 		 * static public TableProviderInfo mTableInfo = <br>
@@ -196,8 +218,8 @@ public class ProviderContract {
 		public String getTableName();
 
 		/**
-		 * Return the default sort order as defined by the orderBy parameter of the 
-		 * {@link android.content.ContentProvider#query(Uri, String[], String, String[], String) query()} 
+		 * Return the default sort order as defined by the orderBy parameter of the
+		 * {@link android.content.ContentProvider#query(Uri, String[], String, String[], String) query()}
 		 * method.
 		 * @return Returns the orderBy string parameter that is default for this table.
 		 * Returning NULL will generally be an "unordered" result.
@@ -205,7 +227,7 @@ public class ProviderContract {
 		public String getDefaultSortOrder();
 		
 		/**
-		 * Gets the fieldname the provider will use as a record ID field. 
+		 * Gets the fieldname the provider will use as a record ID field.
 		 * _ID is predefined, so it is the recommended default.
 		 * @return Returns your ID field name, consider returning _ID as the default.
 		 */
@@ -237,15 +259,15 @@ public class ProviderContract {
 		}
 		
 		/**
-		 * The content Uri for this table. If NULL is passed in as the ID parameter, 
+		 * The content Uri for this table. If NULL is passed in as the ID parameter,
 		 * the "result set" Uri is returned with no ID path segment appended.<br>
-		 * NOTE: a value of "#" for the ID parameter is reserved as the  
+		 * NOTE: a value of "#" for the ID parameter is reserved as the
 		 * {@link #getContentUriWithIdPattern() path pattern}.<br>
-		 * NOTE on NULL IDs: if NULL is desired as an ID value... unknown how to support it. 
+		 * NOTE on NULL IDs: if NULL is desired as an ID value... unknown how to support it.
 		 * Tests will need to be conducted and the results should replace this text.
 		 * @param aIDstring - ID parameter already converted to String to place on the Uri.
 		 * If NULL is passed in, the standard "result set" Uri is returned.
-		 * @return Returns the Uri to be used to interact with this table. 
+		 * @return Returns the Uri to be used to interact with this table.
 		 * If NULL is passed as the ID value, then the "result set" Uri will
 		 * be returned, leaving the ID path segment out.
 		 */
@@ -258,10 +280,10 @@ public class ProviderContract {
 		}
 		
 		/**
-		 * ContentObservers that wish to know what kind of action caused the onChange to 
+		 * ContentObservers that wish to know what kind of action caused the onChange to
 		 * fire would need to register their Uri using this function with the appropriate
 		 * Database.DATA_ACTION_* constant passed in.
-		 * @param aDataAction - one of {@link Database#DATA_ACTION_INSERT} or 
+		 * @param aDataAction - one of {@link Database#DATA_ACTION_INSERT} or
 		 * {@link DATA_ACTION_UPDATE} or {@link DATA_ACTION_DELETE} or {@link Database#DATA_ACTION_NULL}
 		 * @return Returns the Uri to register to observe particular Provider actions.
 		 */
@@ -273,7 +295,7 @@ public class ProviderContract {
 		}
 
 		/**
-		 * This method is used internally by the SqlContractProvider to convert the 
+		 * This method is used internally by the SqlContractProvider to convert the
 		 * standard Observer notification ContentUri into a specific data action Uri
 		 * whose term I have coined as an ObserverUri.
 		 * @param aUri - ContentUri to convert to an ObserverUri for a specific data action.
@@ -289,9 +311,9 @@ public class ProviderContract {
 		}
 		
 		/**
-		 * The passed in Uri is converted from a potentially DataAction-specific ObserverUri 
+		 * The passed in Uri is converted from a potentially DataAction-specific ObserverUri
 		 * to a standard ContentUri. Use this function in your ContentObserver's onChange
-		 * method to convert the returned Uri back into a ContentUri so you can use it with 
+		 * method to convert the returned Uri back into a ContentUri so you can use it with
 		 * the Provider again. It is safe to pass in either an ObserverUri or ContentUri.
 		 * @param aUri - either an ObserverUri or ContentUri.
 		 * @return Returns a ContentUri.
@@ -315,7 +337,7 @@ public class ProviderContract {
 		}
 		
 		/**
-		 * The content Uri match pattern for a single record of this table. 
+		 * The content Uri match pattern for a single record of this table.
 		 * Use this to match incoming Uri's in your provider.
 		 * @return Returns {@link #getContentUri(String) getContentUri("#")}.
 		 */
@@ -345,8 +367,8 @@ public class ProviderContract {
 		
 		/**
 		 * Gets the MIME subtype for this table's data.
-		 * @return By default, this returns the data dictionary's 
-		 * {@link #getBaseSubType() base subtype} with the table's 
+		 * @return By default, this returns the data dictionary's
+		 * {@link #getBaseSubType() base subtype} with the table's
 		 * name appended to it.
 		 */
 		public String getMIMEsubtype() {

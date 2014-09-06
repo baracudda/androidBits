@@ -145,6 +145,15 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 		return PreferenceManager.getDefaultSharedPreferences(aContext);
 	}
 	
+	/**
+	 * Create pref entries and fill them with defined default values.<br>
+	 * NOTE: does not work if using a boolean, the default entry will not
+	 * be created in Android 2.x. A call to ".getBoolean(KEY, true)" will
+	 * always return true. For Android 4.x it works.
+	 * @param aContext - context to use.
+	 * @param aPrefResourceIds - R.xml pref layout file IDs.
+	 * @param bResetPrefs - Use FALSE to only perform this if the entry does not exist yet.
+	 */
 	static public void setDefaultPrefs(Context aContext, int[] aPrefResourceIds, boolean bResetPrefs) {
 		for (int thePrefResId:aPrefResourceIds) {
 			PreferenceManager.setDefaultValues(aContext,thePrefResId,bResetPrefs);
