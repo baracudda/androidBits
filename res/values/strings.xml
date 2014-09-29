@@ -3,4 +3,11 @@
 <string name="app_name">BITS App</string>
 <string name="version_name">Version %1$s</string>
 
+<string name="msg_list_empty">(nothing found)</string>
+<string name="msg_action_failed">Action Failed</string>
+<string name="msg_permission_denied">Permission denied!</string>
+<string name="msg_busy">Busy! Please wait…</string>
+<string name="msg_cancelled">Cancelled</string>
+<string name="msg_loading">Loading…</string>
+
 </resources>

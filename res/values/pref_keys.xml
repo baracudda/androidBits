@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- Pref Keys (DO NOT TRANSLATE) -->
+<string name="pref_key_enabled">pref_key_enabled</string>
+<string name="pref_key_debug_mode">pref_key_debug_mode</string>
+
+</resources>

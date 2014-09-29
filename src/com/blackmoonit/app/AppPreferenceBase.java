@@ -11,10 +11,13 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+
+import com.blackmoonit.androidBits.R;
 
 /**
  * Standard application preference class. v11+ defines a preference-headers xml file that references the
@@ -158,6 +161,14 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 		for (int thePrefResId:aPrefResourceIds) {
 			PreferenceManager.setDefaultValues(aContext,thePrefResId,bResetPrefs);
 		}
+	}
+	
+	/**
+	 * Call this method in main activity's onCreate (requires preference layouts defined in pref_layouts int-array).
+	 * @param aContext - main activity
+	 */
+	static public void setDefaultPrefs(Context aContext) {
+		setDefaultPrefs(aContext,getResourceArray(aContext,R.array.pref_layouts),false);
 	}
 	
 	/**
@@ -306,5 +317,24 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 		}
 		return theResult;
 	}
+
+	/**
+	 * Loads an int-array resource and creates the array of
+	 * integer resources they represent. Android did not
+	 * historically handle this use-case automatically.
+	 * @param aContext - context used to getResources().
+	 * @return Returns a new int[] with the proper resource IDs.
+	 */
+	static public int[] getResourceArray(Context aContext, int aResArray) {
+		TypedArray theResArray = aContext.getResources().obtainTypedArray(aResArray);
+		int iMax = theResArray.length();
+		int[] theResIds = new int[iMax];
+		for (int i=0; i<iMax; i++) {
+			theResIds[i] = theResArray.getResourceId(i,0);
+		}
+		theResArray.recycle();
+		return theResIds;
+	}
+
 
 }
