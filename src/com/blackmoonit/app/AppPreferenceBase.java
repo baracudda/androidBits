@@ -98,6 +98,7 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 		if (!isNewV11Prefs()) {
 			loadPrefLayouts();
 		}
+		setDefaultPrefs(this);
 		setup();
 	}
 
@@ -109,7 +110,10 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 	}
 	
 	protected int[] getPrefResources() {
-		return new int[] {R_layout_app_prefs};
+		if (R_layout_app_prefs!=0)
+			return new int[] {R_layout_app_prefs};
+		else
+			return getResourceArray(getApplicationContext(), R.array.pref_layouts);
 	}
 
 	@SuppressWarnings("deprecation")
