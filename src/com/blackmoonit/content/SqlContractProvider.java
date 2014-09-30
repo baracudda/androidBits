@@ -36,13 +36,13 @@ abstract public class SqlContractProvider extends SqlContentProvider {
 	 * Contains a map of integer Match Codes to TableProviderInfo for all
 	 * tables the provider will respond to with set results.
 	 */
-	static protected final ConcurrentHashMap<Integer, TableProviderInfo> mTableInfoMapSets =
+	protected final ConcurrentHashMap<Integer, TableProviderInfo> mTableInfoMapSets =
 			new ConcurrentHashMap<Integer, TableProviderInfo>();
 	/**
 	 * Contains a map of integer Match Codes to TableProviderInfo for all
 	 * tables the provider will respond to with single row results.
 	 */
-	static protected final ConcurrentHashMap<Integer, TableProviderInfo> mTableInfoMapRows =
+	protected final ConcurrentHashMap<Integer, TableProviderInfo> mTableInfoMapRows =
 			new ConcurrentHashMap<Integer, TableProviderInfo>();
 
 	/**
