@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Volumes/Cargo750g/DevCode/studio/androidBits/app/src/main/res/values-de/strings_app_about.xml -->
+    <eat-comment/>
+    <string name="app_about_button_changelog">Änderungen</string>
+    <string name="app_about_button_email">E-Mail</string>
+    <string name="app_about_button_faq">FAQ</string>
+    <string name="app_about_menu_label">Über</string>
+    <string name="version_name">Version %1$s</string>
+</resources>

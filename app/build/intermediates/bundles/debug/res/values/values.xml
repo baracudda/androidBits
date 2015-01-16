@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/tools">
+    <!-- From: file:/Volumes/Cargo750g/DevCode/studio/androidBits/app/src/main/res/values/arrays.xml -->
+    <eat-comment/>
+    <integer-array name="pref_layouts">
+    </integer-array>
+    <!-- From: file:/Volumes/Cargo750g/DevCode/studio/androidBits/app/src/main/res/values/strings_app_about.xml -->
+    <eat-comment/>
+    <string name="app_about_button_changelog">changelog</string>
+    <string name="app_about_button_email">email</string>
+    <string name="app_about_button_faq">FAQ</string>
+    <string name="app_about_copyright" ns1:ignore="MissingTranslation">© 2014 Blackmoon Info Tech Services\nAll Rights Reserved</string>
+    <string name="app_about_imgdesc_logo">your logo</string>
+    <string name="app_about_link_changelog" ns1:ignore="MissingTranslation">http://</string>
+    <string name="app_about_link_email" ns1:ignore="MissingTranslation">androidapps@blackmoonit.com</string>
+    <string name="app_about_link_faq" ns1:ignore="MissingTranslation">http://</string>
+    <string name="app_about_menu_label">About</string>
+    <string name="app_about_text_thanks" ns1:ignore="MissingTranslation">&lt;font color=yellow> + &lt;/font>A big \"thank you!\" to the &lt;a href="http://tango.freedesktop.org/Tango_Desktop_Project">Tango Project&lt;/a> for wonderful Public Domain icons, and many others who help improve the app!</string>
+    <string name="app_about_version_display" ns1:ignore="MissingTranslation">&lt;font color=aqua>-{]&lt;/font>&lt;font color=lime> %s &lt;/font>&lt;font color=aqua>}-&lt;/font></string>
+    <!-- From: file:/Volumes/Cargo750g/DevCode/studio/androidBits/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">BITS App</string>
+    <string name="msg_action_failed">Action Failed</string>
+    <string name="msg_busy">Busy! Please wait…</string>
+    <string name="msg_cancelled">Cancelled</string>
+    <string name="msg_list_empty">(nothing found)</string>
+    <string name="msg_loading">Loading…</string>
+    <string name="msg_permission_denied">Permission denied!</string>
+    <!-- From: file:/Volumes/Cargo750g/DevCode/studio/androidBits/app/src/main/res/values/strings_report_exceptions.xml -->
+    <eat-comment/>
+    <string name="postmortem_report_act_trace_footer">----------------------------------------</string>
+    <string name="postmortem_report_act_trace_header">--------- Activity Stack Trace ---------</string>
+    <string name="postmortem_report_cause_trace_footer">-----------------------------</string>
+    <string name="postmortem_report_cause_trace_header">----------- Cause -----------</string>
+    <string name="postmortem_report_email_msg">Please help by sending this email. No personal information is being sent (you can check by reading the rest of the email).</string>
+    <string name="postmortem_report_email_recipients">my.feedback.email@examlple.com</string>
+    <string name="postmortem_report_email_subject">%1$s Exception Report</string>
+    <string name="postmortem_report_env_app">App\t\t= %1$s, version %2$s (build %3$s)</string>
+    <string name="postmortem_report_env_device">Device\t= %1$s</string>
+    <string name="postmortem_report_env_display">Res\t\t= %1$s</string>
+    <string name="postmortem_report_env_footer">-----------------------------</string>
+    <string name="postmortem_report_env_header">-------- Environment --------</string>
+    <string name="postmortem_report_env_locale">Locale\t= %1$s</string>
+    <string name="postmortem_report_env_make">Make\t= %1$s</string>
+    <string name="postmortem_report_env_model">Model\t= %1$s</string>
+    <string name="postmortem_report_env_product">Product\t= %1$s</string>
+    <string name="postmortem_report_env_time">Time\t= %1$s</string>
+    <string name="postmortem_report_env_ts_format">yyyy.MM.dd HH.mm.ss zzz</string>
+    <string name="postmortem_report_footer_text">END REPORT.</string>
+    <string name="postmortem_report_header_text">%1$s generated the following exception:\n%2$s"</string>
+    <string name="postmortem_report_stack_trace_footer">----------------------------------------</string>
+    <string name="postmortem_report_stack_trace_header">-------- Instruction Stack Trace -------</string>
+    <!-- From: file:/Volumes/Cargo750g/DevCode/studio/androidBits/app/src/main/res/values/pref_keys.xml -->
+    <eat-comment/>
+    <string name="pref_key_debug_mode">pref_key_debug_mode</string>
+    <string name="pref_key_enabled">pref_key_enabled</string>
+    <!-- From: file:/Volumes/Cargo750g/DevCode/studio/androidBits/app/src/main/res/values/pref_ui.xml -->
+    <eat-comment/>
+    <string name="pref_summary_about">-{ Version %s }-</string>
+    <string name="pref_summary_debug_mode">Send debug information to Android Logs.</string>
+    <string name="pref_summary_enabled">Enables the app.</string>
+    <string name="pref_title_about">About %s</string>
+    <string name="pref_title_debug_mode">Debug Mode</string>
+    <string name="pref_title_enabled">ENABLED</string>
+    <!-- From: file:/Volumes/Cargo750g/DevCode/studio/androidBits/app/src/main/res/values/strings_sql_content_provider.xml -->
+    <eat-comment/>
+    <string name="sql_content_provider_msg_insert_fail">"Failed to insert row into %s"</string>
+    <string name="sql_content_provider_msg_missing_column">Missing column: %s</string>
+    <!-- From: file:/Volumes/Cargo750g/DevCode/studio/androidBits/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="version_name">Version %1$s</string>
+</resources>
