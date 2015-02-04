@@ -1,10 +1,8 @@
 package com.blackmoonit.content;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.net.Uri;
 
@@ -12,8 +10,13 @@ import com.blackmoonit.database.ProviderContract.Database;
 import com.blackmoonit.database.ProviderContract.DbProviderInfo;
 import com.blackmoonit.database.ProviderContract.TableProviderInfo;
 
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
- * The {@link #ProviderContract} class provides a mechanism for the provider
+ * The {@link com.blackmoonit.database.ProviderContract ProviderContract}
+ * class provides a mechanism for the provider
  * to query the contract itself for various simple tasks, especially Uri
  * and MIME types required by the provider and can be automated (less
  * developer attention required). Another compelling reason to use a
@@ -24,8 +27,8 @@ import com.blackmoonit.database.ProviderContract.TableProviderInfo;
  * @see Database#DATA_ACTION_UPDATE
  * @see Database#DATA_ACTION_DELETE
  * @see TableProviderInfo#getObserverUri(String)
- * @see TableProviderInfo#ensureContentUri(Uri)
- * @see DbProviderInfo#ensureContentUri(Uri)
+ * @see TableProviderInfo#ensureContentUri(android.net.Uri)
+ * @see DbProviderInfo#ensureContentUri(android.net.Uri)
  *
  * @author Ryan Fischbach
  */
@@ -88,16 +91,12 @@ abstract public class SqlContractProvider extends SqlContentProvider {
 		// Note, written with different local vars so that multi-core processors
 		// do not have to execute the code in sequence, parallel would be nice.
 		UriMatcher theMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		Iterator<Map.Entry<Integer, TableProviderInfo>> theTableSets = mTableInfoMapSets.entrySet().iterator();
-		while (theTableSets.hasNext()) {
-			Map.Entry<Integer, TableProviderInfo> theEntry = theTableSets.next();
-			theEntry.getValue().addTableSetUri(theMatcher,theEntry.getKey());
-		}
-		Iterator<Map.Entry<Integer, TableProviderInfo>> theTableRows = mTableInfoMapRows.entrySet().iterator();
-		while (theTableRows.hasNext()) {
-			Map.Entry<Integer, TableProviderInfo> theEntry = theTableRows.next();
-			theEntry.getValue().addTableRowUri(theMatcher,theEntry.getKey());
-		}
+        for (Map.Entry<Integer, TableProviderInfo> theEntry : mTableInfoMapSets.entrySet()) {
+            theEntry.getValue().addTableSetUri(theMatcher, theEntry.getKey());
+        }
+        for (Map.Entry<Integer, TableProviderInfo> theEntry : mTableInfoMapRows.entrySet()) {
+            theEntry.getValue().addTableRowUri(theMatcher, theEntry.getKey());
+        }
 		return theMatcher;
 	}
 
@@ -127,7 +126,18 @@ abstract public class SqlContractProvider extends SqlContentProvider {
 		}
 	}
 
-	@Override
+    @Override
+    protected String[] getDefaultColumns(int aMatchId) {
+        TableProviderInfo theTableInfo = getTableInfo(aMatchId);
+        if (theTableInfo!=null) {
+            ArrayList<String> theColNames = theTableInfo.getColNamesFromMyContract();
+            return theColNames.toArray(new String[theColNames.size()]);
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    @Override
 	protected String getDefaultSortOrder(int aMatchId) {
 		TableProviderInfo theTableInfo = getTableInfo(aMatchId);
 		if (theTableInfo!=null) {
@@ -169,7 +179,19 @@ abstract public class SqlContractProvider extends SqlContentProvider {
 		}
 	}
 
-	@Override
+    @Override
+    protected Uri craftInsertResult(int aMatchId, ContentValues aValues, long aInserted_ID) {
+        TableProviderInfo theTableInfoSet = mTableInfoMapSets.get(aMatchId);
+        if (theTableInfoSet.getTableContract().getIdFieldName().equals(theTableInfoSet.getTableContract()._ID)) {
+            return super.craftInsertResult(aMatchId,aValues,aInserted_ID);
+        } else {
+            return theTableInfoSet.getContentUri(
+                    aValues.getAsString(theTableInfoSet.getTableContract().getIdFieldName())
+            );
+        }
+    }
+
+    @Override
 	protected void notifyInsert(int aMatchId, Uri aInsertResult) {
 		// Note, written with different local vars so that multi-core processors
 		// do not have to execute the code in sequence, parallel would be nice.

@@ -45,7 +45,10 @@ public final class ProviderContract_Sample implements ProviderContract.Database 
 		public String getIdFieldName() {
 			return _ID;
 		}
-		
+
+        @Override
+        public String getUriMatcherIdWildcardChar() { return "#"; }
+
 		/*
 		 * ===== Column definitions =====
 		 */
@@ -60,7 +63,7 @@ public final class ProviderContract_Sample implements ProviderContract.Database 
 		 * Desc: Rank value.
 		 * Type: INTEGER
 		 */
-		static public final String COL_ITEM_RANK = "rank_num"; 
+		static public final String COL_ITEM_RANK = "rank_num";
 
 		@Override
 		public String getDefaultSortOrder() {

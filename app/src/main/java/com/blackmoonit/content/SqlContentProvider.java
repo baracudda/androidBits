@@ -2,6 +2,7 @@ package com.blackmoonit.content;
 
 import java.util.Arrays;
 
+import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -31,8 +32,12 @@ public abstract class SqlContentProvider extends ContentProvider {
 	private int R_string_sql_content_provider_msg_column_missing = 0;
 
 	static protected int getResId(Context aContext, String aResType, String aResName) {
-		return aContext.getApplicationContext().getResources().getIdentifier(aResName,aResType,
-				aContext.getPackageName());
+        try {
+            return aContext.getApplicationContext().getResources().getIdentifier(aResName, aResType,
+                    aContext.getPackageName());
+        } catch (Exception e) {
+            return 0;
+        }
 	}
 	
 	protected int getResId(String aResType, String aResName) {
@@ -62,6 +67,7 @@ public abstract class SqlContentProvider extends ContentProvider {
 	}
 	
 	@Override
+    @TargetApi(11)
 	public void shutdown() {
 		if (mDb!=null) {
 			mDb.close();
@@ -86,7 +92,7 @@ public abstract class SqlContentProvider extends ContentProvider {
 	protected abstract String[] getDefaultColumns(int aMatchId);
 
 	/**
-	 * Helper function for {@link #appendSelection()}.
+	 * Helper function for {@link #appendSelection(android.net.Uri,int,java.lang.String)}.
 	 * @param aSelection - the selection string
 	 * @param aTermToAppend - the term to append to the selection string.
 	 * @return Returns the appended string.
@@ -96,7 +102,7 @@ public abstract class SqlContentProvider extends ContentProvider {
 	}
 	
 	/**
-	 * Helper function for {@link #appendSelArgs()}.
+	 * Helper function for {@link #appendSelArgs(android.net.Uri,int,String[])}.
 	 * @param aSelectionArgs - the selection args.
 	 * @param aArgToAppend - the arg to append to the selection arg array.
 	 * @return Returns the appended array.
@@ -140,7 +146,7 @@ public abstract class SqlContentProvider extends ContentProvider {
 	}
 	
 	@Override
-	public Cursor query(Uri aUri, String[] aProjection, String aSelection, 
+	public Cursor query(Uri aUri, String[] aProjection, String aSelection,
 			String[] aSelectionArgs, String aSortOrder) {
 		int theMatchId = mUriMatcher.match(aUri);
 		if (TextUtils.isEmpty(aSortOrder)) {
@@ -162,7 +168,12 @@ public abstract class SqlContentProvider extends ContentProvider {
 	protected abstract void populateDefaultValues(int aMatchId, ContentValues aValues);
 
 	protected abstract Uri getContentIdBaseUri(int aMatchId);
-	
+
+    protected Uri craftInsertResult(int aMatchId, ContentValues aValues, long aInserted_ID) {
+        Uri theResultUriBase = getContentIdBaseUri(aMatchId);
+        return ContentUris.withAppendedId(theResultUriBase,aInserted_ID);
+    }
+
 	protected void notifyInsert(int aMatchId, Uri aInsertResult) {
 		getContext().getContentResolver().notifyChange(aInsertResult,null);
 	}
@@ -182,10 +193,9 @@ public abstract class SqlContentProvider extends ContentProvider {
 		}
 		populateDefaultValues(theMatchId,theValues);
 		String theTableName = getTableName(theMatchId);
-		Uri theResultUriBase = getContentIdBaseUri(theMatchId);
 		theRowIdAdded = mDb.getWritableDatabase().insert(theTableName,null,theValues);
 		if (theRowIdAdded > -1L) {
-			Uri theResult = ContentUris.withAppendedId(theResultUriBase,theRowIdAdded);
+            Uri theResult = craftInsertResult(theMatchId,theValues,theRowIdAdded);
 			notifyInsert(theMatchId,theResult);
 			return theResult;
 		} else {
