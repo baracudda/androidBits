@@ -6,7 +6,8 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import com.blackmoonit.androidbits.graphics.GraphicsUtils;
+
+import com.blackmoonit.androidbits.utils.BitsGraphicsUtils;
 
 /**
  * Simple swipe & scroll handler containing a detector with listener.
@@ -78,10 +79,10 @@ public class SimpleGestureHandler implements OnTouchListener {
 		public SimpleGestureListener(Context aContext, OnSimpleGesture aGestureHandler) {
 			// commented out due to removal of Blackmoon imports
 
-			mSwipeMinDistanceRequired = GraphicsUtils.dipsToPixels(aContext,mSwipeMinDistanceRequired);
-			mSwipeMaxRiseAllowed = GraphicsUtils.dipsToPixels(aContext,mSwipeMaxRiseAllowed);
-			mScrollMinDistanceRequired = GraphicsUtils.dipsToPixels(aContext,mScrollMinDistanceRequired);
-			mScrollMaxRunAllowed = GraphicsUtils.dipsToPixels(aContext,mScrollMaxRunAllowed);
+			mSwipeMinDistanceRequired = BitsGraphicsUtils.dipsToPixels(aContext,mSwipeMinDistanceRequired);
+			mSwipeMaxRiseAllowed = BitsGraphicsUtils.dipsToPixels(aContext,mSwipeMaxRiseAllowed);
+			mScrollMinDistanceRequired = BitsGraphicsUtils.dipsToPixels(aContext,mScrollMinDistanceRequired);
+			mScrollMaxRunAllowed = BitsGraphicsUtils.dipsToPixels(aContext,mScrollMaxRunAllowed);
 			if (aGestureHandler!=null)
 				mGestureHandler = aGestureHandler;
 			else
