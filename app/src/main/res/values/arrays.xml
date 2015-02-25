@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer-array name="pref_layouts">
+    <integer-array name="pref_screen_definitions">
+        <!-- too easy to "fat-finger" pull down shade with top setting item
+             make it something not terribly important if pressed accidentally -->
+        <item >@layout/prefs_about</item>
+        <!-- item >@layout/prefs_morestuff</item -->
     </integer-array>
-	
+
 </resources>

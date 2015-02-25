@@ -10,4 +10,7 @@
 <string name="msg_cancelled">Cancelled</string>
 <string name="msg_loading">Loading…</string>
 
+<string name="file_info_fmtstr">%1$s, %2$tF %3$tR</string>
+<string name="folder_info_fmtstr">%1$tF %2$tR</string>
+
 </resources>

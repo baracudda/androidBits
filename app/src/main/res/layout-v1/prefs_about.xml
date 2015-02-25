@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PreferenceScreens do not have to have the layout_height nor layout_width attributes
+     that the IDE is trying to shove down our throats.  Its only because these XML files
+     exists here in the Layouts folder tree that the IDE complains about it. The reason they
+     exist here instead of inside the generic xml folder is that we take advantage of the
+     layout selectors (v1, v14, etc) to switch out what widgets the Settings activity uses
+     based on what is available.  Switch-style controls are only available v14+ so checkbox
+     settings can have a v14 layout what uses switches instead of checkboxes.  And so on.
+     Also, in order to list the R ID into a Values->Arrays.xml list, there is no R.xml.*
+     so it must be located in someplace like the layout folder in order to get a "standard R"
+     id value that can be referenced elsewhere as "@layout/blah".
+
+     Now, having said all that, adding layout_height and layout_width will not hurt anything
+     so let us just add it so the IDE will stfu about it.
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="wrap_content" android:layout_width="wrap_content"
+>
+	<com.blackmoonit.widget.AboutAppPreference
+	    android:icon="@drawable/icon_question"
+		android:title="@string/pref_title_about"
+		android:summary="@string/pref_summary_about"
+	>
+		<intent
+	    	android:action="android.intent.action.VIEW"
+	        android:targetPackage="com.blackmoonit.androidbits"
+	        android:targetClass="com.blackmoonit.androidbits.app.AppAbout"
+	    />
+	</com.blackmoonit.widget.AboutAppPreference>
+
+</PreferenceScreen>
