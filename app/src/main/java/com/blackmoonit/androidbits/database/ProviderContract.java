@@ -37,7 +37,7 @@ public class ProviderContract {
 	 */
 	static public interface Database {
 		/**
-		 * Gets your statically created {@link DbProviderInfo} object (simple singleton).
+		 * Gets your statically created {@link com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo} object (simple singleton).
 		 * Please create your static object like the sample code provided.<br><code>
 		 * static public YourDatabaseContract mDbContract = new YourDatabaseContract();<br>
 		 * static public DbProviderInfo mDbInfo = new DbProviderInfo(mDbContract);<br>
@@ -49,8 +49,8 @@ public class ProviderContract {
 
 		/**
 		 * The name of this Data Dictionary. By default, this name will be used
-		 * to augment the {@link ProviderContract.DbProviderInfo#getAuthority() provider authority} and
-		 * {@link ProviderContract.DbProviderInfo#getBaseMIMEsubtype() MIME subtype} strings to help
+		 * to augment the {@link com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#getAuthority() provider authority} and
+		 * {@link com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#getBaseMIMEsubtype() MIME subtype} strings to help
 		 * ensure their global namespace uniqueness.
 		 */
 		public String getDbName();
@@ -58,41 +58,41 @@ public class ProviderContract {
 	    /**
 	     * Data actions are specified in the username@authority section of an
 	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
-	     * @see ProviderContract.TableProviderInfo#getObserverUri(String)
-	     * @see ProviderContract.Database#DATA_ACTION_INSERT
-	     * @see ProviderContract.Database#DATA_ACTION_UPDATE
-	     * @see ProviderContract.Database#DATA_ACTION_DELETE
-	     * @see ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
 	     */
 		static public final String DATA_ACTION_NULL = "";
 	    /**
 	     * Data actions are specified in the username@authority section of an
 	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
-	     * @see ProviderContract.TableProviderInfo#getObserverUri(String)
-	     * @see ProviderContract.Database#DATA_ACTION_NULL
-	     * @see ProviderContract.Database#DATA_ACTION_UPDATE
-	     * @see ProviderContract.Database#DATA_ACTION_DELETE
-	     * @see ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
 	     */
 		static public final String DATA_ACTION_INSERT = "insert@";
 	    /**
 	     * Data actions are specified in the username@authority section of an
 	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
-	     * @see ProviderContract.TableProviderInfo#getObserverUri(String)
-	     * @see ProviderContract.Database#DATA_ACTION_NULL
-	     * @see ProviderContract.Database#DATA_ACTION_INSERT
-	     * @see ProviderContract.Database#DATA_ACTION_DELETE
-	     * @see ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
 	     */
 		static public final String DATA_ACTION_UPDATE = "update@";
 	    /**
 	     * Data actions are specified in the username@authority section of an
 	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
-	     * @see ProviderContract.TableProviderInfo#getObserverUri(String)
-	     * @see ProviderContract.Database#DATA_ACTION_NULL
-	     * @see ProviderContract.Database#DATA_ACTION_INSERT
-	     * @see ProviderContract.Database#DATA_ACTION_UPDATE
-	     * @see ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE
+	     * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
 	     */
 		static public final String DATA_ACTION_DELETE = "delete@";
 
@@ -175,9 +175,9 @@ public class ProviderContract {
 		 * MIME type used for the database itself. Specific table rows should use
 		 * MyDbContract.MyTableContract.mTableInfo.getMIMEsubtype().
 		 * @return MIME type string
-		 * @see ProviderContract.TableProviderInfo#getMIMEsubtype()
-		 * @see ProviderContract.TableProviderInfo#getMIMEtypeForResultSet()
-		 * @see ProviderContract.TableProviderInfo#getMIMEtypeForSingularResult()
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getMIMEsubtype()
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getMIMEtypeForResultSet()
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getMIMEtypeForSingularResult()
 		 */
 		public String getMIMEtype() {
 			return Database.MIME_CATEGORY_RESULT_SET + "/" + getBaseMIMEsubtype();
@@ -190,7 +190,7 @@ public class ProviderContract {
 		 * the Provider again. It is safe to pass in either an ObserverUri or ContentUri.
 		 * @param aUri - either an ObserverUri or ContentUri.
 		 * @return Returns a ContentUri.
-		 * @see ProviderContract.TableProviderInfo#ensureContentUri(android.net.Uri)
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#ensureContentUri(android.net.Uri)
 		 */
 		static public Uri ensureContentUri(Uri aUri) {
 			if (aUri!=null) {
@@ -214,7 +214,7 @@ public class ProviderContract {
 	 */
 	static public interface Table extends BaseColumns {
 		/**
-		 * Gets your statically created {@link TableProviderInfo} object (simple singleton).
+		 * Gets your statically created {@link com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo} object (simple singleton).
 		 * Please create your static object like the sample code provided.<br><code>
 		 * static public YourTableContract mTableContract = new YourTableContract();<br>
 		 * static public TableProviderInfo mTableInfo = <br>
@@ -302,10 +302,10 @@ public class ProviderContract {
 		 * ContentObservers that wish to know what kind of action caused the onChange to
 		 * fire would need to register their Uri using this function with the appropriate
 		 * Database.DATA_ACTION_* constant passed in.
-		 * @param aDataAction - one of {@link ProviderContract.Database#DATA_ACTION_INSERT DATA_ACTION_INSERT} or
-		 * {@link Database#DATA_ACTION_UPDATE DATA_ACTION_UPDATE} or
-         * {@link Database#DATA_ACTION_DELETE DATA_ACTION_DELETE} or
-         * {@link Database#DATA_ACTION_NULL DATA_ACTION_NULL}
+		 * @param aDataAction - one of {@link com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT DATA_ACTION_INSERT} or
+		 * {@link com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE DATA_ACTION_UPDATE} or
+         * {@link com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE DATA_ACTION_DELETE} or
+         * {@link com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL DATA_ACTION_NULL}
 		 * @return Returns the Uri to register to observe particular Provider actions.
 		 */
 		public Uri getObserverUri(String aDataAction) {
@@ -337,7 +337,7 @@ public class ProviderContract {
 		 * the Provider again. It is safe to pass in either an ObserverUri or ContentUri.
 		 * @param aUri - either an ObserverUri or ContentUri.
 		 * @return Returns a ContentUri.
-		 * @see ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
 		 */
 		public Uri ensureContentUri(Uri aUri) {
 			return DbProviderInfo.ensureContentUri(aUri);
@@ -389,7 +389,7 @@ public class ProviderContract {
 		/**
 		 * Gets the MIME subtype for this table's data.
 		 * @return By default, this returns the data dictionary's
-		 * {@link DbProviderInfo#getBaseMIMEsubtype() base subtype} with the table's
+		 * {@link com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#getBaseMIMEsubtype() base subtype} with the table's
 		 * name appended to it.
 		 */
 		public String getMIMEsubtype() {

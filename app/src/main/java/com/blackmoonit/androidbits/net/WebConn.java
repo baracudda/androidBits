@@ -389,8 +389,8 @@ public class WebConn {
 	 * @param aTypeOfObject - type of aObject so JSON conversion works.
 	 * @param aResultClass - resulting class JSON data is converted into.
 	 * @return Returns the class filled in with appropriate data or NULL on failure.
-	 * @see WebConn#uploadJson(java.net.URLConnection, Object, java.lang.reflect.Type)
-	 * @see WebConn#downloadJson(java.net.URLConnection, Class)
+	 * @see com.blackmoonit.androidbits.net.WebConn#uploadJson(java.net.URLConnection, Object, java.lang.reflect.Type)
+	 * @see com.blackmoonit.androidbits.net.WebConn#downloadJson(java.net.URLConnection, Class)
 	 */
 	public <T> T jsonParley(URLConnection aUrlConn, Object aObject, Type aTypeOfObject, Class<T> aResultClass) {
 		jsonUpload(aUrlConn, aObject, aTypeOfObject);

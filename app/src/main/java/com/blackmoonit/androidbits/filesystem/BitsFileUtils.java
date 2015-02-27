@@ -337,7 +337,7 @@ public final class BitsFileUtils {
 	}
 
 	/**
-	 * Wrapper for the API 8 (Android 2.2) {@link Context#getExternalCacheDir} function.
+	 * Wrapper for the API 8 (Android 2.2) {@link android.content.Context#getExternalCacheDir} function.
 	 *
 	 * @param aContext - context to use
 	 * @return Returns the File object representing the external cache folder.  May be null.
@@ -398,7 +398,7 @@ public final class BitsFileUtils {
 
 	/**
 	 * Wrapper for the API 8 (Android 2.2)
-	 * {@link Environment#getExternalStoragePublicDirectory(String)} function.
+	 * {@link android.os.Environment#getExternalStoragePublicDirectory(String)} function.
 	 *
 	 * @param aPublicFolder - string used for which public folder requested
 	 * @return Returns the file representing the public folder desired.
@@ -1212,9 +1212,9 @@ public final class BitsFileUtils {
 	 * Tests the existance of anAudioFile in the given audioFolder.
 	 *
 	 * @param audioFolder - one of the following folders:
-	 * <li>{@link com.blackmoonit.androidbits.filesystem.BitsFileUtils#customRingtoneFolder}</li>
-	 * <li>{@link com.blackmoonit.androidbits.filesystem.BitsFileUtils#customNotificationFolder}</li>
-	 * <li>{@link com.blackmoonit.androidbits.filesystem.BitsFileUtils#customAlarmFolder}</li>
+	 * <li>{@link BitsFileUtils#customRingtoneFolder}</li>
+	 * <li>{@link BitsFileUtils#customNotificationFolder}</li>
+	 * <li>{@link BitsFileUtils#customAlarmFolder}</li>
 	 * @param anAudioFile - audio file object
 	 * @return Returns true if the audio file exists in the audioFolder, false otherwise.
 	 */

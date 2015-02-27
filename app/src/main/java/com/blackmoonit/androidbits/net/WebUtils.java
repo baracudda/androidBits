@@ -113,7 +113,7 @@ public final class WebUtils {
 	 * @param aUserName - the user name
 	 * @param aPasswordEntry - the password to use
 	 * @return Returns the Base64 encoded string to be used with the "Authorization" header.
-	 * @see WebUtils#getBasicAuthString(String)
+	 * @see com.blackmoonit.androidbits.net.WebUtils#getBasicAuthString(String)
 	 */
 	static public String getBasicAuthString(String aUserName, String aPasswordEntry) {
 		return getBasicAuthString(aUserName+":"+aPasswordEntry);

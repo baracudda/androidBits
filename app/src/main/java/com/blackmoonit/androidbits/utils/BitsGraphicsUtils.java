@@ -113,7 +113,7 @@ public final class BitsGraphicsUtils {
     /**
      * Read just enough of the image file to figure out the width and height.
      * @param aImageFile - image file
-     * @return Returns the {@link BitmapFactory.Options} with the out params set. If aImageFile is null,
+     * @return Returns the {@link android.graphics.BitmapFactory.Options} with the out params set. If aImageFile is null,
      * null is returned.
      */
     static public BitmapFactory.Options getImageFileResolution(File aImageFile) {
@@ -130,7 +130,7 @@ public final class BitsGraphicsUtils {
      * Compute the optimal bitmap reading sample size based on the thumbsize desired and the bitmap's
      * resolution.
      *
-     * @param aImgSize - {@link BitmapFactory.Options} with the out params set
+     * @param aImgSize - {@link android.graphics.BitmapFactory.Options} with the out params set
      * @param aOutputX - resulting thumbsize width
      * @param aOutputY - resulting thumbsize height
      * @param bSpeedOverQuality - round up the sample size to the nearest power of 2
@@ -153,7 +153,7 @@ public final class BitsGraphicsUtils {
     static private Method mActMgr_GetMemoryClass = null;
     static private int myMemoryClassValue = 0;
     /**
-     * Wrapper for {@link ActivityManager#getMemoryClass()}.
+     * Wrapper for {@link android.app.ActivityManager#getMemoryClass()}.
      * @param aContext - an Activity
      * @return Returns the number of megs available per app.
      */

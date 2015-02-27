@@ -23,47 +23,50 @@ public class OnClickTask implements View.OnClickListener, Runnable {
 	 * afterTask() is run on the UI thread again.
 	 */
 	static abstract public class TaskDef<TResultOfBeforeTask, TProgress, TResultOfDoTask> extends
-			AsyncTask<View, TProgress, TResultOfDoTask> {
+			AsyncTask<Object, Object, Object> {
 		OnClickTask myClickHandler = null;
+		View myViewClicked = null;
 		TResultOfBeforeTask mResultOfBeforeTask = null;
 
 		public TaskDef() {
 		}
 
-		public TaskDef setClickHandler(OnClickTask aClickHandler) {
-			myClickHandler = aClickHandler;
-			return this;
-		}
+		/**
+		 * If your custom task needs to initialize some constructor parameters passed into
+		 * the OnClickTask constructor, they will be passed into this method.
+		 * @param aSetupParams - array of objects that match what was passed into OnClickTask's
+		 * constructor.
+		 */
+		abstract protected void setup(Object... aSetupParams);
 
-		public TaskDef(OnClickTask aClickHandler) {
-			this();
-			setClickHandler(aClickHandler);
+		protected void setup(OnClickTask aClickHandler, Object... aSetupParams) {
+			myClickHandler = aClickHandler;
+			myViewClicked = myClickHandler.mViewClicked;
+			setup(aSetupParams);
 		}
 
 		@Override
 		protected void onPreExecute() {
-			mResultOfBeforeTask = beforeTask(myClickHandler.mViewClicked);
+			mResultOfBeforeTask = beforeTask(myViewClicked);
 		}
 
 		@Override
-		protected TResultOfDoTask doInBackground(View... params) {
-			View theView = null;
-			if (params!=null && params.length>0)
-				theView = params[0];
-			return doTask(theView, mResultOfBeforeTask);
+		protected Object doInBackground(Object... params) {
+			return doTask(myViewClicked, mResultOfBeforeTask);
 		}
 
 		@Override
-		protected void onProgressUpdate(TProgress... aProgress) {
-			TProgress theObj = null;
+		protected void onProgressUpdate(Object... aProgress) {
+			Object theObj = null;
 			if (aProgress!=null && aProgress.length>0)
 				theObj = aProgress[0];
-			onTaskProgressUpdate(theObj);
+			onTaskProgressUpdate((TProgress)theObj);
 		}
 
 		@Override
-		protected void onPostExecute(TResultOfDoTask aTaskResult) {
-			afterTask(aTaskResult);
+		protected void onPostExecute(Object aTaskResult) {
+			afterTask(myViewClicked, (TResultOfDoTask)aTaskResult);
+			myClickHandler.mRunningTask = null;
 		}
 
 		/**
@@ -84,7 +87,7 @@ public class OnClickTask implements View.OnClickListener, Runnable {
 		 * After work is done, this part is run on the UI thread.
 		 * @param aTaskResult - result of doTask().
 		 */
-		abstract public void afterTask(TResultOfDoTask aTaskResult);
+		abstract public void afterTask(View v, TResultOfDoTask aTaskResult);
 
 		/**
 		 * doTask() can call publishProgress(TProgress) which will run this method on UI thread.
@@ -94,12 +97,14 @@ public class OnClickTask implements View.OnClickListener, Runnable {
 
 	}
 
-	protected Class<TaskDef> mDefinedTask;
+	protected Class<? extends TaskDef> mDefinedTask;
+	protected Object[] mTaskSetupParams;
 	protected TaskDef mRunningTask = null;
 	protected View mViewClicked = null;
 
-	public OnClickTask(Class<TaskDef> aTaskDef) {
+	public OnClickTask(Class<? extends TaskDef> aTaskDef, Object... aTaskSetupParams) {
 		mDefinedTask = aTaskDef;
+		mTaskSetupParams = aTaskSetupParams;
 	}
 
 	@Override
@@ -115,13 +120,14 @@ public class OnClickTask implements View.OnClickListener, Runnable {
 	public void run() {
 		if (mDefinedTask!=null && mRunningTask==null) {
 			try {
-				mRunningTask = mDefinedTask.newInstance().setClickHandler(this);
+				mRunningTask = mDefinedTask.newInstance();
+				mRunningTask.setup(this, mTaskSetupParams);
+				mRunningTask.execute(mViewClicked);
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
-			mRunningTask.execute(mViewClicked);
 		}
 	}
 

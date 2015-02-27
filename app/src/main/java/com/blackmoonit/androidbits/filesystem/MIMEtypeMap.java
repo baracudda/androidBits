@@ -145,7 +145,7 @@ public final class MIMEtypeMap extends TreeMap<String, Integer> {
 	 * @param aFile - a file in which to determine the MIME category to compare against aMIMEcategory
 	 * @return Returns true if the categories are equal.
 	 *
-	 * @see com.blackmoonit.androidbits.filesystem.MIMEtypeMap#guessMIMEtype(java.io.File) guessMIMEtype(File)
+	 * @see MIMEtypeMap#guessMIMEtype(java.io.File) guessMIMEtype(File)
 	 */
 	public boolean isCategory(String aMIMEcategory, File aFile) {
 		String theMIMEcat = getMIMEcategory(aFile);
@@ -159,7 +159,7 @@ public final class MIMEtypeMap extends TreeMap<String, Integer> {
 	 * @param aFile - a file in which to determine the MIME type to compare against aMIMEtype
 	 * @return Returns true if the types are equal.
 	 *
-	 * @see com.blackmoonit.androidbits.filesystem.MIMEtypeMap#guessMIMEtype(java.io.File) guessMIMEtype(File)
+	 * @see MIMEtypeMap#guessMIMEtype(java.io.File) guessMIMEtype(File)
 	 */
 	public boolean isType(String aMIMEtype, File aFile) {
 		String theMIMEtype = guessMIMEtype(aFile);
@@ -173,8 +173,8 @@ public final class MIMEtypeMap extends TreeMap<String, Integer> {
 	 * @param aFile - a file in which to determine the MIME type to compare against aMIMEmatch
 	 * @return Returns TRUE if aMIMEmatch is NULL, "&#42/&#42", or aFile MIME type matches "category/type" or "category/*".
 	 *
-	 * @see com.blackmoonit.androidbits.filesystem.MIMEtypeMap#guessMIMEtype(java.io.File) guessMIMEtype(File)
-	 * @see com.blackmoonit.androidbits.filesystem.MIMEtypeMap#isType(String, java.io.File) isType(String,File)
+	 * @see MIMEtypeMap#guessMIMEtype(java.io.File) guessMIMEtype(File)
+	 * @see MIMEtypeMap#isType(String, java.io.File) isType(String,File)
 	 */
 	public boolean matchType(String aMIMEmatch, File aFile) {
 		if (aMIMEmatch!=null && !aMIMEmatch.equals("*/*")) {

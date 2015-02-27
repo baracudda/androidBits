@@ -312,7 +312,7 @@ public class FileListDataSource extends ArrayList<FileListAdapterElement> {
 	 * Find the file and return the item associated with it.
 	 *
 	 * @param aFile - file to find
-	 * @return Returns the found {@link FileListAdapterElement} from the list, else null.
+	 * @return Returns the found {@link com.blackmoonit.androidbits.filesystem.FileListAdapterElement} from the list, else null.
 	 */
 	public FileListAdapterElement find(File aFile) {
 		if (!"?".equals(mCurrPath) && mCurrPath!=null && aFile!=null && !mCurrPath.equals(aFile.getParent()))

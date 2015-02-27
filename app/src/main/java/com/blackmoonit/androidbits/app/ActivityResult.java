@@ -17,7 +17,7 @@ import android.os.Message;
  * would be with some kind of manager that can dynamically create result codes that do not conflict
  * with any defined constants in the Activity and manage those results as needed.<br>
  * <br>
- * Create an instance of this class and then override {@link Activity.onActivityResult(int, int, android.content.Intent)}
+ * Create an instance of this class and then override {@link android.app.Activity.onActivityResult(int, int, android.content.Intent)}
  * so that it will call the same method of the {@link com.blackmoonit.androidbits.app.ActivityResult.Manager} class.
  * Example usage after such a setup:<br>
  * <pre class="prettyprint">
@@ -163,7 +163,7 @@ public class ActivityResult {
 		/**
 		 * Performs the same function as {@link android.app.Activity#startActivityForResult(android.content.Intent,int)}.
 		 * @param aIntent - intent of Activity to be started
-		 * @param aRequestCode - request code to use, returned from {@link #registerResultHandler(ActivityResult.Handler)}
+		 * @param aRequestCode - request code to use, returned from {@link #registerResultHandler(com.blackmoonit.androidbits.app.ActivityResult.Handler)}
 		 */
 		public void startActivityForResult(Intent aIntent, int aRequestCode) {
 			getActivity().startActivityForResult(aIntent,aRequestCode);

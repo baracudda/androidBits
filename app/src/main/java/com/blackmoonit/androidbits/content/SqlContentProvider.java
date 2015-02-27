@@ -92,7 +92,7 @@ public abstract class SqlContentProvider extends ContentProvider {
 	protected abstract String[] getDefaultColumns(int aMatchId);
 
 	/**
-	 * Helper function for {@link #appendSelection(android.net.Uri,int,java.lang.String)}.
+	 * Helper function for {@link #appendSelection(android.net.Uri,int,String)}.
 	 * @param aSelection - the selection string
 	 * @param aTermToAppend - the term to append to the selection string.
 	 * @return Returns the appended string.

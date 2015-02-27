@@ -166,7 +166,7 @@ public final class BitsIntent extends Intent {
 	/**
 	 * Check to see if  Quick Search Box settings activity exists.
 	 *
-	 * @param aContext - context used to {@link Context#startActivity(android.content.Intent)}
+	 * @param aContext - context used to {@link android.content.Context#startActivity(android.content.Intent)}
 	 */
 	static public boolean existsQSBsettings(Context aContext) {
 		Intent theIntent = new Intent(ACTION_QSB_SETTINGS);
@@ -176,7 +176,7 @@ public final class BitsIntent extends Intent {
 	/**
 	 * Launch the Quick Search Box settings activity.
 	 *
-	 * @param aContext - context used to {@link Context#startActivity(android.content.Intent)}
+	 * @param aContext - context used to {@link android.content.Context#startActivity(android.content.Intent)}
 	 */
 	static public void launchQSBsettings(Context aContext) {
 		if (existsQSBsettings(aContext)) {

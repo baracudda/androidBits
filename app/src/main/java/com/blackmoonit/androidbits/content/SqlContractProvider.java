@@ -23,12 +23,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * SqlContractProvider is that ContentObservers have to option to listen
  * for specific data actions (insert/update/delete) rather than just
  * any kind of change.
- * @see Database#DATA_ACTION_INSERT
- * @see Database#DATA_ACTION_UPDATE
- * @see Database#DATA_ACTION_DELETE
- * @see TableProviderInfo#getObserverUri(String)
- * @see TableProviderInfo#ensureContentUri(android.net.Uri)
- * @see DbProviderInfo#ensureContentUri(android.net.Uri)
+ * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT
+ * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE
+ * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
+ * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
+ * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#ensureContentUri(android.net.Uri)
+ * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
  *
  * @author Ryan Fischbach
  */

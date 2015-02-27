@@ -3,7 +3,7 @@ package com.blackmoonit.androidbits.filesystem;
 
 /**
  * Size, followed by Alphabetical sort.
- * @see com.blackmoonit.androidbits.filesystem.FileComparatorAlpha
+ * @see FileComparatorAlpha
  *
  * @author Ryan Fischbach
  */

@@ -37,7 +37,7 @@ public class CustomSSLTrustManager {
 	protected SSLContext mSSLContext = null;
 
 	/**
-	 * Exception class thrown if {@link CustomSSLTrustManager#getSSLContext()} fails.
+	 * Exception class thrown if {@link com.blackmoonit.androidbits.net.ssl.CustomSSLTrustManager#getSSLContext()} fails.
 	 */
 	static public class SSLContextException extends Exception {
 		private static final long serialVersionUID = -2562981353329324044L;
@@ -72,7 +72,7 @@ public class CustomSSLTrustManager {
 	/**
 	 * Self-signed or unknown CAs need to be loaded in order for SSL to work.
 	 * @return Returns an SSLContext that uses our custom TrustManager.
-	 * @throws CustomSSLTrustManager.SSLContextException
+	 * @throws com.blackmoonit.androidbits.net.ssl.CustomSSLTrustManager.SSLContextException
 	 * @see <a href="http://developer.android.com/training/articles/security-ssl.html"
 	 * >Google Article: Security with HTTPS and SSL</a>
 	 */
