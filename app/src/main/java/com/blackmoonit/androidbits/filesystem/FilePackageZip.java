@@ -2,7 +2,7 @@ package com.blackmoonit.androidbits.filesystem;
 
 import android.net.Uri;
 
-import com.blackmoonit.androidbits.utils.BitsArrays;
+import com.blackmoonit.androidbits.utils.BitsArrayUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -213,7 +213,7 @@ public class FilePackageZip extends FilePackage {
 		String theResult = null;
 		byte[] magicCentralDirectoryEnd = {0x50, 0x4b, 0x05, 0x06};
 		int buffLen = Math.min(mBuffer.length,numRead);
-		int idxCentralDirEnd = BitsArrays.lastIndexOf(mBuffer,magicCentralDirectoryEnd,0,buffLen);
+		int idxCentralDirEnd = BitsArrayUtils.lastIndexOf(mBuffer, magicCentralDirectoryEnd, 0, buffLen);
 		if (idxCentralDirEnd>=0) {
 			int commentLen = mBuffer[idxCentralDirEnd+20]+mBuffer[idxCentralDirEnd+21]*256;
 			if (idxCentralDirEnd+22+commentLen<=buffLen) {
