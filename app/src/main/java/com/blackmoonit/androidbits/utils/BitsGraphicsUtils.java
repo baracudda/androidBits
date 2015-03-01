@@ -1,6 +1,5 @@
 package com.blackmoonit.androidbits.utils;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -14,8 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * Graphic utility class of static functions.
@@ -150,46 +147,20 @@ public final class BitsGraphicsUtils {
             throw new IllegalArgumentException();
     }
 
-    static private Method mActMgr_GetMemoryClass = null;
-    static private int myMemoryClassValue = 0;
-    /**
-     * Wrapper for {@link android.app.ActivityManager#getMemoryClass()}.
-     * @param aContext - an Activity
-     * @return Returns the number of megs available per app.
-     */
-    static private int getMemoryClass(Context aContext) {
-        if (myMemoryClassValue==0) {
-            myMemoryClassValue = 16; //16 megs is the Java heap size in older phones
-            ActivityManager theActMgr = (ActivityManager)aContext.getSystemService(Context.ACTIVITY_SERVICE);
-            if (mActMgr_GetMemoryClass!=null) {
-                try {
-                    myMemoryClassValue = (Integer)mActMgr_GetMemoryClass.invoke(theActMgr, (Object[])null);
-                } catch (IllegalArgumentException e) {
-                    //leave default value
-                } catch (IllegalAccessException e) {
-                    //leave default value
-                } catch (InvocationTargetException e) {
-                    //leave default value
-                }
-            }
-        }
-        return myMemoryClassValue;
-    }
-
     /**
      * Android bug where trying to load a really large image will either hang the phone or kill the app.
      * @param aContext - context needed to determine available memory
      * @param aImgSize - image dimensions as gotten from {@link #getImageFileResolution(java.io.File)}
      * @return Returns TRUE if the file is too large to load.
      */
-    static public boolean isImageFileTooBig(Context aContext, BitmapFactory.Options aImgSize) {
-        if (aContext!=null && aImgSize!=null) {
-            int theMaxSize = getMemoryClass(aContext);
-            int theImageSize = aImgSize.outWidth*aImgSize.outHeight/1048576; //div 1meg
-            return (theImageSize>=theMaxSize);
-        } else
-            return false;
-    }
+	static public boolean isImageFileTooBig(Context aContext, BitmapFactory.Options aImgSize) {
+		if (aContext!=null && aImgSize!=null) {
+			int theMaxSize = BitsAppUtils.getMemoryClass(aContext);
+			int theImageSize = aImgSize.outWidth*aImgSize.outHeight/1048576; //div 1meg
+			return (theImageSize>=theMaxSize);
+		} else
+			return false;
+	}
 
     static public int getDrawableResId(Context aContext, String aResName) {
         return aContext.getApplicationContext().getResources().getIdentifier(aResName,"drawable",

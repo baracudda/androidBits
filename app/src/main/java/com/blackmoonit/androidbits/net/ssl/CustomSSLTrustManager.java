@@ -37,7 +37,7 @@ public class CustomSSLTrustManager {
 	protected SSLContext mSSLContext = null;
 
 	/**
-	 * Exception class thrown if {@link com.blackmoonit.androidbits.net.ssl.CustomSSLTrustManager#getSSLContext()} fails.
+	 * Exception class thrown if {@link CustomSSLTrustManager#getSSLContext()} fails.
 	 */
 	static public class SSLContextException extends Exception {
 		private static final long serialVersionUID = -2562981353329324044L;

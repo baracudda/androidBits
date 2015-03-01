@@ -22,7 +22,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
- * Zip archive descendant of {@link com.blackmoonit.androidbits.filesystem.FilePackage}
+ * Zip archive descendant of {@link FilePackage}
  *
  * @author Ryan Fischbach
  */

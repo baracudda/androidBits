@@ -4,7 +4,7 @@ import android.util.Log;
 
 /**
  * Adds static bDebugMode var along with some methods related to it.
- * @see com.blackmoonit.androidbits.app.AppPreferenceBase
+ * @see AppPreferenceBase
  */
 public class AppPrefsDebug extends AppPreferenceBase {
 	static protected Boolean bDebugMode = null;

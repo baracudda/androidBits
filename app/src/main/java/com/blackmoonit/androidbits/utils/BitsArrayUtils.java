@@ -7,7 +7,9 @@ import java.util.Arrays;
  *
  * @author Ryan Fischbach
  */
-public class BitsArrayUtils {
+public final class BitsArrayUtils {
+
+	private BitsArrayUtils() {} //do not instanciate this class
 
 	/**
 	 * Knuth-Morris-Pratt Algorithm for Pattern Matching

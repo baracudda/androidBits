@@ -10,6 +10,8 @@ import android.graphics.ColorMatrix;
  */
 public final class BitsColorUtils {
 
+	private BitsColorUtils() {} //do not instanciate this class
+
 	static public int floatToColor(float aColorValue) {
         int theColorInt = Math.round(aColorValue);
         return intToColor(theColorInt);

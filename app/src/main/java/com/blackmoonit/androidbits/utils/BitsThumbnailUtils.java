@@ -34,6 +34,7 @@ public final class BitsThumbnailUtils {
 	static public String mThumbnailFilePrefix = DEFAULT_THUMBNAIL_FILE_PREFIX;
 	static public final long THUMBNAIL_TOUCH_FREQUENCY = 1000*60*60*24; //miliseconds in 1 day
 
+	private BitsThumbnailUtils() {} //do not instanciate this class
 
 	/**
 	 * Get a representative thumbnail of a video file.

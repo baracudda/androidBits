@@ -14,6 +14,8 @@ import java.util.Arrays;
  */
 public final class BitsStringUtils {
 
+	private BitsStringUtils() {} //do not instanciate this class
+
 	/**
 	 * Trim function that converts null string into "".
 	 *

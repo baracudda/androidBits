@@ -7,7 +7,9 @@ import java.util.concurrent.CancellationException;
  *
  * @author Ryan Fischbach
  */
-public class BitsThreadUtils {
+public final class BitsThreadUtils {
+
+	private BitsThreadUtils() {} //do not instanciate this class
 
 	/**
 	 * Determine if the current thread is the Android activity's UI thread.
