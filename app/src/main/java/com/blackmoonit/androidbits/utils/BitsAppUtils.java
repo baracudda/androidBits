@@ -83,12 +83,13 @@ public final class BitsAppUtils {
 	/**
 	 * Returns the current app's package information (package name, version info, etc.)
 	 * @param aContext - context to use.
+	 * @param flags - PackageManager.GET_* flags. 0 gets basic info like name and version.
 	 * @return Returns the PackageInfo class from the PackageManager.
 	 */
-	static public PackageInfo getAppPackageInfo(Context aContext) {
+	static public PackageInfo getAppPackageInfo(Context aContext, int flags) {
 		PackageInfo pi;
 		try {
-			pi = aContext.getPackageManager().getPackageInfo(aContext.getPackageName(), 0);
+			pi = aContext.getPackageManager().getPackageInfo(aContext.getPackageName(), flags);
 		} catch (Exception e) {
 			//doubt this will ever run since we want info about our own package
 			pi = new PackageInfo();
@@ -108,7 +109,7 @@ public final class BitsAppUtils {
 	 *      application is also debuggable.
 	 */
 	static public String getAppVersionName(Context aContext) {
-		PackageInfo pi = getAppPackageInfo(aContext);
+		PackageInfo pi = getAppPackageInfo(aContext,0);
 		String theResult = pi.versionName;
 		if ((pi.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE)!=0) {
 			theResult += "*";
