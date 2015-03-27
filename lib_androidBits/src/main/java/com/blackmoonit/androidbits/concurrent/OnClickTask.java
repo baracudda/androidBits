@@ -136,4 +136,11 @@ public class OnClickTask implements View.OnClickListener, Runnable {
 		return this;
 	}
 
+	public OnClickTask cancel(boolean bMayInterruptIfRunning) {
+		if (mRunningTask!=null) {
+			mRunningTask.cancel(bMayInterruptIfRunning);
+		}
+		return this;
+	}
+
 }
