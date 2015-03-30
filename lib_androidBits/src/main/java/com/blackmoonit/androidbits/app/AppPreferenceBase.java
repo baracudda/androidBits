@@ -114,7 +114,7 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 	}
 
 	/**
-	 * Called before the prefs are loaded from resrouce.
+	 * Called before the prefs are loaded from resource.
 	 */
 	protected void convertOldPrefs() {
 		//default no-op

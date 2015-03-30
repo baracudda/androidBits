@@ -11,6 +11,7 @@ import android.view.View;
  * Useful if you want cancellable slow tasks performed in the background.
  * @author Ryan Fischbach
  */
+@SuppressWarnings("WeakerAccess")
 public class OnClickTask implements View.OnClickListener, Runnable {
 
 	/**
@@ -57,14 +58,17 @@ public class OnClickTask implements View.OnClickListener, Runnable {
 
 		@Override
 		protected void onProgressUpdate(Object... aProgress) {
-			Object theObj = null;
-			if (aProgress!=null && aProgress.length>0)
-				theObj = aProgress[0];
-			onTaskProgressUpdate((TProgress)theObj);
+			TProgress theObj = null;
+			if (aProgress!=null && aProgress.length>0) {
+				//noinspection unchecked
+				theObj = (TProgress)aProgress[0];
+			}
+			onTaskProgressUpdate(theObj);
 		}
 
 		@Override
 		protected void onPostExecute(Object aTaskResult) {
+			//noinspection unchecked
 			afterTask(myViewClicked, (TResultOfDoTask)aTaskResult);
 			myClickHandler.mRunningTask = null;
 		}
@@ -97,9 +101,9 @@ public class OnClickTask implements View.OnClickListener, Runnable {
 
 	}
 
-	protected Class<? extends TaskDef> mDefinedTask;
-	protected Object[] mTaskSetupParams;
-	protected TaskDef mRunningTask = null;
+	protected final Class<? extends TaskDef> mDefinedTask;
+	protected final Object[] mTaskSetupParams;
+	protected TaskDef<?,?,?> mRunningTask = null;
 	protected View mViewClicked = null;
 
 	public OnClickTask(Class<? extends TaskDef> aTaskDef, Object... aTaskSetupParams) {
@@ -119,6 +123,7 @@ public class OnClickTask implements View.OnClickListener, Runnable {
 	@Override
 	public void run() {
 		if (mDefinedTask!=null && mRunningTask==null) {
+			//noinspection TryWithIdenticalCatches
 			try {
 				mRunningTask = mDefinedTask.newInstance();
 				mRunningTask.setup(this, mTaskSetupParams);
