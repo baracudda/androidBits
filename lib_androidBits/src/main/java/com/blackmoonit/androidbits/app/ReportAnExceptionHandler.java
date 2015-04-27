@@ -1,19 +1,5 @@
 package com.blackmoonit.androidbits.app;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
@@ -28,6 +14,20 @@ import android.util.Log;
 
 import com.blackmoonit.androidbits.R;
 import com.blackmoonit.androidbits.net.WebUtils;
+
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Exception report delivery via email and user interaction.  Avoids giving an app the
@@ -45,23 +45,51 @@ import com.blackmoonit.androidbits.net.WebUtils;
  *  Source has been released to the public as is and without any warranty.
  */
 public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler, Runnable {
-	//static private final String TAG = "BITS.lib.app."+ReportAnExceptionHandler.class.getSimpleName();
 	/**
-	 * Debug report filename.
+	 * Old exception handler we need to save and put back on finalize().
 	 */
-	static public final String ExceptionReportFilename = "bitsAppStack.trace";
+	protected final Thread.UncaughtExceptionHandler mDefaultUEH;
+	/**
+	 * Context to use for strings and intents.
+	 */
+	protected WeakReference<Context> mContext;
+	/**
+	 * If FALSE, logging will be disabled.
+	 */
+	protected boolean bEnabled = true;
+	/**
+	 * Used in case Context disappears so we can log what went wrong (hopefully).
+	 */
+	protected String mContextClassName = null;
+	/**
+	 * Constructor may dictate that we purely log rather than email/delete the log.
+	 */
+	protected boolean bSendLogOnlyIfNotDebuggable = true;
+	/**
+	 * If TRUE, will attempt to email the log at app start and when unhandled error is thrown.
+	 */
+	protected boolean bSendLog = true;
 
-	private final Thread.UncaughtExceptionHandler mDefaultUEH;
-	private WeakReference<Context> mContext;
-	private boolean bEnabled = true;
-	private String mContextClassName = null;
-
-	public ReportAnExceptionHandler(Context aContext) {
+	/**
+	 * Construct the exception handler object.
+	 * @param aContext - context to use.
+	 * @param bEmailOnlyIfNotDebuggable - if TRUE, the log will only be emailed if app is !debuggable.
+	 */
+	public ReportAnExceptionHandler(Context aContext, boolean bEmailOnlyIfNotDebuggable) {
 		mDefaultUEH = Thread.getDefaultUncaughtExceptionHandler();
 		mContext = new WeakReference<Context>(aContext);
 		if (aContext!=null) {
 			mContextClassName = aContext.getClass().getName();
 		}
+		bSendLogOnlyIfNotDebuggable = bEmailOnlyIfNotDebuggable;
+	}
+
+	/**
+	 * Creates an unhandled exception report handler only for non-debug builds.
+	 * @param aContext - context to use.
+	 */
+	public ReportAnExceptionHandler(Context aContext) {
+		this(aContext, true);
 	}
 
 	public Context getContext() {
@@ -69,9 +97,9 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	}
 
 	/**
-	 * Call this method at the end of the protected code, usually in {@link finalize()}.
+	 * Call this method at the end of the protected code, usually in {@link #finalize()}.
 	 */
-	private void restoreOriginalHandler() {
+	protected void restoreOriginalHandler() {
 		if (Thread.getDefaultUncaughtExceptionHandler().equals(this))
 			Thread.setDefaultUncaughtExceptionHandler(mDefaultUEH);
 	}
@@ -83,26 +111,24 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	}
 
 	/**
-	 * Call this method after creation to start protecting all code thereafter.
-	 * @param bOnlyIfDebuggable - if TRUE, it will only register the handler if app is debuggable.
-	 * @Returns Return this object to allow chaining.
+	 * Used internally during #setup() to see if bSendLog should be true/false.
 	 */
-	public ReportAnExceptionHandler setup(boolean bOnlyIfDebuggable) {
-		Context theContext = getContext();
-		if (theContext==null)
-			throw new NullPointerException();
-		if (bOnlyIfDebuggable) {
-			if ((theContext.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)!=ApplicationInfo.FLAG_DEBUGGABLE) {
-				try {
-					//app is not debuggable, check to see if version name contains "beta" before ignoring
-					String theVersionName = theContext.getPackageManager().getPackageInfo(theContext.getPackageName(),0).versionName;
-					if (theVersionName!=null && !theVersionName.contains("beta"))
-						return this;
-				} catch (NameNotFoundException e) {
-					//should never happen, if so, assume debuggable
-				}
+	protected void checkSendLog() {
+		if (bSendLogOnlyIfNotDebuggable) {
+			ApplicationInfo myAppInfo = getContext().getApplicationInfo();
+			if (myAppInfo!=null &&
+					(myAppInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE)==ApplicationInfo.FLAG_DEBUGGABLE) {
+				bSendLog = false;
 			}
 		}
+	}
+
+	/**
+	 * Call this method after creation to start protecting all code thereafter.
+	 * @Returns Return this object to allow chaining.
+	 */
+	public ReportAnExceptionHandler setup() {
+		checkSendLog();
 		sendDebugReportToAuthor(); //in case a previous error did not get sent to the email app
 		Thread.setDefaultUncaughtExceptionHandler(this);
 		return this;
@@ -157,6 +183,14 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			else
 				mDefaultUEH.uncaughtException(t,e);
 		}
+	}
+
+	/**
+	 * Return the filename to use for exception reports.
+	 * @return Returns the filename.
+	 */
+	protected String getExceptionReportFilename() {
+		return "AppStackTraces.txt";
 	}
 
 	/**
@@ -234,16 +268,16 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 
 	/**
 	 * Compiles the debug information and returns it as a string. The report
-	 * consists of {@link #Utils.getDebugHeader(android.content.Context,Throwable)} followed by
+	 * consists of {@link Utils#getDebugHeader(android.content.Context,Throwable)} followed by
 	 * {@link #getDebugActivityTrace(android.content.Context, java.util.List)} followed by
-	 * {@link #Utils.getDebugInstructionTrace(android.content.Context,Throwable)} followed by
-	 * {@link #Utils.getDeviceEnvironment(android.content.Context)}.
+	 * {@link Utils#getDebugInstructionTrace(android.content.Context,Throwable)} followed by
+	 * {@link Utils#getDeviceEnvironment(android.content.Context)}.
 	 * @param aException - the exception to report.
 	 * @return Returns the exception report as a string.
-	 * @see #Utils.getDebugHeader(android.content.Context,Throwable)
+	 * @see Utils#getDebugHeader(android.content.Context,Throwable)
 	 * @see #getDebugActivityTrace(android.content.Context, java.util.List)
-	 * @see #Utils.getDebugInstructionTrace(android.content.Context, Throwable)
-	 * @see #Utils.getDeviceEnvironment(android.content.Context)
+	 * @see Utils#getDebugInstructionTrace(android.content.Context, Throwable)
+	 * @see Utils#getDeviceEnvironment(android.content.Context)
 	 */
 	public String getDebugReport(Throwable aException) {
 		Context theContext = getContext();
@@ -267,8 +301,9 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 		Context theContext = getContext();
 		if (theContext!=null) {
 			//save report to file
+			String theFilename = getExceptionReportFilename();
 			try {
-				FileOutputStream theFile = theContext.openFileOutput(ExceptionReportFilename, Context.MODE_PRIVATE);
+				FileOutputStream theFile = theContext.openFileOutput(theFilename, Context.MODE_APPEND);
 				theFile.write(aReport.getBytes());
 				theFile.close();
 			} catch (Exception e) {
@@ -276,25 +311,29 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			} catch (Error err) {
 				//error during report needs to be ignored, do not wish to start infinite loop
 			}
+		} else {
+			//cannot commit suicide in Java, so just cleanup our instance (de-handle handlers)
+			cleanup();
 		}
 	}
 
 	/**
 	 * Read in saved debug report and send to email app.
 	 */
-	public void sendDebugReportToAuthor() {
+	protected void sendDebugReportToAuthor() {
 		Context theContext = getContext();
-		if (theContext!=null) {
+		if (theContext!=null && this.bSendLog) {
 			String theLine = "";
 			String theTrace = "";
+			String theFilename = getExceptionReportFilename();
 			try {
 				BufferedReader theReader = new BufferedReader(new InputStreamReader(
-						theContext.openFileInput(ExceptionReportFilename)));
+						theContext.openFileInput(theFilename)));
 				while ((theLine = theReader.readLine())!=null) {
 					theTrace += theLine+"\n";
 				}
 				if (sendDebugReportToAuthor(theTrace)) {
-					theContext.deleteFile(ExceptionReportFilename);
+					theContext.deleteFile(theFilename);
 				}
 			} catch (Exception e) {
 				// avoid infinite recursion
@@ -312,7 +351,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	 */
 	public boolean sendDebugReportToAuthor(String aReport) {
 		Context theContext = getContext();
-		if (theContext!=null && aReport!=null) {
+		if (theContext!=null && this.bSendLog && aReport!=null) {
 			Intent theIntent = WebUtils.newEmailIntent(theContext.getString(R.string.postmortem_report_email_recipients));
 
 			if (!(theContext instanceof Activity))
@@ -336,7 +375,8 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 				return false;
 			}
 		} else {
-			return true;
+			//return TRUE if we were supposed to send a log, else FALSE (so its not deleted)
+			return this.bSendLog;
 		}
 	}
 
