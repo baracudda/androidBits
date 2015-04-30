@@ -117,6 +117,11 @@ public final class ProviderContract_Sample implements ProviderContract.Database 
 				+ ");";
 		}
 
+		@Override
+		public ProviderContract.RowVar newRowVar() {
+			return null;
+		}
+
 	}
 
 
