@@ -163,6 +163,11 @@ public abstract class SqlContentProvider extends ContentProvider {
 		return theResult;
 	}
 
+	/**
+	 * Insert may require certain fields be present in order to succeed.
+	 * @param aMatchId - which table match ID being used.
+	 * @return Returns an array of column names (may be empty).
+	 */
 	protected abstract String[] getRequiredColumns(int aMatchId);
 
 	protected abstract void populateDefaultValues(int aMatchId, ContentValues aValues);

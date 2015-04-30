@@ -55,6 +55,12 @@ public class ProviderContract {
 		 */
 		public String getDbName();
 
+		/**
+		 * The version number of this contract for use in Database class to determine onUpgrade()/onDowngrade().
+		 * @return Returns the db version as an integer.
+		 */
+		public int getDbVersion();
+
 	    /**
 	     * Data actions are specified in the username@authority section of an
 	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
@@ -205,6 +211,27 @@ public class ProviderContract {
 			return aUri;
 		}
 
+		private ArrayList<ProviderContract.Table> mTableList = null;
+		public ArrayList<ProviderContract.Table> getTableList() {
+			if (mTableList==null) {
+				mTableList = new ArrayList<ProviderContract.Table>();
+				Class[] myClasses = mDbContract.getClass().getClasses();
+				for (Class theClass : myClasses) {
+					if (ProviderContract.Table.class.isAssignableFrom(theClass)) {
+						try {
+							TableProviderInfo theTableInfo = (TableProviderInfo) (theClass.getField("mTableInfo").get(null));
+							mTableList.add(theTableInfo.getTableContract());
+						} catch (NoSuchFieldException nsfe) {
+							//don't care, just ignore
+						} catch (IllegalAccessException e) {
+							//don't care, just ignore
+						}
+					}
+				}
+			}
+			return mTableList;
+		}
+
 	}
 
 	//==================================================================================
@@ -252,6 +279,27 @@ public class ProviderContract {
          * @return Returns either "#" for Longint IDs or "*" for strings.
          */
         public String getUriMatcherIdWildcardChar();
+
+		/**
+		 * The data provider needs to know what columns are required for insert.
+		 * Default is none, override and supply column names of required fields.
+		 * @return Returns the array of required column names or an empty array if none.
+		 */
+		public String[] getRequiredColumns();
+
+		/**
+		 * The data provider needs to know if any columns have default values.
+		 * Act upon the values parameter to add/modify any missing content.
+		 * @param values - Add or modify existing values to enforce default data.
+		 */
+		public void populateDefaultValues(ContentValues values);
+
+		/**
+		 * May as well define the SQLite table here as well and keep things simple and contained.
+		 * @return Returns the SQL string to be executed to create the SQLite table.
+		 */
+		public String getCreateTableSQL();
+
 	}
 
 	static public class TableProviderInfo {
@@ -416,6 +464,7 @@ public class ProviderContract {
          * Cache of the columns found from getColNamesFromMyContract().
          */
         protected ArrayList<String> myColNamesFromMyContract = null;
+
         /**
          * Analyzes the Table Contract and reports back all COL_* fields
          * as well as the _ID field.

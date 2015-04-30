@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.net.Uri;
 
+import com.blackmoonit.androidbits.database.ProviderContract;
 import com.blackmoonit.androidbits.database.ProviderContract.Database;
 import com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo;
 import com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo;
@@ -34,6 +35,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @SuppressLint("UseSparseArrays")
 abstract public class SqlContractProvider extends SqlContentProvider {
+	/**
+	 * What contract is this provider adhering to?
+	 * @return Returns the ProviderContract.Database interface being used.
+	 */
+	abstract protected ProviderContract.Database getDbContract();
 
 	/**
 	 * Contains a map of integer Match Codes to TableProviderInfo for all
@@ -51,12 +57,24 @@ abstract public class SqlContractProvider extends SqlContentProvider {
 	/**
 	 * Fill the {@link #mTableInfoMapSets} variable.
 	 */
-	abstract protected void fillTableInfoMapSets();
+	protected void fillTableInfoMapSets() {
+		ArrayList<ProviderContract.Table> theTables = getDbContract().getDbInfo().getTableList();
+		for (int i = 0; i < theTables.size(); i++) {
+			ProviderContract.Table theContractTable = theTables.get(i);
+			mTableInfoMapSets.put(i+1, theContractTable.getTableInfo());
+		}
+	}
 
 	/**
 	 * Fill the {@link #mTableInfoMapRows} variable.
 	 */
-	abstract protected void fillTableInfoMapRows();
+	protected void fillTableInfoMapRows() {
+		ArrayList<ProviderContract.Table> theTables = getDbContract().getDbInfo().getTableList();
+		for (int i = 0; i < theTables.size(); i++) {
+			ProviderContract.Table theContractTable = theTables.get(i);
+			mTableInfoMapRows.put(i+1+theTables.size()+1, theContractTable.getTableInfo());
+		}
+	}
 
 	@Override
 	public boolean onCreate() {
@@ -142,6 +160,26 @@ abstract public class SqlContractProvider extends SqlContentProvider {
 		TableProviderInfo theTableInfo = getTableInfo(aMatchId);
 		if (theTableInfo!=null) {
 			return theTableInfo.getTableContract().getDefaultSortOrder();
+		} else {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	@Override
+	protected String[] getRequiredColumns(int aMatchId) {
+		TableProviderInfo theTableInfo = getTableInfo(aMatchId);
+		if (theTableInfo!=null) {
+			return theTableInfo.getTableContract().getRequiredColumns();
+		} else {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	@Override
+	protected void populateDefaultValues(int aMatchId, ContentValues aValues) {
+		TableProviderInfo theTableInfo = getTableInfo(aMatchId);
+		if (theTableInfo!=null) {
+			theTableInfo.getTableContract().populateDefaultValues(aValues);
 		} else {
 			throw new UnsupportedOperationException();
 		}
