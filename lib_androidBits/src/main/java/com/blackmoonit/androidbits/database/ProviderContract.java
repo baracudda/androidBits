@@ -290,9 +290,10 @@ public class ProviderContract {
 		/**
 		 * The data provider needs to know if any columns have default values.
 		 * Act upon the values parameter to add/modify any missing content.
+		 * @param aContext - context in case string resources are needed.
 		 * @param values - Add or modify existing values to enforce default data.
 		 */
-		public void populateDefaultValues(ContentValues values);
+		public void populateDefaultValues(Context aContext, ContentValues values);
 
 		/**
 		 * May as well define the SQLite table here as well and keep things simple and contained.

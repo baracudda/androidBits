@@ -179,7 +179,7 @@ abstract public class SqlContractProvider extends SqlContentProvider {
 	protected void populateDefaultValues(int aMatchId, ContentValues aValues) {
 		TableProviderInfo theTableInfo = getTableInfo(aMatchId);
 		if (theTableInfo!=null) {
-			theTableInfo.getTableContract().populateDefaultValues(aValues);
+			theTableInfo.getTableContract().populateDefaultValues(getContext(), aValues);
 		} else {
 			throw new UnsupportedOperationException();
 		}

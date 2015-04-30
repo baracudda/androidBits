@@ -1,6 +1,7 @@
 package com.blackmoonit.androidbits.database;
 
 import android.content.ContentValues;
+import android.content.Context;
 
 import com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo;
 import com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo;
@@ -94,10 +95,11 @@ public final class ProviderContract_Sample implements ProviderContract.Database 
 		/**
 		 * The data provider needs to know if any columns have default values.
 		 * Act upon the values parameter to add/modify any missing content.
+		 * @param aContext - context in case string resources are needed.
 		 * @param values - Add or modify existing values to enforce default data.
 		 */
 		@Override
-		public void populateDefaultValues(ContentValues values) {
+		public void populateDefaultValues(Context aContext, ContentValues values) {
 			if (!values.containsKey(COL_ITEM_ID))
 				values.put(COL_ITEM_ID, UUID.randomUUID().toString());
 		}
