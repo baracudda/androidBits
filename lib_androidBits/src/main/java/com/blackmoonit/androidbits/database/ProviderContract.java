@@ -301,6 +301,11 @@ public class ProviderContract {
 		 */
 		public String getCreateTableSQL();
 
+		/**
+		 * @return Return the RowVar for my table.
+		 */
+		public RowVar newRowVar();
+
 	}
 
 	static public class TableProviderInfo {
