@@ -606,8 +606,8 @@ public class ProviderContract {
             return this;
         }
 
-        public Bundle toBundle() {
-            Bundle theResults = new Bundle();
+        public Bundle toBundle(Bundle aBundle) {
+			Bundle theResults = (aBundle!=null) ? new Bundle(aBundle) : new Bundle();
             for (String theColName : getColNamesFromMyContract()) {
                 //var names cannot have spaces in them like db column names, cnv to "_"
                 String theRowVarName = theColName.replace(" ","_");
@@ -644,6 +644,10 @@ public class ProviderContract {
             theResults.putParcelable("android.intent.extra.ORIGINATING_URI", getMyUri());
             return theResults;
         }
+
+		public Bundle toBundle() {
+			return toBundle(null);
+		}
 
         public ContentValues toContentValues(boolean bOmitNulls) {
             ContentValues theResults = new ContentValues();
