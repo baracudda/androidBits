@@ -13,7 +13,6 @@ import android.util.Log;
 
 import com.blackmoonit.androidbits.R;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -30,7 +29,7 @@ import java.util.Locale;
  * @author Ryan Fischbach
  */
 public class ProviderContract {
-    static public final String TAG = "androidBits.ProviderContract";
+	static public final String TAG = ProviderContract.class.getSimpleName();
 
 	/**
 	 * Database meta information definitions required by the ProviderContract.
@@ -61,45 +60,45 @@ public class ProviderContract {
 		 */
 		public int getDbVersion();
 
-	    /**
-	     * Data actions are specified in the username@authority section of an
-	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
-	     */
+		/**
+		 * Data actions are specified in the username@authority section of an
+		 * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
+		 */
 		static public final String DATA_ACTION_NULL = "";
-	    /**
-	     * Data actions are specified in the username@authority section of an
-	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
-	     */
+		/**
+		 * Data actions are specified in the username@authority section of an
+		 * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
+		 */
 		static public final String DATA_ACTION_INSERT = "insert@";
-	    /**
-	     * Data actions are specified in the username@authority section of an
-	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
-	     */
+		/**
+		 * Data actions are specified in the username@authority section of an
+		 * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
+		 */
 		static public final String DATA_ACTION_UPDATE = "update@";
-	    /**
-	     * Data actions are specified in the username@authority section of an
-	     * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE
-	     * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
-	     */
+		/**
+		 * Data actions are specified in the username@authority section of an
+		 * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE
+		 * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
+		 */
 		static public final String DATA_ACTION_DELETE = "delete@";
 
 		/**
@@ -275,10 +274,10 @@ public class ProviderContract {
 		 */
 		public String getIdFieldName();
 
-        /**
-         * @return Returns either "#" for Longint IDs or "*" for strings.
-         */
-        public String getUriMatcherIdWildcardChar();
+		/**
+		 * @return Returns either "#" for Longint IDs or "*" for strings.
+		 */
+		public String getUriMatcherIdWildcardChar();
 
 		/**
 		 * The data provider needs to know what columns are required for insert.
@@ -358,15 +357,15 @@ public class ProviderContract {
 		 * Database.DATA_ACTION_* constant passed in.
 		 * @param aDataAction - one of {@link com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT DATA_ACTION_INSERT} or
 		 * {@link com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE DATA_ACTION_UPDATE} or
-         * {@link com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE DATA_ACTION_DELETE} or
-         * {@link com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL DATA_ACTION_NULL}
+		 * {@link com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE DATA_ACTION_DELETE} or
+		 * {@link com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL DATA_ACTION_NULL}
 		 * @return Returns the Uri to register to observe particular Provider actions.
 		 */
 		public Uri getObserverUri(String aDataAction) {
-            Uri theUri = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + aDataAction +
-                    mDbContract.getDbInfo().getAuthority() + "/" +
-                    mTableContract.getTableName());
-            return theUri;
+			Uri theUri = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + aDataAction +
+					mDbContract.getDbInfo().getAuthority() + "/" +
+					mTableContract.getTableName());
+			return theUri;
 		}
 
 		/**
@@ -427,7 +426,7 @@ public class ProviderContract {
 		public void addTableRowUri(UriMatcher aMatcher, int aMatchCode) {
 			aMatcher.addURI(mDbContract.getDbInfo().getAuthority(),
 					mTableContract.getTableName()+"/"+
-                    mTableContract.getUriMatcherIdWildcardChar(),aMatchCode);
+					mTableContract.getUriMatcherIdWildcardChar(),aMatchCode);
 		}
 
 		/**
@@ -466,369 +465,430 @@ public class ProviderContract {
 			return Database.MIME_CATEGORY_RESULT_ONE+"/"+getMIMEsubtype();
 		}
 
-        /**
-         * Cache of the columns found from getColNamesFromMyContract().
-         */
-        protected ArrayList<String> myColNamesFromMyContract = null;
+		/**
+		 * Cache of the columns found from getColNamesFromMyContract().
+		 */
+		protected ArrayList<String> myColNamesFromMyContract = null;
 
-        /**
-         * Analyzes the Table Contract and reports back all COL_* fields
-         * as well as the _ID field.
-         * @return
-         */
-        public ArrayList<String> getColNamesFromMyContract() {
-            if (this.myColNamesFromMyContract==null) {
-                this.myColNamesFromMyContract = new ArrayList<String>();
-                Field[] myFields = getTableContract().getClass().getFields();
-                for (Field theField : myFields) {
-                    if (theField.getName().startsWith("COL_") || theField.getName().equals("_ID")) {
-                        try {
-                            this.myColNamesFromMyContract.add((String) theField.get(getTableContract()));
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-            return this.myColNamesFromMyContract;
-        }
+		/**
+		 * Analyzes the Table Contract and reports back all COL_* fields
+		 * as well as the _ID field.
+		 * @return Returns the column names as an ArrayList.
+		 */
+		public ArrayList<String> getColNamesFromMyContract() {
+			if (this.myColNamesFromMyContract==null) {
+				this.myColNamesFromMyContract = new ArrayList<String>();
+				Field[] myFields = getTableContract().getClass().getFields();
+				for (Field theField : myFields) {
+					if (theField.getName().startsWith("COL_") || theField.getName().equals("_ID")) {
+						try {
+							this.myColNamesFromMyContract.add((String) theField.get(getTableContract()));
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+			return this.myColNamesFromMyContract;
+		}
 
-    }
+	}
 
-    static public abstract class RowVar {
-        public final TableProviderInfo myTableInfo;
-        public long _id = 0L; // used for _ID (which is a longint)
+	static public abstract class RowVar {
+		public final TableProviderInfo myTableInfo;
+		public long _id = 0L; // used for _ID (which is a longint)
 
-        public RowVar(TableProviderInfo aTableInfo) {
-            myTableInfo = aTableInfo;
-        }
+		public RowVar(TableProviderInfo aTableInfo) {
+			myTableInfo = aTableInfo;
+		}
 
-        public Uri getMyTableUri() {
-            return myTableInfo.getContentUri(null);
-        }
+		public Uri getMyTableUri() {
+			return myTableInfo.getContentUri(null);
+		}
 
-        public String getMyMimeType() {
-            return myTableInfo.getMIMEtypeForSingularResult();
-        }
+		public String getMyMimeType() {
+			return myTableInfo.getMIMEtypeForSingularResult();
+		}
 
-        public Uri getMyUri() {
-            String myIdFieldName = myTableInfo.getTableContract().getIdFieldName();
-            String theIdAsStr = null;
-            try {
-                theIdAsStr = String.valueOf(this.getClass().getField(myIdFieldName).get(this));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                Log.wtf(TAG,String.format(Locale.ENGLISH,
-                        "The ID field returned by getIdFieldName(), %s, cannot be accessed in RowVar descendant %s.",
-                        myIdFieldName,this.getClass().getCanonicalName()));
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-                Log.wtf(TAG,String.format(Locale.ENGLISH,
-                        "The ID field returned by getIdFieldName(), %s, does not exist in RowVar descendant %s.",
-                        myIdFieldName,this.getClass().getCanonicalName()));
-            }
-            if (theIdAsStr!=null)
-                return myTableInfo.getContentUri(theIdAsStr);
-            else
-                return null;
-        }
+		public Uri getMyUri() {
+			String myIdFieldName = myTableInfo.getTableContract().getIdFieldName();
+			String theIdAsStr = null;
+			try {
+				theIdAsStr = String.valueOf(this.getClass().getField(myIdFieldName).get(this));
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				Log.wtf(TAG,String.format(Locale.ENGLISH,
+						"The ID field returned by getIdFieldName(), %s, cannot be accessed in RowVar descendant %s.",
+						myIdFieldName,this.getClass().getCanonicalName()));
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+				Log.wtf(TAG,String.format(Locale.ENGLISH,
+						"The ID field returned by getIdFieldName(), %s, does not exist in RowVar descendant %s.",
+						myIdFieldName,this.getClass().getCanonicalName()));
+			}
+			if (theIdAsStr!=null)
+				return myTableInfo.getContentUri(theIdAsStr);
+			else
+				return null;
+		}
 
-        public ArrayList<String> getColNamesFromMyContract() {
-            return myTableInfo.getColNamesFromMyContract();
-        }
+		public ArrayList<String> getColNamesFromMyContract() {
+			return myTableInfo.getColNamesFromMyContract();
+		}
 
-        public RowVar setFromCursor(Cursor aCursor) {
-            if (aCursor != null) {
-                for (String theColName : getColNamesFromMyContract()) {
-                    //var names cannot have spaces in them like db column names, cnv to "_"
-                    String theRowVarName = theColName.replace(" ","_");
-                    int theColIdx;
-                    try {
-                        theColIdx = aCursor.getColumnIndex(theColName);
-                        if (theColIdx>=0) {
-                            Field theRowVarField = this.getClass().getField(theRowVarName);
-                            //Cursor does not have a generic GET method, so need to check types
-                            if (theRowVarField.getType() == String.class) {
-                                theRowVarField.set(this, aCursor.getString(theColIdx));
-                            } else if (theRowVarField.getType().equals(Integer.TYPE)) {
-                                theRowVarField.set(this, aCursor.getInt(theColIdx));
-                            } else if (theRowVarField.getType().equals(Long.TYPE)) {
-                                theRowVarField.set(this, aCursor.getLong(theColIdx));
-                            } else if (theRowVarField.getType().equals(Float.TYPE)) {
-                                theRowVarField.set(this, aCursor.getFloat(theColIdx));
-                            } else if (theRowVarField.getType().equals(Double.TYPE)) {
-                                theRowVarField.set(this, aCursor.getDouble(theColIdx));
-                            } else if (theRowVarField.getType().equals(Boolean.TYPE)) {
-                                theRowVarField.set(this,(aCursor.getInt(theColIdx)>0));
-                            } else if (theRowVarField.getType().equals(Character.TYPE)) {
-                                String s = aCursor.getString(theColIdx);
-                                if (s!=null && s.length()>0)
-                                    theRowVarField.set(this, s.charAt(0));
-                            } else if (theRowVarField.getType().equals(Byte.TYPE)) {
-                                theRowVarField.set(this, Byte.parseByte(aCursor.getString(theColIdx)));
-                            } else if (theRowVarField.getType().equals(Short.TYPE)) {
-                                theRowVarField.set(this, aCursor.getShort(theColIdx));
-                            }
-                        }
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchFieldException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return this;
-        }
+		public String cnvColNameToRowFieldName(String aColName) {
+			//var names cannot have spaces in them like db column names, cnv to "_"
+			return (aColName!=null) ? aColName.replace(" ", "_") : null;
+		}
 
-        public RowVar setFromBundle(Bundle aBundle) {
-            if (aBundle!=null) {
-                for (String theColName : getColNamesFromMyContract()) {
-                    //var names cannot have spaces in them like db column names, cnv to "_"
-                    String theRowVarName = theColName.replace(" ","_");
-                    Object theColValue;
-                    try {
-                        theColValue = aBundle.get(theRowVarName);
-                        Field theRowVarField = this.getClass().getField(theRowVarName);
-                        theRowVarField.set(this, theColValue);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchFieldException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return this;
-        }
+		protected Field getRowField(String aRowFieldName) throws NoSuchFieldException {
+			return getClass().getField(aRowFieldName);
+		}
 
-        public RowVar setFromIntent(Intent aIntent) {
-            if (aIntent!=null)
-                setFromBundle(aIntent.getExtras());
-            return this;
-        }
+		protected void setRowField(Field aRowField, Object aRowFieldValue) {
+			try {
+				aRowField.set(this, aRowFieldValue);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+		}
 
-        public Bundle toBundle(Bundle aBundle) {
+		public Object getColValue(String aColName) throws IllegalArgumentException {
+			try {
+				getRowField(cnvColNameToRowFieldName(aColName)).get(this);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				throw new IllegalArgumentException(aColName+" does not match any accessible "+
+						"fields inside the RowVar class \""+getClass().getSimpleName()+"\"");
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+				throw new IllegalArgumentException(aColName+" does not match any accessible "+
+						"fields inside the RowVar class \""+getClass().getSimpleName()+"\"");
+			}
+			return null;
+		}
+
+		public RowVar setColValue(String aColName, Object aColValue) {
+			try {
+				setRowField(getRowField(cnvColNameToRowFieldName(aColName)), aColValue);
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+			}
+			return this;
+		}
+
+		public RowVar setFromCursor(Cursor aCursor) {
+			if (aCursor != null) {
+				for (String theColName : getColNamesFromMyContract()) {
+					//inner loop vars used so multi-core processors with preditive branch
+					//  processing are not constrained by accessing a single var; results
+					//  in multiple loops being processed concurrently, thus enhancing speed
+					//  at the sacrifice of a bit of memory/garbage collecting
+					Field theRowField;
+					int theColIdx;
+					try {
+						theRowField = getRowField(cnvColNameToRowFieldName(theColName));
+						theColIdx = aCursor.getColumnIndex(theColName);
+						if (theColIdx>=0) {
+							Class<?> theRowFieldType = theRowField.getType();
+							//Cursor does not have a generic GET method, so need to check types
+							if (theRowFieldType.equals(String.class)) {
+								setRowField(theRowField, aCursor.getString(theColIdx));
+							} else if (theRowFieldType.equals(Integer.TYPE)) {
+								setRowField(theRowField, aCursor.getInt(theColIdx));
+							} else if (theRowFieldType.equals(Long.TYPE)) {
+								setRowField(theRowField, aCursor.getLong(theColIdx));
+							} else if (theRowFieldType.equals(Float.TYPE)) {
+								setRowField(theRowField, aCursor.getFloat(theColIdx));
+							} else if (theRowFieldType.equals(Double.TYPE)) {
+								setRowField(theRowField, aCursor.getDouble(theColIdx));
+							} else if (theRowFieldType.equals(Boolean.TYPE)) {
+								setRowField(theRowField, (aCursor.getInt(theColIdx)>0));
+							} else if (theRowFieldType.equals(Character.TYPE)) {
+								String s = aCursor.getString(theColIdx);
+								if (s!=null && s.length()>0)
+									setRowField(theRowField, s.charAt(0));
+							} else if (theRowFieldType.equals(Byte.TYPE)) {
+								setRowField(theRowField,  Byte.parseByte(aCursor.getString(theColIdx)));
+							} else if (theRowFieldType.equals(Short.TYPE)) {
+								setRowField(theRowField,  aCursor.getShort(theColIdx));
+							}
+						}
+					} catch (NoSuchFieldException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return this;
+		}
+
+		public RowVar setFromBundle(Bundle aBundle) {
+			if (aBundle!=null) {
+				for (String theColName : getColNamesFromMyContract()) {
+					//inner loop vars used so multi-core processors with preditive branch
+					//  processing are not constrained by accessing a single var; results
+					//  in multiple loops being processed concurrently, thus enhancing speed
+					//  at the sacrifice of a bit of memory/garbage collecting
+					Field theRowField;
+					try {
+						theRowField = getRowField(cnvColNameToRowFieldName(theColName));
+						setRowField(theRowField, aBundle.get(theRowField.getName()));
+					} catch (NoSuchFieldException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return this;
+		}
+
+		public RowVar setFromIntent(Intent aIntent) {
+			if (aIntent!=null)
+				setFromBundle(aIntent.getExtras());
+			return this;
+		}
+
+		public Bundle toBundle(Bundle aBundle) {
 			Bundle theResults = (aBundle!=null) ? new Bundle(aBundle) : new Bundle();
-            for (String theColName : getColNamesFromMyContract()) {
-                //var names cannot have spaces in them like db column names, cnv to "_"
-                String theRowVarName = theColName.replace(" ","_");
-                Object theColValue;
-                try {
-                    Field theRowVarField = this.getClass().getField(theRowVarName);
-                    theColValue = theRowVarField.get(this);
-                    //Bundle does not have a generic PUT method, so need to check types
-                    if (theRowVarField.getType() == String.class) {
-                        theResults.putString(theRowVarName, (String) theColValue);
-                    } else if (theRowVarField.getType().equals(Integer.TYPE)) {
-                        theResults.putInt(theRowVarName, (Integer) theColValue);
-                    } else if (theRowVarField.getType().equals(Long.TYPE)) {
-                        theResults.putLong(theRowVarName, (Long) theColValue);
-                    } else if (theRowVarField.getType().equals(Float.TYPE)) {
-                        theResults.putFloat(theRowVarName, (Float) theColValue);
-                    } else if (theRowVarField.getType().equals(Double.TYPE)) {
-                        theResults.putDouble(theRowVarName, (Double) theColValue);
-                    } else if (theRowVarField.getType().equals(Boolean.TYPE)) {
-                        theResults.putBoolean(theRowVarName, (Boolean) theColValue);
-                    } else if (theRowVarField.getType().equals(Character.TYPE)) {
-                        theResults.putChar(theRowVarName, (Character) theColValue);
-                    } else if (theRowVarField.getType().equals(Byte.TYPE)) {
-                        theResults.putByte(theRowVarName, (Byte) theColValue);
-                    } else if (theRowVarField.getType().equals(Short.TYPE)) {
-                        theResults.putShort(theRowVarName, (Short) theColValue);
-                    }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                }
-            }
-            theResults.putParcelable("android.intent.extra.ORIGINATING_URI", getMyUri());
-            return theResults;
-        }
+			for (String theColName : getColNamesFromMyContract()) {
+				//inner loop vars used so multi-core processors with preditive branch
+				//  processing are not constrained by accessing a single var; results
+				//  in multiple loops being processed concurrently, thus enhancing speed
+				//  at the sacrifice of a bit of memory/garbage collecting
+				String theRowFieldName = cnvColNameToRowFieldName(theColName);
+				Field theRowField;
+				try {
+					theRowField = getRowField(cnvColNameToRowFieldName(theColName));
+					Class<?> theRowFieldType = theRowField.getType();
+					//Bundle does not have a generic PUT method, so need to check types
+					if (theRowFieldType.equals(String.class)) {
+						theResults.putString(theRowFieldName, (String) theRowField.get(this));
+					} else if (theRowFieldType.equals(Integer.TYPE)) {
+						theResults.putInt(theRowFieldName, (Integer) theRowField.get(this));
+					} else if (theRowFieldType.equals(Long.TYPE)) {
+						theResults.putLong(theRowFieldName, (Long) theRowField.get(this));
+					} else if (theRowFieldType.equals(Float.TYPE)) {
+						theResults.putFloat(theRowFieldName, (Float) theRowField.get(this));
+					} else if (theRowFieldType.equals(Double.TYPE)) {
+						theResults.putDouble(theRowFieldName, (Double) theRowField.get(this));
+					} else if (theRowFieldType.equals(Boolean.TYPE)) {
+						theResults.putBoolean(theRowFieldName, (Boolean) theRowField.get(this));
+					} else if (theRowFieldType.equals(Character.TYPE)) {
+						theResults.putChar(theRowFieldName, (Character) theRowField.get(this));
+					} else if (theRowFieldType.equals(Byte.TYPE)) {
+						theResults.putByte(theRowFieldName, (Byte) theRowField.get(this));
+					} else if (theRowFieldType.equals(Short.TYPE)) {
+						theResults.putShort(theRowFieldName, (Short) theRowField.get(this));
+					}
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (NoSuchFieldException e) {
+					e.printStackTrace();
+				}
+			}
+			theResults.putParcelable("android.intent.extra.ORIGINATING_URI", getMyUri());
+			return theResults;
+		}
 
 		public Bundle toBundle() {
 			return toBundle(null);
 		}
 
-        public ContentValues toContentValues(boolean bOmitNulls) {
-            ContentValues theResults = new ContentValues();
-            for (String theColName : getColNamesFromMyContract()) {
-                //var names cannot have spaces in them like db column names, cnv to "_"
-                String theRowVarName = theColName.replace(" ","_");
-                Object theColValue;
-                try {
-                    Field theRowVarField = this.getClass().getField(theRowVarName);
-                    theColValue = theRowVarField.get(this);
-                    if (theColValue!=null || !bOmitNulls) {
-                        if (theColValue==null)
-                            theResults.putNull(theColName);
-                        else
-                        //ContentValues does not have a generic PUT method, so need to check types
-                        if (theRowVarField.getType() == String.class) {
-                            theResults.put(theRowVarName, (String) theColValue);
-                        } else if (theRowVarField.getType().equals(Integer.TYPE)) {
-                            theResults.put(theRowVarName, (Integer) theColValue);
-                        } else if (theRowVarField.getType().equals(Long.TYPE)) {
-                            theResults.put(theRowVarName, (Long) theColValue);
-                        } else if (theRowVarField.getType().equals(Float.TYPE)) {
-                            theResults.put(theRowVarName, (Float) theColValue);
-                        } else if (theRowVarField.getType().equals(Double.TYPE)) {
-                            theResults.put(theRowVarName, (Double) theColValue);
-                        } else if (theRowVarField.getType().equals(Boolean.TYPE)) {
-                            theResults.put(theRowVarName, (Boolean) theColValue);
-                        } else if (theRowVarField.getType().equals(Character.TYPE)) {
-                            theResults.put(theRowVarName, (String) theColValue);
-                        } else if (theRowVarField.getType().equals(Byte.TYPE)) {
-                            theResults.put(theRowVarName, (Byte) theColValue);
-                        } else if (theRowVarField.getType().equals(Short.TYPE)) {
-                            theResults.put(theRowVarName, (Short) theColValue);
-                        }
-                    }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                }
-            }
-            return theResults;
-        }
+		public ContentValues toContentValues(boolean bOmitNulls) {
+			ContentValues theResults = new ContentValues();
+			for (String theColName : getColNamesFromMyContract()) {
+				//inner loop vars used so multi-core processors with preditive branch
+				//  processing are not constrained by accessing a single var; results
+				//  in multiple loops being processed concurrently, thus enhancing speed
+				//  at the sacrifice of a bit of memory/garbage collecting
+				String theRowFieldName = cnvColNameToRowFieldName(theColName);
+				Field theRowField;
+				Object theColValue;
+				try {
+					theRowField = getRowField(cnvColNameToRowFieldName(theColName));
+					Class<?> theRowFieldType = theRowField.getType();
+					theColValue = theRowField.get(this);
+					if (theColValue!=null || !bOmitNulls) {
+						if (theColValue==null)
+							theResults.putNull(theColName);
+						else
+						//ContentValues does not have a generic PUT method, so need to check types
+						if (theRowFieldType.equals(String.class)) {
+							theResults.put(theRowFieldName, (String) theColValue);
+						} else if (theRowFieldType.equals(Integer.TYPE)) {
+							theResults.put(theRowFieldName, (Integer) theColValue);
+						} else if (theRowFieldType.equals(Long.TYPE)) {
+							theResults.put(theRowFieldName, (Long) theColValue);
+						} else if (theRowFieldType.equals(Float.TYPE)) {
+							theResults.put(theRowFieldName, (Float) theColValue);
+						} else if (theRowFieldType.equals(Double.TYPE)) {
+							theResults.put(theRowFieldName, (Double) theColValue);
+						} else if (theRowFieldType.equals(Boolean.TYPE)) {
+							theResults.put(theRowFieldName, (Boolean) theColValue);
+						} else if (theRowFieldType.equals(Character.TYPE)) {
+							theResults.put(theRowFieldName, (String) theColValue);
+						} else if (theRowFieldType.equals(Byte.TYPE)) {
+							theResults.put(theRowFieldName, (Byte) theColValue);
+						} else if (theRowFieldType.equals(Short.TYPE)) {
+							theResults.put(theRowFieldName, (Short) theColValue);
+						}
+					}
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (NoSuchFieldException e) {
+					e.printStackTrace();
+				}
+			}
+			return theResults;
+		}
 
-        /**
-         * Clear out all data and set to elements to NULL/0 where appropriate.
-         */
-        public void clear() {
-            for (String theColName : getColNamesFromMyContract()) {
-                //var names cannot have spaces in them like db column names, cnv to "_"
-                String theRowVarName = theColName.replace(" ","_");
-                int theColIdx;
-                try {
-                    Field theRowVarField = this.getClass().getField(theRowVarName);
-                    if (theRowVarField.getType().equals(Integer.TYPE)) {
-                        theRowVarField.set(this, 0);
-                    } else if (theRowVarField.getType().equals(Long.TYPE)) {
-                        theRowVarField.set(this, 0L);
-                    } else if (theRowVarField.getType().equals(Float.TYPE)) {
-                        theRowVarField.set(this, 0.0f);
-                    } else if (theRowVarField.getType().equals(Double.TYPE)) {
-                        theRowVarField.set(this, 0.0d);
-                    } else if (theRowVarField.getType().equals(Boolean.TYPE)) {
-                        theRowVarField.set(this,false);
-                    } else if (theRowVarField.getType().equals(Character.TYPE)) {
-                        theRowVarField.set(this, '\u0000');
-                    } else if (theRowVarField.getType().equals(Byte.TYPE)) {
-                        theRowVarField.set(this, 0);
-                    } else if (theRowVarField.getType().equals(Short.TYPE)) {
-                        theRowVarField.set(this, 0);
-                    } else
-                        theRowVarField.set(this, null);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+		/**
+		 * Clear out all data and set to elements to NULL/0 where appropriate.
+		 */
+		public void clear() {
+			for (String theColName : getColNamesFromMyContract()) {
+				//inner loop vars used so multi-core processors with preditive branch
+				//  processing are not constrained by accessing a single var; results
+				//  in multiple loops being processed concurrently, thus enhancing speed
+				//  at the sacrifice of a bit of memory/garbage collecting
+				Field theRowField;
+				try {
+					theRowField = getRowField(cnvColNameToRowFieldName(theColName));
+					Class<?> theRowFieldType = theRowField.getType();
+					if (theRowFieldType.equals(String.class)) {
+						setRowField(theRowField, null);
+					} else if (theRowFieldType.equals(Integer.TYPE)) {
+						setRowField(theRowField, 0);
+					} else if (theRowFieldType.equals(Long.TYPE)) {
+						setRowField(theRowField, 0L);
+					} else if (theRowFieldType.equals(Float.TYPE)) {
+						setRowField(theRowField, 0.0f);
+					} else if (theRowFieldType.equals(Double.TYPE)) {
+						setRowField(theRowField, 0.0d);
+					} else if (theRowFieldType.equals(Boolean.TYPE)) {
+						setRowField(theRowField, false);
+					} else if (theRowFieldType.equals(Character.TYPE)) {
+						setRowField(theRowField, '\u0000');
+					} else if (theRowFieldType.equals(Byte.TYPE)) {
+						setRowField(theRowField, 0);
+					} else if (theRowFieldType.equals(Short.TYPE)) {
+						setRowField(theRowField, 0);
+					} else
+						setRowField(theRowField, null);
+				} catch (NoSuchFieldException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
-        /**
-         * Insert this data into the RowVar's table.
-         * @param aContext - context to use.
-         * @param aContentResolver - ContentResolver to use (unit tests use a mock one).
-         * @return Returns the Uri of the inserted data.
-         */
-        public Uri insertIntoTable(Context aContext, ContentResolver aContentResolver) {
-            ContentValues aValues = toContentValues(true);
-            Uri theNewRecUri = aContentResolver.insert(getMyTableUri(), aValues);
-            if (theNewRecUri != null)
-                Log.d(TAG, aContext.getString(R.string.sql_contract_provider_msg_insert_success,
-                        theNewRecUri));
-            return theNewRecUri;
-        }
+		/**
+		 * Insert this data into the RowVar's table.
+		 * @param aContext - context to use.
+		 * @param aContentResolver - ContentResolver to use (unit tests use a mock one).
+		 * @return Returns the Uri of the inserted data.
+		 */
+		public Uri insertIntoTable(Context aContext, ContentResolver aContentResolver) {
+			ContentValues aValues = toContentValues(true);
+			Uri theNewRecUri = aContentResolver.insert(getMyTableUri(), aValues);
+			if (theNewRecUri != null)
+				Log.d(TAG, aContext.getString(R.string.sql_contract_provider_msg_insert_success,
+						theNewRecUri));
+			return theNewRecUri;
+		}
 
-        /**
-         * Insert this data into the RowVar's table.
-         * @param aContext - context to use.
-         * @return Returns the Uri of the inserted data.
-         */
-        public Uri insertIntoTable(Context aContext) {
-            return insertIntoTable(aContext, aContext.getContentResolver());
-        }
+		/**
+		 * Insert this data into the RowVar's table.
+		 * @param aContext - context to use.
+		 * @return Returns the Uri of the inserted data.
+		 */
+		public Uri insertIntoTable(Context aContext) {
+			return insertIntoTable(aContext, aContext.getContentResolver());
+		}
 
-        /**
-         * Retrieve a specific row in RowVar's table.
-         * @param aContext - context to use.
-         * @param aIDstring - string value of the table's ID field to find and load.
-         * @param aContentResolver - ContentResolver to use (unit tests use a mock one).
-         * @return Returns TRUE on successful query and data load.
-         */
-        public boolean getSingleRow(Context aContext, String aIDstring, ContentResolver aContentResolver) {
-            Cursor theEntryCursor = null;
-            try {
-                Uri theUri = myTableInfo.getContentUri(aIDstring);
-                theEntryCursor = aContentResolver.query(theUri,null,null,null,null);
-                if (theEntryCursor != null && theEntryCursor.moveToFirst()) {
-                    setFromCursor(theEntryCursor);
-                    return true;
-                }
-            }
-            finally {
-                if (theEntryCursor!=null && !theEntryCursor.isClosed())
-                    theEntryCursor.close();
-            }
-            return false;
-        }
+		/**
+		 * Retrieve a specific row in RowVar's table.
+		 * @param aContext - context to use.
+		 * @param aIDstring - string value of the table's ID field to find and load.
+		 * @param aContentResolver - ContentResolver to use (unit tests use a mock one).
+		 * @return Returns TRUE on successful query and data load.
+		 */
+		public boolean getSingleRow(Context aContext, String aIDstring, ContentResolver aContentResolver) {
+			Cursor theEntryCursor = null;
+			try {
+				if (aContentResolver==null)
+					aContentResolver = aContext.getContentResolver();
+				Uri theUri = myTableInfo.getContentUri(aIDstring);
+				theEntryCursor = aContentResolver.query(theUri,null,null,null,null);
+				if (theEntryCursor != null && theEntryCursor.moveToFirst()) {
+					setFromCursor(theEntryCursor);
+					return true;
+				}
+			}
+			finally {
+				if (theEntryCursor!=null && !theEntryCursor.isClosed())
+					theEntryCursor.close();
+			}
+			return false;
+		}
 
-        /**
-         * Retrieve a specific row in RowVar's table.
-         * @param aContext - context to use.
-         * @param aIDstring - string value of the table's ID field to find and load.
-         * @return Returns TRUE on successful query and data load.
-         */
-        public boolean getSingleRow(Context aContext, String aIDstring) {
-            return getSingleRow(aContext, aIDstring, aContext.getContentResolver());
-        }
+		/**
+		 * Retrieve a specific row in RowVar's table.
+		 * @param aContext - context to use.
+		 * @param aIDstring - string value of the table's ID field to find and load.
+		 * @return Returns TRUE on successful query and data load.
+		 */
+		public boolean getSingleRow(Context aContext, String aIDstring) {
+			return getSingleRow(aContext, aIDstring, null);
+		}
 
-        /**
-         * Delete a specified ID from this RowVar's table.
-         * @param aContext - context to use.
-         * @param aIDstring - string value of the table's ID field to find and delete.
-         * @param aContentResolver - ContentResolver to use (unit tests use a mock one).
-         * @return Returns TRUE on successful delete, FALSE on fail or nothing to delete.
-         */
-        public boolean removeSingleRow(Context aContext, String aIDstring, ContentResolver aContentResolver){
-            Uri theUri = myTableInfo.getContentUri(aIDstring);
-            int theDelResult = aContentResolver.delete(theUri, null, null);
-            Log.d(TAG, aContext.getString(R.string.sql_contract_provider_msg_delete_result,theUri, theDelResult));
-            return (theDelResult>0);
-        }
+		/**
+		 * Delete a specified ID from this RowVar's table.
+		 * @param aContext - context to use.
+		 * @param aIDstring - string value of the table's ID field to find and delete.
+		 * @param aContentResolver - ContentResolver to use (unit tests use a mock one).
+		 * @return Returns TRUE on successful delete, FALSE on fail or nothing to delete.
+		 */
+		public boolean removeSingleRow(Context aContext, String aIDstring, ContentResolver aContentResolver){
+			if (aContentResolver==null)
+				aContentResolver = aContext.getContentResolver();
+			Uri theUri = myTableInfo.getContentUri(aIDstring);
+			int theDelResult = aContentResolver.delete(theUri, null, null);
+			Log.d(TAG, aContext.getString(R.string.sql_contract_provider_msg_delete_result,theUri, theDelResult));
+			return (theDelResult>0);
+		}
 
-        /**
-         * Delete a specified ID from this RowVar's table.
-         * @param aContext - context to use.
-         * @param aIDstring - string value of the table's ID field to find and delete.
-         * @return Returns TRUE on successful delete, FALSE on fail or nothing to delete.
-         */
-        public boolean removeSingleRow(Context aContext, String aIDstring){
-            return removeSingleRow(aContext, aIDstring, aContext.getContentResolver());
-        }
+		/**
+		 * Delete a specified ID from this RowVar's table.
+		 * @param aContext - context to use.
+		 * @param aIDstring - string value of the table's ID field to find and delete.
+		 * @return Returns TRUE on successful delete, FALSE on fail or nothing to delete.
+		 */
+		public boolean removeSingleRow(Context aContext, String aIDstring){
+			return removeSingleRow(aContext, aIDstring, null);
+		}
 
-        /**
-         * Update a record in RowVar's table using the RowVar's data.
-         * @param aContext - context to use.
-         * @param aContentResolver - ContentResolver to use (unit tests use a mock one).
-         * @return Returns TRUE on successful update.
-         */
-        public boolean updateSingleRow(Context aContext, ContentResolver aContentResolver) {
-            ContentValues theValues = toContentValues(false);
-            return (aContentResolver.update(getMyUri(), theValues, null, null)>0);
-        }
-        /**
-         * Update a record in RowVar's table using the RowVar's data.
-         * @param aContext - context to use.
-         * @return Returns TRUE on successful update.
-         */
-        public boolean updateSingleRow(Context aContext) {
-            return updateSingleRow(aContext, aContext.getContentResolver());
-        }
+		/**
+		 * Update a record in RowVar's table using the RowVar's data.
+		 * @param aContext - context to use.
+		 * @param aContentResolver - ContentResolver to use (unit tests use a mock one).
+		 * @return Returns TRUE on successful update.
+		 */
+		public boolean updateSingleRow(Context aContext, ContentResolver aContentResolver) {
+			if (aContentResolver==null)
+				aContentResolver = aContext.getContentResolver();
+			ContentValues theValues = toContentValues(false);
+			return (aContentResolver.update(getMyUri(), theValues, null, null)>0);
+		}
+		/**
+		 * Update a record in RowVar's table using the RowVar's data.
+		 * @param aContext - context to use.
+		 * @return Returns TRUE on successful update.
+		 */
+		public boolean updateSingleRow(Context aContext) {
+			return updateSingleRow(aContext, null);
+		}
 
-    }
+	}
 
 }
