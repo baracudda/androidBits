@@ -287,7 +287,7 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 	 * R.xml if it fails to find it there.<br>
 	 * <br>
 	 * Added benefit is that these PreferenceFragments will be auto-allowed when using a
-	 * descendent of AppPreferenceBase and targetting API 19+.
+	 * descendant of AppPreferenceBase and targeting API 19+.
 	 */
 	/* supress Unused */
 	@TargetApi(11)
