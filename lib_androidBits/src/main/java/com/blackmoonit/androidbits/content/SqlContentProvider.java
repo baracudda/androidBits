@@ -1,7 +1,5 @@
 package com.blackmoonit.androidbits.content;
 
-import java.util.Arrays;
-
 import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -111,7 +109,8 @@ public abstract class SqlContentProvider extends ContentProvider {
 		if (aSelectionArgs==null || aSelectionArgs.length<1) {
 			return new String[] { aArgToAppend };
 		} else {
-		    String[] theResult = Arrays.copyOf(aSelectionArgs, aSelectionArgs.length+1);
+		    String[] theResult = new String[aSelectionArgs.length+1];
+		    System.arraycopy(aSelectionArgs, 0, theResult, 0, aSelectionArgs.length);
 		    theResult[aSelectionArgs.length] = aArgToAppend;
 		    return theResult;
 		}

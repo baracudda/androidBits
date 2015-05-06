@@ -496,7 +496,7 @@ public class ProviderContract {
 
 	static public abstract class RowVar {
 		public final TableProviderInfo myTableInfo;
-		public long _id = 0L; // used for _ID (which is a longint)
+		public Long _id = null; // used for _ID (which is a longint)
 
 		public RowVar(TableProviderInfo aTableInfo) {
 			myTableInfo = aTableInfo;
