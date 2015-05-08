@@ -514,7 +514,10 @@ public class ProviderContract {
 			String myIdFieldName = myTableInfo.getTableContract().getIdFieldName();
 			String theIdAsStr = null;
 			try {
-				theIdAsStr = String.valueOf(this.getClass().getField(myIdFieldName).get(this));
+				Object theValue = this.getClass().getField(myIdFieldName).get(this);
+				//need the 2 step approach because String.valueOf(null) == "null" which isn't NULl.
+				if (theValue!=null)
+					theIdAsStr = String.valueOf(theValue);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 				Log.wtf(TAG,String.format(Locale.ENGLISH,
@@ -526,10 +529,7 @@ public class ProviderContract {
 						"The ID field returned by getIdFieldName(), %s, does not exist in RowVar descendant %s.",
 						myIdFieldName,this.getClass().getCanonicalName()));
 			}
-			if (theIdAsStr!=null)
-				return myTableInfo.getContentUri(theIdAsStr);
-			else
-				return null;
+			return myTableInfo.getContentUri(theIdAsStr);
 		}
 
 		public ArrayList<String> getColNamesFromMyContract() {
