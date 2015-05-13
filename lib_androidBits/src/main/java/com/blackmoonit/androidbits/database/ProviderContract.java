@@ -492,6 +492,27 @@ public class ProviderContract {
 			return this.myColNamesFromMyContract;
 		}
 
+		public <T extends RowVar> T newRowVar(Context aContext, String aIDstring) {
+			RowVar theResult = getTableContract().newRowVar();
+			if (aIDstring!=null) {
+				theResult.getSingleRow(aContext, aIDstring);
+			}
+			return theResult.asMyType();
+		}
+
+		public <T extends RowVar> T newRowVar(Context aContext, Long aID) {
+			RowVar theResult = getTableContract().newRowVar();
+			if (aID!=null) {
+				theResult.getSingleRow(aContext, aID);
+			}
+			return theResult.asMyType();
+		}
+
+		public <T extends RowVar> T newRowVar(Cursor aCursor) {
+			return getTableContract().newRowVar().setFromCursor(aCursor);
+		}
+
+
 	}
 
 	static public abstract class RowVar {
@@ -500,6 +521,10 @@ public class ProviderContract {
 
 		public RowVar(TableProviderInfo aTableInfo) {
 			myTableInfo = aTableInfo;
+		}
+
+		public <T extends RowVar> T asMyType() {
+			return (T)this;
 		}
 
 		public Uri getMyTableUri() {
@@ -545,7 +570,7 @@ public class ProviderContract {
 			return getClass().getField(aRowFieldName);
 		}
 
-		protected void setRowField(Field aRowField, Object aRowFieldValue) {
+		protected <T extends RowVar> T setRowField(Field aRowField, Object aRowFieldValue) {
 			try {
 				aRowField.set(this, aRowFieldValue);
 			} catch (IllegalAccessException e) {
@@ -553,6 +578,7 @@ public class ProviderContract {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
+			return (T)this;
 		}
 
 		public Object getColValue(String aColName) throws IllegalArgumentException {
@@ -570,16 +596,16 @@ public class ProviderContract {
 			return null;
 		}
 
-		public RowVar setColValue(String aColName, Object aColValue) {
+		public <T extends RowVar> T setColValue(String aColName, Object aColValue) {
 			try {
 				setRowField(getRowField(cnvColNameToRowFieldName(aColName)), aColValue);
 			} catch (NoSuchFieldException e) {
 				e.printStackTrace();
 			}
-			return this;
+			return (T)this;
 		}
 
-		public RowVar setFromCursor(Cursor aCursor) {
+		public <T extends RowVar> T setFromCursor(Cursor aCursor) {
 			if (aCursor != null) {
 				for (String theColName : getColNamesFromMyContract()) {
 					//inner loop vars used so multi-core processors with preditive branch
@@ -621,10 +647,10 @@ public class ProviderContract {
 					}
 				}
 			}
-			return this;
+			return (T)this;
 		}
 
-		public RowVar setFromBundle(Bundle aBundle) {
+		public <T extends RowVar> T setFromBundle(Bundle aBundle) {
 			if (aBundle!=null) {
 				for (String theColName : getColNamesFromMyContract()) {
 					//inner loop vars used so multi-core processors with preditive branch
@@ -640,13 +666,13 @@ public class ProviderContract {
 					}
 				}
 			}
-			return this;
+			return (T)this;
 		}
 
-		public RowVar setFromIntent(Intent aIntent) {
+		public <T extends RowVar> T setFromIntent(Intent aIntent) {
 			if (aIntent!=null)
 				setFromBundle(aIntent.getExtras());
-			return this;
+			return (T)this;
 		}
 
 		public Bundle toBundle(Bundle aBundle) {
@@ -746,7 +772,7 @@ public class ProviderContract {
 		/**
 		 * Clear out all data and set to elements to NULL/0 where appropriate.
 		 */
-		public void clear() {
+		public <T extends RowVar> T clear() {
 			for (String theColName : getColNamesFromMyContract()) {
 				//inner loop vars used so multi-core processors with preditive branch
 				//  processing are not constrained by accessing a single var; results
@@ -780,6 +806,7 @@ public class ProviderContract {
 					e.printStackTrace();
 				}
 			}
+			return (T)this;
 		}
 
 		/**
@@ -840,6 +867,43 @@ public class ProviderContract {
 		 */
 		public boolean getSingleRow(Context aContext, String aIDstring) {
 			return getSingleRow(aContext, aIDstring, null);
+		}
+
+		/**
+		 * Retrieve a specific row by the _ID value in RowVar's table.
+		 * @param aContext - context to use.
+		 * @param aID - the _ID of the record to retrieve.
+		 * @param aContentResolver - ContentResolver to use (unit tests use a mock one).
+		 * @return Returns TRUE on successful query and data load.
+		 */
+		public boolean getSingleRow(Context aContext, Long aID, ContentResolver aContentResolver) {
+			Cursor theEntryCursor = null;
+			try {
+				if (aContentResolver==null)
+					aContentResolver = aContext.getContentResolver();
+				theEntryCursor = aContentResolver.query(getMyTableUri(), null,
+						Table._ID + "=?",
+						new String[] { String.valueOf(aID) }, null);
+				if (theEntryCursor != null && theEntryCursor.moveToFirst()) {
+					setFromCursor(theEntryCursor);
+					return true;
+				}
+			}
+			finally {
+				if (theEntryCursor!=null && !theEntryCursor.isClosed())
+					theEntryCursor.close();
+			}
+			return false;
+		}
+
+		/**
+		 * Retrieve a specific row by the _ID value in RowVar's table.
+		 * @param aContext - context to use.
+		 * @param aID - the _ID of the record to retrieve.
+		 * @return Returns TRUE on successful query and data load.
+		 */
+		public boolean getSingleRow(Context aContext, Long aID) {
+			return getSingleRow(aContext, aID, null);
 		}
 
 		/**
