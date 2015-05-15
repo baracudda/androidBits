@@ -516,7 +516,7 @@ public class ProviderContract {
 	}
 
 	static public abstract class RowVar {
-		public final TableProviderInfo myTableInfo;
+		protected final TableProviderInfo myTableInfo;
 		public Long _id = null; // used for _ID (which is a longint)
 
 		public RowVar(TableProviderInfo aTableInfo) {
@@ -525,6 +525,10 @@ public class ProviderContract {
 
 		public <T extends RowVar> T asMyType() {
 			return (T)this;
+		}
+
+		public TableProviderInfo getMyTableInfo() {
+			return myTableInfo;
 		}
 
 		public Uri getMyTableUri() {
@@ -622,23 +626,23 @@ public class ProviderContract {
 							//Cursor does not have a generic GET method, so need to check types
 							if (theRowFieldType.equals(String.class)) {
 								setRowField(theRowField, aCursor.getString(theColIdx));
-							} else if (theRowFieldType.equals(Integer.TYPE)) {
+							} else if (theRowFieldType.equals(Integer.TYPE) || theRowFieldType==Integer.class) {
 								setRowField(theRowField, aCursor.getInt(theColIdx));
-							} else if (theRowFieldType.equals(Long.TYPE)) {
+							} else if (theRowFieldType.equals(Long.TYPE) || theRowFieldType==Long.class) {
 								setRowField(theRowField, aCursor.getLong(theColIdx));
-							} else if (theRowFieldType.equals(Float.TYPE)) {
+							} else if (theRowFieldType.equals(Float.TYPE) || theRowFieldType==Float.class) {
 								setRowField(theRowField, aCursor.getFloat(theColIdx));
-							} else if (theRowFieldType.equals(Double.TYPE)) {
+							} else if (theRowFieldType.equals(Double.TYPE) || theRowFieldType==Double.class) {
 								setRowField(theRowField, aCursor.getDouble(theColIdx));
-							} else if (theRowFieldType.equals(Boolean.TYPE)) {
+							} else if (theRowFieldType.equals(Boolean.TYPE) || theRowFieldType==Boolean.class) {
 								setRowField(theRowField, (aCursor.getInt(theColIdx)>0));
-							} else if (theRowFieldType.equals(Character.TYPE)) {
+							} else if (theRowFieldType.equals(Character.TYPE) || theRowFieldType==Character.class) {
 								String s = aCursor.getString(theColIdx);
 								if (s!=null && s.length()>0)
 									setRowField(theRowField, s.charAt(0));
-							} else if (theRowFieldType.equals(Byte.TYPE)) {
+							} else if (theRowFieldType.equals(Byte.TYPE) || theRowFieldType==Byte.class) {
 								setRowField(theRowField,  Byte.parseByte(aCursor.getString(theColIdx)));
-							} else if (theRowFieldType.equals(Short.TYPE)) {
+							} else if (theRowFieldType.equals(Short.TYPE) || theRowFieldType==Short.class) {
 								setRowField(theRowField,  aCursor.getShort(theColIdx));
 							}
 						}
@@ -690,21 +694,21 @@ public class ProviderContract {
 					//Bundle does not have a generic PUT method, so need to check types
 					if (theRowFieldType.equals(String.class)) {
 						theResults.putString(theRowFieldName, (String) theRowField.get(this));
-					} else if (theRowFieldType.equals(Integer.TYPE)) {
+					} else if (theRowFieldType.equals(Integer.TYPE) || theRowFieldType==Integer.class) {
 						theResults.putInt(theRowFieldName, (Integer) theRowField.get(this));
-					} else if (theRowFieldType.equals(Long.TYPE)) {
+					} else if (theRowFieldType.equals(Long.TYPE) || theRowFieldType==Long.class) {
 						theResults.putLong(theRowFieldName, (Long) theRowField.get(this));
-					} else if (theRowFieldType.equals(Float.TYPE)) {
+					} else if (theRowFieldType.equals(Float.TYPE) || theRowFieldType==Float.class) {
 						theResults.putFloat(theRowFieldName, (Float) theRowField.get(this));
-					} else if (theRowFieldType.equals(Double.TYPE)) {
+					} else if (theRowFieldType.equals(Double.TYPE) || theRowFieldType==Double.class) {
 						theResults.putDouble(theRowFieldName, (Double) theRowField.get(this));
-					} else if (theRowFieldType.equals(Boolean.TYPE)) {
+					} else if (theRowFieldType.equals(Boolean.TYPE) || theRowFieldType==Boolean.class) {
 						theResults.putBoolean(theRowFieldName, (Boolean) theRowField.get(this));
-					} else if (theRowFieldType.equals(Character.TYPE)) {
+					} else if (theRowFieldType.equals(Character.TYPE) || theRowFieldType==Character.class) {
 						theResults.putChar(theRowFieldName, (Character) theRowField.get(this));
-					} else if (theRowFieldType.equals(Byte.TYPE)) {
+					} else if (theRowFieldType.equals(Byte.TYPE) || theRowFieldType==Byte.class) {
 						theResults.putByte(theRowFieldName, (Byte) theRowField.get(this));
-					} else if (theRowFieldType.equals(Short.TYPE)) {
+					} else if (theRowFieldType.equals(Short.TYPE) || theRowFieldType==Short.class) {
 						theResults.putShort(theRowFieldName, (Short) theRowField.get(this));
 					}
 				} catch (IllegalAccessException e) {
@@ -742,21 +746,21 @@ public class ProviderContract {
 						//ContentValues does not have a generic PUT method, so need to check types
 						if (theRowFieldType.equals(String.class)) {
 							theResults.put(theRowFieldName, (String) theColValue);
-						} else if (theRowFieldType.equals(Integer.TYPE)) {
+						} else if (theRowFieldType.equals(Integer.TYPE) || theRowFieldType==Integer.class) {
 							theResults.put(theRowFieldName, (Integer) theColValue);
-						} else if (theRowFieldType.equals(Long.TYPE)) {
+						} else if (theRowFieldType.equals(Long.TYPE) || theRowFieldType==Long.class) {
 							theResults.put(theRowFieldName, (Long) theColValue);
-						} else if (theRowFieldType.equals(Float.TYPE)) {
+						} else if (theRowFieldType.equals(Float.TYPE) || theRowFieldType==Float.class) {
 							theResults.put(theRowFieldName, (Float) theColValue);
-						} else if (theRowFieldType.equals(Double.TYPE)) {
+						} else if (theRowFieldType.equals(Double.TYPE) || theRowFieldType==Double.class) {
 							theResults.put(theRowFieldName, (Double) theColValue);
-						} else if (theRowFieldType.equals(Boolean.TYPE)) {
+						} else if (theRowFieldType.equals(Boolean.TYPE) || theRowFieldType==Boolean.class) {
 							theResults.put(theRowFieldName, (Boolean) theColValue);
-						} else if (theRowFieldType.equals(Character.TYPE)) {
+						} else if (theRowFieldType.equals(Character.TYPE) || theRowFieldType==Character.class) {
 							theResults.put(theRowFieldName, (String) theColValue);
-						} else if (theRowFieldType.equals(Byte.TYPE)) {
+						} else if (theRowFieldType.equals(Byte.TYPE) || theRowFieldType==Byte.class) {
 							theResults.put(theRowFieldName, (Byte) theColValue);
-						} else if (theRowFieldType.equals(Short.TYPE)) {
+						} else if (theRowFieldType.equals(Short.TYPE) || theRowFieldType==Short.class) {
 							theResults.put(theRowFieldName, (Short) theColValue);
 						}
 					}
@@ -784,21 +788,21 @@ public class ProviderContract {
 					Class<?> theRowFieldType = theRowField.getType();
 					if (theRowFieldType.equals(String.class)) {
 						setRowField(theRowField, null);
-					} else if (theRowFieldType.equals(Integer.TYPE)) {
+					} else if (theRowFieldType.equals(Integer.TYPE) || theRowFieldType==Integer.class) {
 						setRowField(theRowField, 0);
-					} else if (theRowFieldType.equals(Long.TYPE)) {
+					} else if (theRowFieldType.equals(Long.TYPE) || theRowFieldType==Long.class) {
 						setRowField(theRowField, 0L);
-					} else if (theRowFieldType.equals(Float.TYPE)) {
+					} else if (theRowFieldType.equals(Float.TYPE) || theRowFieldType==Float.class) {
 						setRowField(theRowField, 0.0f);
-					} else if (theRowFieldType.equals(Double.TYPE)) {
+					} else if (theRowFieldType.equals(Double.TYPE) || theRowFieldType==Double.class) {
 						setRowField(theRowField, 0.0d);
-					} else if (theRowFieldType.equals(Boolean.TYPE)) {
+					} else if (theRowFieldType.equals(Boolean.TYPE) || theRowFieldType==Boolean.class) {
 						setRowField(theRowField, false);
-					} else if (theRowFieldType.equals(Character.TYPE)) {
+					} else if (theRowFieldType.equals(Character.TYPE) || theRowFieldType==Character.class) {
 						setRowField(theRowField, '\u0000');
-					} else if (theRowFieldType.equals(Byte.TYPE)) {
+					} else if (theRowFieldType.equals(Byte.TYPE) || theRowFieldType==Byte.class) {
 						setRowField(theRowField, 0);
-					} else if (theRowFieldType.equals(Short.TYPE)) {
+					} else if (theRowFieldType.equals(Short.TYPE) || theRowFieldType==Short.class) {
 						setRowField(theRowField, 0);
 					} else
 						setRowField(theRowField, null);
@@ -942,6 +946,10 @@ public class ProviderContract {
 			if (aContentResolver==null)
 				aContentResolver = aContext.getContentResolver();
 			ContentValues theValues = toContentValues(false);
+			//do not update ID columns
+			theValues.remove(BaseColumns._ID);
+			//do not update primary IdField either
+			theValues.remove(myTableInfo.mTableContract.getIdFieldName());
 			return (aContentResolver.update(getMyUri(), theValues, null, null)>0);
 		}
 		/**
