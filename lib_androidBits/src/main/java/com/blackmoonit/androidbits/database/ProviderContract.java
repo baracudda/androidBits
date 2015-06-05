@@ -517,6 +517,7 @@ public class ProviderContract {
 
 	static public abstract class RowVar {
 		protected final TableProviderInfo myTableInfo;
+		protected final boolean bLogInsAndDel = false;
 		public Long _id = null; // used for _ID (which is a longint)
 
 		public RowVar(TableProviderInfo aTableInfo) {
@@ -822,7 +823,7 @@ public class ProviderContract {
 		public Uri insertIntoTable(Context aContext, ContentResolver aContentResolver) {
 			ContentValues aValues = toContentValues(true);
 			Uri theNewRecUri = aContentResolver.insert(getMyTableUri(), aValues);
-			if (theNewRecUri != null)
+			if (bLogInsAndDel && theNewRecUri != null)
 				Log.d(TAG, aContext.getString(R.string.sql_contract_provider_msg_insert_success,
 						theNewRecUri));
 			return theNewRecUri;
@@ -922,7 +923,9 @@ public class ProviderContract {
 				aContentResolver = aContext.getContentResolver();
 			Uri theUri = myTableInfo.getContentUri(aIDstring);
 			int theDelResult = aContentResolver.delete(theUri, null, null);
-			Log.d(TAG, aContext.getString(R.string.sql_contract_provider_msg_delete_result,theUri, theDelResult));
+			if (bLogInsAndDel)
+				Log.d(TAG, aContext.getString(R.string.sql_contract_provider_msg_delete_result,
+						theUri, theDelResult));
 			return (theDelResult>0);
 		}
 
