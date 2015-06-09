@@ -34,6 +34,7 @@ import com.blackmoonit.androidbits.net.ssl.CustomSSLTrustManager.SSLContextExcep
  *
  * @author Ryan Fischbach
  */
+@SuppressWarnings({"Convert2Diamond", "TryFinallyCanBeTryWithResources", "UnnecessaryLocalVariable", "UnusedReturnValue"})
 public class WebConn {
 	static private final String TAG = "androidBits."+WebConn.class.getSimpleName();
 	protected WeakReference<Context> mContext = null;
@@ -42,6 +43,7 @@ public class WebConn {
 	protected Uri mCAResource = null;
 	protected SSLContext mSSLContext = null;
 
+	@SuppressWarnings("CanBeFinal")
 	public String myUserAgent = null;
 	public Integer expect_spontaneous_packages = null; //should poll URL or not for incoming data.
 
@@ -49,10 +51,10 @@ public class WebConn {
 		static public final String EXTRA_URL = "webconn.url";
 		static public final String EXTRA_URL_BASIC_AUTH = "webconn.auth_key";
 		static public final String EXTRA_CUSTOM_CA_URI = "webconn.custom_ca_uri";
-		static public final String EXTRA_EXPECT_SPONTANEOUS_PACKGES = "webconn.expect_spontaneous_packages";
+		static public final String EXTRA_EXPECT_SPONTANEOUS_PACKAGES = "webconn.expect_spontaneous_packages";
 
-		static public int EXPECT_SPONTANEOUS_PACKGES_NEVER = 0;
-		static public int EXPECT_SPONTANEOUS_PACKGES_APP_SETTING = 1;
+		static public int EXPECT_SPONTANEOUS_PACKAGES_NEVER = 0;
+		static public int EXPECT_SPONTANEOUS_PACKAGES_APP_SETTING = 1;
 
 		public URL url = null;
 		public String auth_key = null;
@@ -91,7 +93,7 @@ public class WebConn {
 				if (theValue!=null)
 					setCustomCaUri((String)theValue);
 
-				theValue = aBundle.get(EXTRA_EXPECT_SPONTANEOUS_PACKGES);
+				theValue = aBundle.get(EXTRA_EXPECT_SPONTANEOUS_PACKAGES);
 				if (theValue!=null)
 					expect_spontaneous_packages = (Integer)theValue;
 			}
@@ -106,7 +108,7 @@ public class WebConn {
 				if (custom_ca_uri!=null)
 					theResults.putString(EXTRA_CUSTOM_CA_URI, custom_ca_uri.toString());
 				if (expect_spontaneous_packages!=null)
-					theResults.putInt(EXTRA_EXPECT_SPONTANEOUS_PACKGES, expect_spontaneous_packages);
+					theResults.putInt(EXTRA_EXPECT_SPONTANEOUS_PACKAGES, expect_spontaneous_packages);
 			}
 			return theResults;
 		}
@@ -122,7 +124,7 @@ public class WebConn {
 		}
 
 		public boolean isEmpty() {
-			return (url==null || "".equals(url));
+			return (url==null || "".equals(url.toString()));
 		}
 	}
 
@@ -389,8 +391,8 @@ public class WebConn {
 	 * @param aTypeOfObject - type of aObject so JSON conversion works.
 	 * @param aResultClass - resulting class JSON data is converted into.
 	 * @return Returns the class filled in with appropriate data or NULL on failure.
-	 * @see WebConn#uploadJson(java.net.URLConnection, Object, java.lang.reflect.Type)
-	 * @see WebConn#downloadJson(java.net.URLConnection, Class)
+	 * @see WebConn#jsonUpload(java.net.URLConnection, Object, java.lang.reflect.Type)
+	 * @see WebConn#jsonDownload(java.net.URLConnection, Class)
 	 */
 	public <T> T jsonParley(URLConnection aUrlConn, Object aObject, Type aTypeOfObject, Class<T> aResultClass) {
 		jsonUpload(aUrlConn, aObject, aTypeOfObject);
