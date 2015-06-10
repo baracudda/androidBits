@@ -126,7 +126,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 
 	/**
 	 * Call this method after creation to start protecting all code thereafter.
-	 * @Returns Return this object to allow chaining.
+	 * @return Return this object to allow chaining.
 	 */
 	public ReportAnExceptionHandler setup() {
 		checkSendLog();
@@ -210,7 +210,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 				aTrace.add("null (was "+mContextClassName+")");
 			else //no context to load strings, must use fixed string here.
 				aTrace.add("null (this context has been destroyed already)");
-		} else if (theContext!=null && theContext instanceof Activity) {
+		} else if (theContext instanceof Activity) {
 			Activity theAct = (Activity) theContext;
 			aTrace.add(theAct.getLocalClassName()+" ("+theAct.getTitle()+")");
 			if (theAct.getCallingActivity()!=null || theAct.getCallingPackage()!=null) {
@@ -218,17 +218,16 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 				if (theAct.getCallingActivity()!=null)
 					theTraceLine = theAct.getCallingActivity().toString();
 				else
-					theTraceLine = theAct.getCallingPackage().toString();
+					theTraceLine = theAct.getCallingPackage();
 				Intent theIntent = theAct.getIntent();
 				if (theIntent!=null) {
 					theTraceLine += " ("+theAct.getIntent().toString()+")";
 					Bundle theExtras = theIntent.getExtras();
 					if (theExtras!=null) {
-						Iterator<String>theExtraList = theExtras.keySet().iterator();
-						while (theExtraList.hasNext()) {
-							String thekey = theExtraList.next();
-							String theval = (theExtras.get(thekey)!=null)?theExtras.get(thekey).toString():"";
-							theTraceLine += ", ["+thekey+"=>"+theval+"]";
+						for (String theKey : theExtras.keySet()) {
+							String theVal = (theExtras.get(theKey) != null)
+									? theExtras.get(theKey).toString() : "";
+							theTraceLine += ", [" + theKey + "=>" + theVal + "]";
 						}
 					}
 				}
@@ -254,14 +253,12 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	 */
 	public String getDebugActivityTrace(Context aContext, List<CharSequence> anActivityTrace) {
 		String theResult = "";
-		Context theContext = aContext;
-		List<CharSequence> theActivityTrace = anActivityTrace;
-		if (theActivityTrace!=null && theActivityTrace.size()>0) {
-			theResult += theContext.getString(R.string.postmortem_report_act_trace_header)+"\n";
-			for (int i=0; i<theActivityTrace.size(); i++) {
-				theResult += Utils.formatStackTraceLine(i+1,theActivityTrace.get(i));
+		if (anActivityTrace !=null && anActivityTrace.size()>0) {
+			theResult += aContext.getString(R.string.postmortem_report_act_trace_header)+"\n";
+			for (int i=0; i< anActivityTrace.size(); i++) {
+				theResult += Utils.formatStackTraceLine(i+1, anActivityTrace.get(i));
 			}//for
-			theResult += theContext.getString(R.string.postmortem_report_act_trace_footer)+"\n";
+			theResult += aContext.getString(R.string.postmortem_report_act_trace_footer)+"\n";
 			theResult += "\n";
 		}
 		return theResult;
@@ -306,6 +303,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			try {
 				File theDebugFile = new File(theFilename);
 				if (theDebugFile.length() > 50000) {
+					//noinspection ResultOfMethodCallIgnored
 					theDebugFile.delete();
 				}
 				FileOutputStream theFile = theContext.openFileOutput(theFilename, Context.MODE_APPEND);
@@ -328,7 +326,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	protected void sendDebugReportToAuthor() {
 		Context theContext = getContext();
 		if (theContext!=null && this.bSendLog) {
-			String theLine = "";
+			String theLine;
 			String theTrace = "";
 			String theFilename = getExceptionReportFilename();
 			try {
@@ -418,7 +416,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	 * Utility function used by the report class, but may be useful for other reasons.
 	 */
 	static public class Utils {
-		private Utils() {}; //do not instantiate
+		private Utils() {} //do not instantiate
 
 		/**
 		 * Format used to display the stack number at beginning of line.
@@ -576,17 +574,18 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 		 * @param aBundle - bundle to dump to the log.
 		 */
 		static public void logDebugBundle(String aTag, Bundle aBundle) {
-			if (aBundle==null) {
+			if (aBundle!=null) {
+				ArrayList<String> theEntries = new ArrayList<String>(aBundle.size());
+				Iterator<String> theKeys = aBundle.keySet().iterator();
+				String theKey;
+				while (theKeys.hasNext()) {
+					theKey = theKeys.next();
+					theEntries.add(theKey + "=" + aBundle.get(theKey).toString());
+				}
+				logDebugTrace(aTag, theEntries.iterator());
+			} else {
 				Log.d(aTag,"= null");
 			}
-			ArrayList<String> theEntries = new ArrayList<String>(aBundle.size());
-			Iterator<String> theKeys = aBundle.keySet().iterator();
-			String theKey;
-			while (theKeys.hasNext()) {
-				theKey = theKeys.next();
-				theEntries.add(theKey+"="+aBundle.get(theKey).toString());
-			}
-			logDebugTrace(aTag,theEntries.iterator());
 		}
 
 	}
