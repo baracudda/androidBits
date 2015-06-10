@@ -24,6 +24,6 @@
 <string name="postmortem_report_act_trace_footer">----------------------------------------</string>
 
 <!-- MUST OVERRIDE THESE IN APP -->
-<string name="postmortem_report_email_recipients">my.feedback.email@examlple.com</string><!-- Separate multiple addresses with ";" -->
+<string name="postmortem_report_email_recipients">my.feedback.email@example.com</string><!-- Separate multiple addresses with ";" -->
 
 </resources>

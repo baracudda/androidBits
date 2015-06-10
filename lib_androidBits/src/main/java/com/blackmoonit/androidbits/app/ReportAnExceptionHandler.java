@@ -16,6 +16,7 @@ import com.blackmoonit.androidbits.R;
 import com.blackmoonit.androidbits.net.WebUtils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
@@ -303,6 +304,10 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			//save report to file
 			String theFilename = getExceptionReportFilename();
 			try {
+				File theDebugFile = new File(theFilename);
+				if (theDebugFile.length() > 50000) {
+					theDebugFile.delete();
+				}
 				FileOutputStream theFile = theContext.openFileOutput(theFilename, Context.MODE_APPEND);
 				theFile.write(aReport.getBytes());
 				theFile.close();
@@ -366,7 +371,14 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			String theBody = "\n"+theMsg+"\n\n"+aReport+"\n\n"+theMsg+"\n\n";
 			theIntent.putExtra(Intent.EXTRA_TEXT, theBody);
 
-			List<?> theList = theContext.getPackageManager().queryIntentActivities(theIntent,0);
+			List<?> theList;
+			try {
+				theList = theContext.getPackageManager().queryIntentActivities(theIntent, 0);
+			} catch (Exception ex) {
+				return true; //log file too big, will crash no matter what, delete it!
+			} catch (Error err) {
+				return true; //log file too big, will crash no matter what, delete it!
+			}
 			boolean hasSendRecipients = (theList!=null && theList.size()>0);
 			if (hasSendRecipients) {
 				theContext.startActivity(theIntent);
