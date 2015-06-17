@@ -1,11 +1,11 @@
 package com.blackmoonit.androidbits.concurrent;
 
+import android.app.Activity;
+
 import java.lang.ref.WeakReference;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-
-import android.app.Activity;
 
 /**
  * Sometimes interaction is required in the middle of a task. Automate the
@@ -31,7 +31,8 @@ public class ModalVar<V> {
 	 */
 	protected final ReentrantLock mCheckDecision = new ReentrantLock();
 	/**
-	 * Blocking condition that will block any read attempt until a {@link #setValue(V)} has been executed.
+	 * Blocking condition that will block any read attempt until a {@link #setValue(V)}
+	 * has been executed.
 	 */
 	protected final Condition mObtainDecision  = mCheckDecision.newCondition();
 	/**
@@ -39,22 +40,23 @@ public class ModalVar<V> {
 	 */
 	protected V mDecisionValue = null;
 	/**
-	 * When TRUE, will cause {@link #mDecisionValue to become NULL again after the first {@link #getValue()}
-	 * finishes.
+	 * When TRUE, will cause {@link #mDecisionValue to become NULL again after
+	 * the first {@link #getValue()} finishes.
 	 */
 	protected boolean bResetOnRead = false;
 	/**
-	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL. The event
-	 * will be run on the same thread as getValue().
+	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL.
+	 * The event will be run on the same thread as getValue().
 	 */
 	protected Runnable mOnObtainDecision = null;
 	/**
-	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL. The event
-	 * will be run on the UI thread.
+	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL.
+	 * The event will be run on the UI thread.
 	 */
 	protected Runnable mOnObtainDecisionUI = null;
 	/**
 	 * Event that fires on {@link #setValue(V aValue)}, after any waiting thread is signaled.
+	 * The event will only fire once the value changes from NULL to a non-null value
 	 * The event will be run on the same thread as setValue().
 	 */
 	protected Runnable mOnSetValue = null;
@@ -63,7 +65,6 @@ public class ModalVar<V> {
 	 * The event will be run on the UI thread.
 	 */
 	protected Runnable mOnSetValueUI = null;
-
 	/**
 	 * If a timeout is desired, set the TimeOut.UNITS.
 	 */
@@ -80,7 +81,6 @@ public class ModalVar<V> {
 	 * If a timeout is desired, optionally set the desired ModalVar value.
 	 */
 	public V mTimeOutValue = null;
-
 
 	/**
 	 * Default constructor, isResetOnRead is false.
@@ -108,64 +108,80 @@ public class ModalVar<V> {
 	}
 
 	/**
-	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL. The event
-	 * will be run on the same thread as getValue().
+	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL.
+	 * Useful if aValue needs to obtain its value from a background thread and maintain
+	 * that value over the course of a loop mechanism.
+	 * The event will be run on the same thread as getValue().
+	 * @return Returns the event handler Runnable that is being used.
 	 */
 	public Runnable getOnObtainValue() {
 		return mOnObtainDecision;
 	}
 
 	/**
-	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL. The event
-	 * will be run on the same thread as getValue().
+	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL.
+	 * Useful if aValue needs to obtain its value from a background thread and maintain
+	 * that value over the course of a loop mechanism.
+	 * The event will be run on the same thread as getValue().
 	 */
 	public void setOnObtainValue(Runnable aOnObtainValue) {
 		mOnObtainDecision = aOnObtainValue;
 	}
 
 	/**
-	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL. The event
-	 * will be run on the UI thread.
+	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL.
+	 * Useful if aValue needs to obtain its value from the user via a dialog and maintain
+	 * that value over the course of a loop mechanism.
+	 * The event will be run on the UI thread.
+	 * @return Returns the event handler Runnable that is being used.
 	 */
 	public Runnable getOnObtainValueUI() {
 		return mOnObtainDecisionUI;
 	}
 
 	/**
-	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL. The event
-	 * will be run on the UI thread.
+	 * Event that fires on {@link #getValue()} if {@link #mDecisionValue} is NULL.
+	 * Useful if aValue needs to obtain its value from the user via a dialog and maintain
+	 * that value over the course of a loop mechanism.
+	 * The event will be run on the UI thread.
 	 */
 	public void setOnObtainValueUI(Runnable aOnObtainValueUI) {
 		mOnObtainDecisionUI = aOnObtainValueUI;
 	}
 
 	/**
-	 * Event that fires on {@link #setValue(V aValue)} if {@link #mDecisionValue} is NULL. The event
-	 * will be run on the same thread as setValue().
+	 * Event that fires on {@link #setValue(V aValue)} if {@link #mDecisionValue} is NULL.
+	 * Useful if setting a value needs to fire off something to be done in the background.
+	 * The event will be run on the same thread as setValue().
+	 * @return Returns the event handler Runnable that is being used.
 	 */
 	public Runnable getOnSetValue() {
 		return mOnSetValue;
 	}
 
 	/**
-	 * Event that fires on {@link #setValue(V aValue)} if {@link #mDecisionValue} is NULL. The event
-	 * will be run on the same thread as setValue().
+	 * Event that fires on {@link #setValue(V aValue)} if {@link #mDecisionValue} is NULL.
+	 * Useful if setting a value needs to fire off something to be done in the background.
+	 * The event will be run on the same thread as setValue().
 	 */
 	public void setOnSetValue(Runnable aOnSetValue) {
 		mOnSetValue = aOnSetValue;
 	}
 
 	/**
-	 * Event that fires on {@link #setValue(V aValue)} if {@link #mDecisionValue} is NULL. The event
-	 * will be run on the UI thread.
+	 * Event that fires on {@link #setValue(V aValue)} if {@link #mDecisionValue} is NULL.
+	 * Useful if setting a value needs to fire off something to be done in the main UI.
+	 * The event will be run on the UI thread.
+	 * @return Returns the event handler Runnable that is being used.
 	 */
 	public Runnable getOnSetValueUI() {
 		return mOnSetValueUI;
 	}
 
 	/**
-	 * Event that fires on {@link #setValue(V aValue)} if {@link #mDecisionValue} is NULL. The event
-	 * will be run on the UI thread.
+	 * Event that fires on {@link #setValue(V aValue)} if {@link #mDecisionValue} is NULL.
+	 * Useful if setting a value needs to fire off something to be done in the main UI.
+	 * The event will be run on the UI thread.
 	 */
 	public void setOnSetValueUI(Runnable aOnSetValueUI) {
 		mOnSetValueUI = aOnSetValueUI;
@@ -194,12 +210,20 @@ public class ModalVar<V> {
 	 * for a new value to be set.
 	 */
 	public void reset() {
-		mDecisionValue = null;
+		setValue(null);
 	}
 
 	/**
-	 * Forces calling thread to wait until a value is obtained. If a value is already set, no waiting
-	 * occurs. NULL value only returned if thread was interrupted.
+	 * Checks to see if a getValue() would force a wait or not.
+	 * @return Returns TRUE if getValue() would return immediately.
+	 */
+	public boolean isValueSet() {
+		return (mDecisionValue!=null);
+	}
+
+	/**
+	 * Forces calling thread to wait until a value is obtained. If a value is already set,
+	 * no waiting occurs. NULL value only returned if thread was interrupted.
 	 * @return Returns the value if set, otherwise it blocks the thread until it is set.
 	 * NULL is returned if the thread has been interrupted.
 	 */
@@ -216,6 +240,8 @@ public class ModalVar<V> {
 						theAct.runOnUiThread(mOnObtainDecisionUI);
 				}
 			}
+
+			//await() will release the lock on mCheckDecision and sleep the current thread
 			//wait for value to be obtained
 			while (mDecisionValue==null) {
 				//false positive signalling may occur, so a while loop is used to be absolutely sure
@@ -243,19 +269,17 @@ public class ModalVar<V> {
 	}
 
 	/**
-	 * Sets the value of this variable and signals those waiting to read it.
-	 * @param aValue - value of the variable. Note that if the value is NULL, it will
-	 * cause a false positive and force a wait for another value to be set.
+	 * Sets the value to this parameter and signals those waiting to read it.
+	 * @param aValue - value to set. Note that if the value is NULL, it will
+	 * reset the ModalVar and not signal any waiting objects. Also, if the param
+	 * is equal to what is already set, nothing will be signaled and no events fired.
 	 */
 	public void setValue(V aValue) {
 		mCheckDecision.lock();
 		try {
-			boolean bValueWasNull = (mDecisionValue==null && aValue!=null);
-			mDecisionValue = aValue;
-			//signal a waiting reader thread
-			mObtainDecision.signal();
-			//fire the events if any were defined
-			if (bValueWasNull) {
+			if (aValue!=null && !aValue.equals(mDecisionValue)) {
+				mDecisionValue = aValue;
+				//fire the events if any were defined
 				if (mOnSetValue!=null)
 					mOnSetValue.run();
 				if (mOnSetValueUI!=null && wAct!=null) {
@@ -263,6 +287,10 @@ public class ModalVar<V> {
 					if (theAct!=null)
 						theAct.runOnUiThread(mOnSetValueUI);
 				}
+				//signal all waiting reader threads, if any
+				mObtainDecision.signalAll();
+			} else if (aValue==null) {
+				mDecisionValue = null;
 			}
 		} finally {
 			mCheckDecision.unlock();
@@ -270,13 +298,12 @@ public class ModalVar<V> {
 	}
 
 	/**
-	 * Determines if object O is a ModalVar and that its interval value type is class C.
-	 *
+	 * Determines if aTestObject is a ModalVar and that its interval value type is aValueClass.
 	 * @param aTestObject - object to test
 	 * @param aValueClass - class of ModalVar to test against
-	 * @return Returns TRUE iff o is an instanceof ModalVar&lt;c>
+	 * @return Returns TRUE iff aTestObject is an instanceof ModalVar&lt;aValueClass&gt;
 	 */
-	public static boolean isModalVar(Object aTestObject, Class<?> aValueClass) {
+	static public boolean isModalVar(Object aTestObject, Class<?> aValueClass) {
 		if (aTestObject instanceof ModalVar<?>) {
 			if (((ModalVar<?>)aTestObject).mDecisionValue!=null)
 				return ((ModalVar<?>)aTestObject).mDecisionValue.getClass().isAssignableFrom(aValueClass);
@@ -288,18 +315,13 @@ public class ModalVar<V> {
 
 	/**
 	 * Test and cast an object into the desired type if it is the correct type.
-	 * @param <V> - class of the ModalVar
 	 * @param aTestObject - object to test
 	 * @param aValueClass - class of ModalVar to test against
-	 * @return Returns aTestObject cast as ModalVar&lt;V> if they are the same type, otherwise NULL.
+	 * @return Returns aTestObject cast as ModalVar&lt;V&gt; if they are the same type, otherwise NULL.
 	 */
-	public static <V> ModalVar<V> castModalVar(Object aTestObject, Class<V> aValueClass) {
-		if (isModalVar(aTestObject,aValueClass)) {
-			@SuppressWarnings("unchecked")
-			ModalVar<V> theResult = (ModalVar<V>)aTestObject;
-			return theResult;
-		}
-		return null;
+	@SuppressWarnings("unchecked")
+	static public <V> ModalVar<V> castModalVar(Object aTestObject, Class<V> aValueClass) {
+		return (isModalVar(aTestObject,aValueClass)) ? (ModalVar<V>)aTestObject : null;
 	}
 
 }
