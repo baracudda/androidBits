@@ -123,9 +123,12 @@ public class ModalVar<V> {
 	 * Useful if aValue needs to obtain its value from a background thread and maintain
 	 * that value over the course of a loop mechanism.
 	 * The event will be run on the same thread as getValue().
+	 * @param aOnObtainValue - runnable to execute.
+	 * @return Returns "this" for chaining purposes.
 	 */
-	public void setOnObtainValue(Runnable aOnObtainValue) {
+	public ModalVar<V> setOnObtainValue(Runnable aOnObtainValue) {
 		mOnObtainDecision = aOnObtainValue;
+		return this;
 	}
 
 	/**
@@ -144,9 +147,12 @@ public class ModalVar<V> {
 	 * Useful if aValue needs to obtain its value from the user via a dialog and maintain
 	 * that value over the course of a loop mechanism.
 	 * The event will be run on the UI thread.
+	 * @param aOnObtainValueUI - runnable to execute on the UI thread.
+	 * @return Returns "this" for chaining purposes.
 	 */
-	public void setOnObtainValueUI(Runnable aOnObtainValueUI) {
+	public ModalVar<V> setOnObtainValueUI(Runnable aOnObtainValueUI) {
 		mOnObtainDecisionUI = aOnObtainValueUI;
+		return this;
 	}
 
 	/**
@@ -163,9 +169,12 @@ public class ModalVar<V> {
 	 * Event that fires on {@link #setValue(V aValue)} if {@link #mDecisionValue} is NULL.
 	 * Useful if setting a value needs to fire off something to be done in the background.
 	 * The event will be run on the same thread as setValue().
+	 * @param aOnSetValue - runnable to execute on the background thread when value gets set.
+	 * @return Returns "this" for chaining purposes.
 	 */
-	public void setOnSetValue(Runnable aOnSetValue) {
+	public ModalVar<V> setOnSetValue(Runnable aOnSetValue) {
 		mOnSetValue = aOnSetValue;
+		return this;
 	}
 
 	/**
@@ -182,9 +191,12 @@ public class ModalVar<V> {
 	 * Event that fires on {@link #setValue(V aValue)} if {@link #mDecisionValue} is NULL.
 	 * Useful if setting a value needs to fire off something to be done in the main UI.
 	 * The event will be run on the UI thread.
+	 * @param aOnSetValueUI - runnable to execute on the UI thread when value gets set.
+	 * @return Returns "this" for chaining purposes.
 	 */
-	public void setOnSetValueUI(Runnable aOnSetValueUI) {
+	public ModalVar<V> setOnSetValueUI(Runnable aOnSetValueUI) {
 		mOnSetValueUI = aOnSetValueUI;
+		return this;
 	}
 
 	/**
@@ -200,17 +212,21 @@ public class ModalVar<V> {
 	 * Sets the value for {@link #isResetOnRead()}.
 	 * @param aResetOnRead - boolean value
 	 * @see #isResetOnRead()
+	 * @return Returns "this" for chaining purposes.
 	 */
-	public void setResetOnRead(boolean aResetOnRead) {
+	public ModalVar<V> setResetOnRead(boolean aResetOnRead) {
 		bResetOnRead = aResetOnRead;
+		return this;
 	}
 
 	/**
 	 * Resets internal mechanisms to behave as if newly created again, causing it to wait
 	 * for a new value to be set.
+	 * @return Returns "this" for chaining purposes.
 	 */
-	public void reset() {
+	public ModalVar<V> reset() {
 		setValue(null);
+		return this;
 	}
 
 	/**
@@ -273,8 +289,9 @@ public class ModalVar<V> {
 	 * @param aValue - value to set. Note that if the value is NULL, it will
 	 * reset the ModalVar and not signal any waiting objects. Also, if the param
 	 * is equal to what is already set, nothing will be signaled and no events fired.
+	 * @return Returns "this" for chaining purposes.
 	 */
-	public void setValue(V aValue) {
+	public ModalVar<V> setValue(V aValue) {
 		mCheckDecision.lock();
 		try {
 			if (aValue!=null && !aValue.equals(mDecisionValue)) {
@@ -295,6 +312,7 @@ public class ModalVar<V> {
 		} finally {
 			mCheckDecision.unlock();
 		}
+		return this;
 	}
 
 	/**
