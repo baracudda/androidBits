@@ -38,9 +38,9 @@ public class ThreadTask extends ThreadInterruptable {
 	 * @param aTask - runnable task to perform once
 	 * @param aName - used to set the name the thread (debugger friendly!)
 	 * @param aPriority - sets the priority of the thread
-	 * @see Thread.MIN_PRIORITY MIN_PRIORITY = 1
-	 * @see Thread.NORM_PRIORITY NORM_PRIORITY = 5
-	 * @see Thread.MAX_PRIORITY MAX_PRIORITY = 10
+	 * @see Thread#MIN_PRIORITY MIN_PRIORITY = 1
+	 * @see Thread#NORM_PRIORITY NORM_PRIORITY = 5
+	 * @see Thread#MAX_PRIORITY MAX_PRIORITY = 10
 	 */
 	public ThreadTask(Runnable aTask, String aName, Integer aPriority) {
 		this(aTask);
