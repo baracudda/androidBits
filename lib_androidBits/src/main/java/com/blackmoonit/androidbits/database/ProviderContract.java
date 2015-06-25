@@ -540,14 +540,10 @@ public class ProviderContract {
 			return myTableInfo.getMIMEtypeForSingularResult();
 		}
 
-		public Uri getMyUri() {
+		public Object getMyIdValue() {
 			String myIdFieldName = myTableInfo.getTableContract().getIdFieldName();
-			String theIdAsStr = null;
 			try {
-				Object theValue = this.getClass().getField(myIdFieldName).get(this);
-				//need the 2 step approach because String.valueOf(null) == "null" which isn't NULl.
-				if (theValue!=null)
-					theIdAsStr = String.valueOf(theValue);
+				return this.getClass().getField(myIdFieldName).get(this);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 				Log.wtf(TAG,String.format(Locale.ENGLISH,
@@ -559,6 +555,13 @@ public class ProviderContract {
 						"The ID field returned by getIdFieldName(), %s, does not exist in RowVar descendant %s.",
 						myIdFieldName,this.getClass().getCanonicalName()));
 			}
+			return null;
+		}
+
+		public Uri getMyUri() {
+			Object theValue = getMyIdValue();
+			//String.valueOf(null) == "null" which isn't NULL.
+			String theIdAsStr = (theValue!=null) ? String.valueOf(theValue) : null;
 			return myTableInfo.getContentUri(theIdAsStr);
 		}
 
@@ -772,6 +775,29 @@ public class ProviderContract {
 				}
 			}
 			return theResults;
+		}
+
+		public String toString() {
+			String theResult = "{" + getClass().getSimpleName();
+			for (String theColName : getColNamesFromMyContract()) {
+				//inner loop vars used so multi-core processors with preditive branch
+				//  processing are not constrained by accessing a single var; results
+				//  in multiple loops being processed concurrently, thus enhancing speed
+				//  at the sacrifice of a bit of memory/garbage collecting
+				Field theRowField;
+				try {
+					theRowField = getRowField(cnvColNameToRowFieldName(theColName));
+					Object theRowValue = theRowField.get(this);
+					if (theRowValue!=null)
+						theResult += ", "+theRowField.getName()+"="+String.valueOf(theRowValue);
+				} catch (NoSuchFieldException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+			theResult += "}";
+			return theResult;
 		}
 
 		/**
