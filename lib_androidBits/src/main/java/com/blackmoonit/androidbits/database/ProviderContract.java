@@ -721,7 +721,8 @@ public class ProviderContract {
 					e.printStackTrace();
 				}
 			}
-			theResults.putParcelable("android.intent.extra.ORIGINATING_URI", getMyUri());
+			if (getMyIdValue()!=null)
+				theResults.putParcelable("android.intent.extra.ORIGINATING_URI", getMyUri());
 			return theResults;
 		}
 
@@ -979,7 +980,10 @@ public class ProviderContract {
 			theValues.remove(BaseColumns._ID);
 			//do not update primary IdField either
 			theValues.remove(myTableInfo.mTableContract.getIdFieldName());
-			return (aContentResolver.update(getMyUri(), theValues, null, null)>0);
+			if (getMyIdValue()!=null)
+				return (aContentResolver.update(getMyUri(), theValues, null, null)>0);
+			else
+				return false;
 		}
 		/**
 		 * Update a record in RowVar's table using the RowVar's data.
