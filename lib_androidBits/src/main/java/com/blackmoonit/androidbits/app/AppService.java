@@ -6,8 +6,11 @@ import java.lang.reflect.Method;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Service class compatible with pre-Android 2.0 devices and 3.0+ devices (.setForeground() removed)
@@ -121,5 +124,33 @@ public abstract class AppService extends Service {
 	 * @param aIntent - the Intent used to startService()
 	 */
 	public abstract void handleCommand(Intent aIntent);
+
+	/**
+	 * Run the action on the UI thread found out via the context used.
+	 * @param aAction - the runnable to execute on the UI thread.
+	 * @return Returns "this" for chaining purposes.
+	 */
+	public <T extends AppService> T runOnUiThread( Runnable aAction ) {
+		new android.os.Handler(getMainLooper()).post(aAction);
+		return (T)this;
+	}
+
+	/**
+	 * Services cannot easily show UI widgets like toast, this helper
+	 * method will show a constructed Toast object on the UI thread.
+	 * @param aToastToShow - constructed Toast: e.g. pass in Toast.makeToast().
+	 * @return Returns "this" for chaining purposes.
+	 */
+	public <T extends AppService> T showToast( final Toast aToastToShow ) {
+		if (aToastToShow!=null) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					aToastToShow.show();
+				}
+			});
+		}
+		return (T)this;
+	}
 
 }
