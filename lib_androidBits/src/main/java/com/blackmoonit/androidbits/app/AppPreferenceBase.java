@@ -97,7 +97,7 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 	public void onCreate(Bundle aSavedState) {
 		mAppPrefDefinitionsResourceIds = getResourceArray(getApplicationContext(), R.array.pref_screen_definitions);
 		if (mAppPrefDefinitionsResourceIds!=null)
-		mAppPrefHeaderDefinitionResourceId = getPreferenceHeaderDefinitionResourceId();
+			mAppPrefHeaderDefinitionResourceId = getPreferenceHeaderDefinitionResourceId();
 		try {
 			mLoadHeaders = getClass().getMethod("loadHeadersFromResource", int.class, List.class);
 			mHasHeaders = getClass().getMethod("hasHeaders");
