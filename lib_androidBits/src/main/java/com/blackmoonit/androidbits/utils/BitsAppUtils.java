@@ -14,13 +14,46 @@ import android.telephony.TelephonyManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
- * Created by ryanf on 2/28/15.
+ * Utility functions that deal mainly with app-wide settings or values.
+ * @author Ryan Fischbach
  */
 public final class BitsAppUtils {
 
-	private BitsAppUtils() {} //do not instanciate this class
+	private BitsAppUtils() {} //do not instantiate this class
+
+	/**
+	 * API 9+, ANDROID_ID, may be NULL or may be non-unique across a mfg model (known bugs).
+	 * A 64-bit number (as a hex string) that is randomly generated when the user first
+	 * sets up the device and should remain constant for the lifetime of the user's device.
+	 * The value may change if a factory reset is performed on the device.
+	 * Note: When a device has multiple users (available on certain devices running Android 4.2
+	 * or higher), each user appears as a completely separate device, so the ANDROID_ID value is
+	 * unique to each user.
+	 * @see Settings.Secure#ANDROID_ID
+	 * @param aContext - context to use to aquire said value.
+	 * @return Returns the 64 bit number as a hex string (16 chars)
+	 */
+	static public String getAndroidID(Context aContext) {
+		if (Build.VERSION.SDK_INT >= 9) {
+			//API 9+: ANDROID_ID (may be NULL or may be non-unique across a mfg model (known bugs))
+			return Settings.Secure.getString(aContext.getContentResolver(), Settings.Secure.ANDROID_ID);
+		} else
+			return null;
+	}
+
+	/**
+	 * API 8+ A hardware serial number, if available. Alphanumeric only, case-insensitive.
+	 * @return Returns the defined serial number or NULL if not available.
+	 */
+	static public String getSerialNumber() {
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
+			return Build.SERIAL;
+		} else
+			return null;
+	}
 
 	/**
 	 * Based on information available for the device, return as unique of a device ID as possible.
@@ -37,9 +70,10 @@ public final class BitsAppUtils {
 			theResult = thePhoneMgr.getDeviceId()+"1";
 		}
 		//ANDROID_ID, if available
-		if (theResult==null && Build.VERSION.SDK_INT >= 9) {
+		if (Build.VERSION.SDK_INT >= 9 &&
+				( theResult==null || theResult.contains("*") || theResult.contains("000000000000000")) ) {
 			//API 9+: ANDROID_ID (may be NULL or may be non-unique across a mfg model (known bugs))
-			theResult = Settings.Secure.getString(aContext.getContentResolver(), Settings.Secure.ANDROID_ID)+"2";
+			theResult = getAndroidID(aContext)+"2";
 		}
 		//SERIAL#, if available
 		if (theResult==null && Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
