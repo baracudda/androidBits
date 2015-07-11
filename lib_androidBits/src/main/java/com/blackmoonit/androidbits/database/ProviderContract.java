@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -15,6 +16,7 @@ import com.blackmoonit.androidbits.R;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -30,6 +32,37 @@ import java.util.Locale;
  */
 public class ProviderContract {
 	static public final String TAG = ProviderContract.class.getSimpleName();
+
+	/**
+	 * Our database interface for this contract is stored here. Instantiate it inside a static { }.
+	 */
+	static public DbProviderInfo mDbInfo;
+
+	/**
+	 * Our cache of table contracts.
+	 */
+	static public HashMap<String, Table> mTableNameContractMap = null;
+
+	/**
+	 * Convenience method for obtaining our defined table contracts.
+	 * @param aTableName - the table name to look up its contract.
+	 * @return Returns the Table contract information.
+	 */
+	static public ProviderContract.Table getTableContractFromName(String aTableName) {
+		if (mTableNameContractMap==null) {
+			ArrayList<ProviderContract.Table> theTableList = mDbInfo.getTableList();
+			mTableNameContractMap = new HashMap<String, Table>(theTableList.size());
+			for (ProviderContract.Table theContractTable : theTableList) {
+				String theTableName = theContractTable.getTableName();
+				mTableNameContractMap.put(theTableName, theContractTable);
+			}
+		}
+		if (mTableNameContractMap.containsKey(aTableName)) {
+			return mTableNameContractMap.get(aTableName);
+		} else {
+			return null;
+		}
+	}
 
 	/**
 	 * Database meta information definitions required by the ProviderContract.
@@ -125,11 +158,14 @@ public class ProviderContract {
 
 	static public class DbProviderInfo {
 		protected final Database mDbContract;
+		protected String mDbFilename;
 		protected String mAuthorityPrefix = "com.blackmoonit.provider";
 		protected String mBaseMIMEsubtypePrefix = "vnd.blackmoonit";
 
 		public DbProviderInfo(Database aDbContract) {
 			mDbContract = aDbContract;
+			//set the default database filename
+			mDbFilename = aDbContract.getDbName()+".db";
 		}
 
 		/**
@@ -137,6 +173,24 @@ public class ProviderContract {
 		 */
 		public Database getDbContract() {
 			return mDbContract;
+		}
+
+		/**
+		 * Get the database filename.
+		 * @return Returns the filename to use for this database.
+		 */
+		public String getDbFilename() {
+			return mDbFilename;
+		}
+
+		/**
+		 * Some may wish to override the default db filename.
+		 * @param aDbFilename - new db filename to use.
+		 * @return Returns this class instance for chaining purposes.
+		 */
+		public DbProviderInfo setDbFilename(String aDbFilename) {
+			mDbFilename = aDbFilename;
+			return this;
 		}
 
 		/**
@@ -512,6 +566,33 @@ public class ProviderContract {
 			return getTableContract().newRowVar().setFromCursor(aCursor);
 		}
 
+		/**
+		 * Called to create the table if it does not exist.
+		 * @param db - the database object
+		 * @see android.database.sqlite.SQLiteOpenHelper#onCreate(SQLiteDatabase)
+		 */
+		public void onCreate(SQLiteDatabase db) {
+			String theSql = getTableContract().getCreateTableSQL();
+			db.execSQL(theSql);
+		}
+
+		/**
+		 * Called during the database onUpgrade() method.
+		 * @param db - the database object
+		 * @see android.database.sqlite.SQLiteOpenHelper#onUpgrade(SQLiteDatabase, int, int)
+		 */
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			//default behavior is to just drop the table and data, then recreate the new structure
+			String theSql = "DROP TABLE IF EXISTS "+getTableContract().getTableName();
+			db.execSQL(theSql);
+			theSql = getTableContract().getCreateTableSQL();
+			db.execSQL(theSql);
+		}
+
+		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			//just wipe it out for now
+			onUpgrade(db, oldVersion, newVersion);
+		}
 
 	}
 

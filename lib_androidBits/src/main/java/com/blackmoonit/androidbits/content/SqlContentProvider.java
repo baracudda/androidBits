@@ -64,22 +64,26 @@ public abstract class SqlContentProvider extends ContentProvider {
 		return (mDb!=null);
 	}
 
-	@Override
-    @TargetApi(11)
-	public void shutdown() {
+	/**
+	 * Common cleanup when finished method called by shutdown() or finalize().
+	 */
+	protected void cleanup() {
 		if (mDb!=null) {
 			mDb.close();
 			mDb = null;
 		}
+	}
+
+	@Override
+    @TargetApi(11)
+	public void shutdown() {
+		cleanup();
 		super.shutdown();
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
-		if (mDb!=null) {
-			mDb.close();
-			mDb = null;
-		}
+		cleanup();
 		super.finalize();
 	}
 

@@ -14,9 +14,11 @@ import java.util.UUID;
  *
  * @author Ryan Fischbach
  */
-public final class ProviderContract_Sample implements ProviderContract.Database {
+public final class ProviderContract_Sample extends ProviderContract implements ProviderContract.Database {
 	static public ProviderContract_Sample mDbContract = new ProviderContract_Sample();
-	static public DbProviderInfo mDbInfo = new DbProviderInfo(mDbContract);
+	static {
+		mDbInfo = new DbProviderInfo(mDbContract);
+	}
 	private ProviderContract_Sample() {}
 
 	@Override
