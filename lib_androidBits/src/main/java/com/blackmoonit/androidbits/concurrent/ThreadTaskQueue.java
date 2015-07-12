@@ -1,10 +1,13 @@
 package com.blackmoonit.androidbits.concurrent;
 
+import android.app.Activity;
+import android.content.Context;
+import android.util.Log;
+
+import com.blackmoonit.androidbits.app.UITaskRunner;
+
 import java.lang.ref.WeakReference;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import android.app.Activity;
-import android.util.Log;
 
 /**
  * ThreadTaskQueue is a Daemon thread that will continue to execute the Runnable tasks in its
@@ -23,7 +26,9 @@ public class ThreadTaskQueue extends ThreadInterruptable {
 	static public class TaskDef {
 		protected Runnable mTask = null;
 		protected String mName = null;
-		protected WeakReference<Activity> wAct = null;
+		protected boolean bRunOnUi = false;
+		protected WeakReference<Activity> wrAct = null;
+		protected WeakReference<Context> wrContext = null;
 
 		public TaskDef() {
 			super();
@@ -39,9 +44,19 @@ public class ThreadTaskQueue extends ThreadInterruptable {
 		static public TaskDef runThisTaskOnUI(Runnable aTask, Activity aAct) {
 			TaskDef theResult = new TaskDef();
 			theResult.mTask = aTask;
-			theResult.wAct = new WeakReference<Activity>(aAct);
+			theResult.bRunOnUi = true;
+			theResult.wrAct = new WeakReference<Activity>(aAct);
 			return theResult;
 		}
+
+		static public TaskDef runThisTaskOnUI(Runnable aTask, Context aContext) {
+			TaskDef theResult = new TaskDef();
+			theResult.mTask = aTask;
+			theResult.bRunOnUi = true;
+			theResult.wrContext = new WeakReference<Context>(aContext);
+			return theResult;
+		}
+
 	}
 
 	protected class TaskDefQueue extends LinkedBlockingQueue<TaskDef> {
@@ -68,14 +83,24 @@ public class ThreadTaskQueue extends ThreadInterruptable {
 			TaskDef theTaskDef = mTaskDefQueue.take();
 			//theTaskDef is guaranteed to be non-null as the queue
 			//  itself will not accept NULL values.
-			Activity theAct = (theTaskDef.wAct!=null) ? theTaskDef.wAct.get() : null;
-			if (theTaskDef.mTask!=null && theAct==null) {
+			if (theTaskDef.mTask==null)
+				return;
+			//we have a task to run, see if it needs to run on UI thread
+			if (theTaskDef.bRunOnUi) {
+				Activity theAct = (theTaskDef.wrAct!=null) ? theTaskDef.wrAct.get() : null;
+				Context theContext = (theTaskDef.wrContext!=null) ? theTaskDef.wrContext.get() : null;
+				if (theAct!=null) {
+					theAct.runOnUiThread(theTaskDef.mTask);
+				}
+				else if (theContext!=null) {
+					UITaskRunner.runOnUiThread(theContext, theTaskDef.mTask);
+				}
+			}
+			else if (theTaskDef.mTask!=null) {
 				if (theTaskDef.mName!=null)
 					setProcessName(mQueueName+": "+theTaskDef.mName);
 				theTaskDef.mTask.run();
 				setProcessName(mQueueName);
-			} else {
-				theAct.runOnUiThread(theTaskDef.mTask);
 			}
 		} catch (InterruptedException ie) {
 			Log.i(getName(), mQueueName+" was interrupted.");
@@ -98,17 +123,34 @@ public class ThreadTaskQueue extends ThreadInterruptable {
 	/**
 	 * Add task that needs to be run on the UI thread to the queue. Builder-chain friendly.
 	 * @param aTask - runnable to loop endlessly
-	 * @param aAct - Activity of the UI thread (optional, but if NULL, {@link #queueTask(Runnable)} is used).
+	 * @param aAct - Activity of the UI thread.
 	 * @return Returns this object so that a chain-call can be continued.
 	 * @throws InterruptedException
 	 */
-	public ThreadTaskQueue queueTask(Runnable aTask, Activity aAct) throws InterruptedException {
+	public ThreadTaskQueue queueTaskForUI(Runnable aTask, Activity aAct) throws InterruptedException {
 		if (aTask==null)
 			throw new IllegalArgumentException("Queuing up a NULL task, the shame!");
 		if (aAct!=null)
 			mTaskDefQueue.put(TaskDef.runThisTaskOnUI(aTask, aAct));
 		else
-			queueTask(aTask,(String)null);
+			throw new IllegalArgumentException("Activity cannot be null");
+		return this;
+	}
+
+	/**
+	 * Add task that needs to be run on the UI thread to the queue. Builder-chain friendly.
+	 * @param aTask - runnable to loop endlessly
+	 * @param aContext - Context needed to determine the UI thread.
+	 * @return Returns this object so that a chain-call can be continued.
+	 * @throws InterruptedException
+	 */
+	public ThreadTaskQueue queueTaskForUI(Runnable aTask, Context aContext) throws InterruptedException {
+		if (aTask==null)
+			throw new IllegalArgumentException("Queuing up a NULL task, the shame!");
+		if (aContext!=null)
+			mTaskDefQueue.put(TaskDef.runThisTaskOnUI(aTask, aContext));
+		else
+			throw new IllegalArgumentException("Context cannot be null");
 		return this;
 	}
 
