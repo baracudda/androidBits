@@ -10,6 +10,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.blackmoonit.androidbits.R;
@@ -46,6 +47,8 @@ import java.util.Locale;
  *  Source has been released to the public as is and without any warranty.
  */
 public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler, Runnable {
+	static public final String PREF_KEY_RELEASE_ONLY_EXCEPTION_REPORT =
+			"email_unhandled_exception_only_if_not_debuggable";
 	/**
 	 * Old exception handler we need to save and put back on finalize().
 	 */
@@ -90,7 +93,8 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	 * @param aContext - context to use.
 	 */
 	public ReportAnExceptionHandler(Context aContext) {
-		this(aContext, true);
+		this( aContext, PreferenceManager.getDefaultSharedPreferences(aContext).getBoolean(
+				PREF_KEY_RELEASE_ONLY_EXCEPTION_REPORT, true) );
 	}
 
 	public Context getContext() {
