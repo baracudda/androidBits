@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * String Utilities.
@@ -70,5 +71,43 @@ public final class BitsStringUtils {
 		return (aString==null || aString.equals(""));
 	}
 
+	/**
+	 * Java does not have a built-in PHP-implode-like function until Java 8.
+	 * @param separator - the separator string to use.
+	 * @param data - the String[] or data to implode.
+	 * @return Returns the data imploded as one string.
+	 */
+	static public String implode(String separator, String... data) {
+		StringBuilder sb = new StringBuilder();
+		//data.length - 1 => to not add separator at the end
+		for (int i = 0; i < data.length - 1; i++) {
+			if (!data[i].matches(" *")) {//empty string are ""; " "; "  "; and so on
+				sb.append(data[i]);
+				sb.append(separator);
+			}
+		}
+		sb.append(data[data.length - 1].trim());
+		return sb.toString();
+	}
+
+	/**
+	 * Java does not have a built-in PHP-implode-like function until Java 8.
+	 * @param separator - the separator string to use.
+	 * @param data - the String[] or data to implode.
+	 * @return Returns the data imploded as one string.
+	 */
+	static public String implode(String separator, List<String> data) {
+		StringBuilder sb = new StringBuilder();
+		//data.size() - 1 => to not add separator at the end
+		for (int i = 0; i < data.size() - 1; i++) {
+			String theStrSegment = data.get(i);
+			if (!theStrSegment.matches(" *")) {//empty string are ""; " "; "  "; and so on
+				sb.append(theStrSegment);
+				sb.append(separator);
+			}
+		}
+		sb.append(data.get(data.size() - 1).trim());
+		return sb.toString();
+	}
 
 }
