@@ -781,19 +781,24 @@ public class ProviderContract {
 						theResults.putString(theRowFieldName, (String) theRowField.get(this));
 					} else if (theRowFieldType.equals(Integer.TYPE) || theRowFieldType==Integer.class) {
 						theResults.putInt(theRowFieldName, (Integer) theRowField.get(this));
-					} else if (theRowFieldType.equals(Long.TYPE) || theRowFieldType==Long.class) {
+					} else if (theRowFieldType.equals(Long.TYPE) ||
+							(theRowFieldType==Long.class && theRowField.get(this)!=null) ) {
 						theResults.putLong(theRowFieldName, (Long) theRowField.get(this));
-					} else if (theRowFieldType.equals(Float.TYPE) || theRowFieldType==Float.class) {
+					} else if (theRowFieldType.equals(Float.TYPE) ||
+							(theRowFieldType==Float.class && theRowField.get(this)!=null) ) {
 						theResults.putFloat(theRowFieldName, (Float) theRowField.get(this));
-					} else if (theRowFieldType.equals(Double.TYPE) || theRowFieldType==Double.class) {
+					} else if (theRowFieldType.equals(Double.TYPE) ||
+							(theRowFieldType==Double.class && theRowField.get(this)!=null) ) {
 						theResults.putDouble(theRowFieldName, (Double) theRowField.get(this));
 					} else if (theRowFieldType.equals(Boolean.TYPE) || theRowFieldType==Boolean.class) {
 						theResults.putBoolean(theRowFieldName, (Boolean) theRowField.get(this));
 					} else if (theRowFieldType.equals(Character.TYPE) || theRowFieldType==Character.class) {
 						theResults.putChar(theRowFieldName, (Character) theRowField.get(this));
-					} else if (theRowFieldType.equals(Byte.TYPE) || theRowFieldType==Byte.class) {
+					} else if (theRowFieldType.equals(Byte.TYPE) ||
+							(theRowFieldType==Byte.class && theRowField.get(this)!=null) ) {
 						theResults.putByte(theRowFieldName, (Byte) theRowField.get(this));
-					} else if (theRowFieldType.equals(Short.TYPE) || theRowFieldType==Short.class) {
+					} else if (theRowFieldType.equals(Short.TYPE) ||
+							(theRowFieldType==Short.class && theRowField.get(this)!=null) ) {
 						theResults.putShort(theRowFieldName, (Short) theRowField.get(this));
 					}
 				} catch (IllegalAccessException e) {
@@ -1017,6 +1022,41 @@ public class ProviderContract {
 		 */
 		public boolean getSingleRow(Context aContext, Long aID) {
 			return getSingleRow(aContext, aID, null);
+		}
+
+		/**
+		 * Retrieve a specific row by a Uri in RowVar's table.
+		 * @param aContext - context to use.
+		 * @param aUri - the Uri of the record to retrieve.
+		 * @param aContentResolver - ContentResolver to use (unit tests use a mock one).
+		 * @return Returns TRUE on successful query and data load.
+		 */
+		public boolean getSingleRow(Context aContext, Uri aUri, ContentResolver aContentResolver) {
+			Cursor theEntryCursor = null;
+			try {
+				if (aContentResolver==null)
+					aContentResolver = aContext.getContentResolver();
+				theEntryCursor = aContentResolver.query(aUri, null, null, null, null);
+				if (theEntryCursor != null && theEntryCursor.moveToFirst()) {
+					setFromCursor(theEntryCursor);
+					return true;
+				}
+			}
+			finally {
+				if (theEntryCursor!=null && !theEntryCursor.isClosed())
+					theEntryCursor.close();
+			}
+			return false;
+		}
+
+		/**
+		 * Retrieve a specific row by a Uri in RowVar's table.
+		 * @param aContext - context to use.
+		 * @param aUri - the Uri of the record to retrieve.
+		 * @return Returns TRUE on successful query and data load.
+		 */
+		public boolean getSingleRow(Context aContext, Uri aUri) {
+			return getSingleRow(aContext, aUri, null);
 		}
 
 		/**
