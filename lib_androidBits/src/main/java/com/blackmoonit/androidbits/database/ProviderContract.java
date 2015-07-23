@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.BaseColumns;
 import android.util.Log;
 
@@ -17,6 +18,7 @@ import com.blackmoonit.androidbits.R;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -739,6 +741,37 @@ public class ProviderContract {
 			return (T)this;
 		}
 
+		/**
+		 * Helper method to read a list of RowVars from a Bundle (such as an Intent extra).
+		 * @param aBundle - the Bundle containing the list data.
+		 * @param aKey - the key used to retrieve the list data.
+		 * @return Returns the List of RowVar data.
+		 */
+		protected <T extends RowVar> void fillRowVarListFromBundle(List<T> aList,
+				Bundle aBundle, String aKey, Class<T> aListItemRowVarClass) {
+			if (aList!=null && aBundle!=null && aKey!=null &&
+					aListItemRowVarClass!=null && aBundle.containsKey(aKey))
+			{
+				Parcelable[] theParcels = aBundle.getParcelableArray(aKey);
+				Bundle[] theBundles = new Bundle[theParcels.length];
+				System.arraycopy(theParcels, 0, theBundles, 0, theParcels.length);
+				for (Bundle theListItemData : theBundles) {
+					//inner loop vars used so multi-core processors with preditive branch
+					//  processing are not constrained by accessing a single var; results
+					//  in multiple loops being processed concurrently, thus enhancing speed
+					//  at the sacrifice of a bit of memory/garbage collecting
+					try {
+						aList.add((T) aListItemRowVarClass.newInstance().setFromBundle(theListItemData));
+					} catch (InstantiationException e) {
+						Log.d(TAG, aListItemRowVarClass.getName()+" needs a default no-arg constructor.");
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+
 		public <T extends RowVar> T setFromBundle(Bundle aBundle) {
 			if (aBundle!=null) {
 				for (String theColName : getColNamesFromMyContract()) {
@@ -758,10 +791,32 @@ public class ProviderContract {
 			return (T)this;
 		}
 
+		/**
+		 * Helper method that will copy data found in the intent to our RowVar's fields based
+		 * on the table contract defining the COL_* names to use.
+		 * @param aIntent - the intent whose data we will copy to our fields.
+		 */
 		public <T extends RowVar> T setFromIntent(Intent aIntent) {
 			if (aIntent!=null)
 				setFromBundle(aIntent.getExtras());
 			return (T)this;
+		}
+
+		/**
+		 * Helper method to write a list of RowVars to a List of Bundles so they can be stored
+		 * as a ParcelableArray in a Bundle such as an Intent extra.
+		 * @param aRowVarList - the list to convert.
+		 * @return Returns the List of Bundles.
+		 */
+		protected Parcelable[] cnvRowVarListToParcelableArray(List<? extends RowVar> aRowVarList) {
+			Parcelable[] theResult = null;
+			if (aRowVarList!=null) {
+				theResult = new Parcelable[aRowVarList.size()];
+				for (int i = 0; i < aRowVarList.size(); i++) {
+					theResult[i] = aRowVarList.get(i).toBundle();
+				}
+			}
+			return theResult;
 		}
 
 		public Bundle toBundle(Bundle aBundle) {
