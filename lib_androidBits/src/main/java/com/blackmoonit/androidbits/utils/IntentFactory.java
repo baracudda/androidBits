@@ -10,6 +10,10 @@ import android.content.Intent;
  */
 public abstract class IntentFactory
 {
+    /** Compatibility: Provides intent category for apps prior to API 15. */
+    public static final String CATEGORY_APP_MESSAGING =
+        "android.intent.category.APP_MESSAGING" ;
+
     /** Should not be instantiated. */
     protected IntentFactory() {}
 
