@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.blackmoonit.androidbits.R;
@@ -1007,6 +1008,18 @@ public class ProviderContract {
 		}
 
 		/**
+		 * Insert this data into the RowVar's table and immediately get it back
+		 * with all the other fields that got updated as well.
+		 * @param aContext - context to use.
+		 * @return Returns the Uri of the inserted data.
+		 */
+		public Uri insertAndGet(Context aContext) {
+			Uri theNewUri = insertIntoTable(aContext, aContext.getContentResolver());
+			getSingleRow(aContext, theNewUri);
+			return theNewUri;
+		}
+
+		/**
 		 * Retrieve a specific row in RowVar's table.
 		 * @param aContext - context to use.
 		 * @param aIDstring - string value of the table's ID field to find and load.
@@ -1140,6 +1153,19 @@ public class ProviderContract {
 		 */
 		public boolean removeSingleRow(Context aContext, String aIDstring){
 			return removeSingleRow(aContext, aIDstring, null);
+		}
+
+		/**
+		 * Delete the row that I represent from this RowVar's table.
+		 * @param aContext - context to use.
+		 * @return Returns TRUE on successful delete, FALSE on fail or nothing to delete.
+		 */
+		public boolean removeMyself(Context aContext){
+			String theId = String.valueOf(getMyIdValue());
+			if (!TextUtils.isEmpty(theId))
+				return removeSingleRow(aContext, theId, null);
+			else
+				return false;
 		}
 
 		/**

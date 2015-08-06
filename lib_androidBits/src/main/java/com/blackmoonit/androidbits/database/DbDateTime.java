@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
@@ -75,21 +76,25 @@ public class DbDateTime {
 	 */
 	static public Calendar fromDbStr(String aStr) {
 		Calendar theCurrentDay = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		SimpleDateFormat iso8601Format;
-		if (aStr!=null && aStr.contains(".")) {
-			iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ",Locale.US);
-		} else {
-			iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ",Locale.US);
-		}
-		if (aStr!=null && !"".equals(aStr)) try {
-			//Java doesn't parse ISO dates correctly. We need to convert "Z" into +0000
-			String theStr = aStr.replaceAll("Z$","+0000");
-			//additionally, we do not have microsecond resolution, so keep .### and remove .###xxx
-			theStr = theStr.replaceAll("(\\.\\d\\d\\d)\\d\\d\\d","$1");
-			theCurrentDay.setTime(iso8601Format.parse(theStr));
-		} catch (ParseException e) {
-			Log.e("androidBits.fromDbStr","Failed to convert "+aStr+" into a UTC datetime.", e);
-			//means we do not modify the calendar at all, leaves it as "now"
+		if (!TextUtils.isEmpty(aStr)) {
+			SimpleDateFormat iso8601Format;
+			if (aStr.contains(".")) {
+				iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+			} else if (aStr.length() > 10) {
+				iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+			} else {
+				iso8601Format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+			}
+			try {
+				//Java doesn't parse ISO dates correctly. We need to convert "Z" into +0000
+				String theStr = aStr.replaceAll("Z$", "+0000");
+				//additionally, we do not have microsecond resolution, so keep .### and remove .###xxx
+				theStr = theStr.replaceAll("(\\.\\d\\d\\d)\\d\\d\\d", "$1");
+				theCurrentDay.setTime(iso8601Format.parse(theStr));
+			} catch (ParseException e) {
+				Log.e("androidBits.fromDbStr", "Failed to convert " + aStr + " into a UTC datetime.", e);
+				//means we do not modify the calendar at all, leaves it as "now"
+			}
 		}
 		return theCurrentDay;
 	}
