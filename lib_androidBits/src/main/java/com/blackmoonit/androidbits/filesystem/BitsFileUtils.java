@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -1341,6 +1342,19 @@ public final class BitsFileUtils {
 			//let default return value be returned
 		}
 		return null;
+	}
+
+	/**
+	 * 2Gb limit, return the file as a byte[].
+	 * @param aFile - file to read in.
+	 * @return Returns the entire file as a loaded byte[].
+	 * @throws IOException
+	 */
+	static public byte[] getFobAsIntByteArray(File aFile) throws IOException {
+		RandomAccessFile theFob = new RandomAccessFile(aFile.getPath(), "r");
+		byte[] theResult = new byte[(int)theFob.length()];
+		theFob.read(theResult);
+		return theResult;
 	}
 
 }
