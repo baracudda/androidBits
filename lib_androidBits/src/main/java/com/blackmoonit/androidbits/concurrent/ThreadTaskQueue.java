@@ -154,4 +154,11 @@ public class ThreadTaskQueue extends ThreadInterruptable {
 		return this;
 	}
 
+	/**
+	 * Stops this thread after the current task is finished.
+	 */
+	public void closeTaskQueue() {
+		setDaemon(false);
+    }
+
 }
