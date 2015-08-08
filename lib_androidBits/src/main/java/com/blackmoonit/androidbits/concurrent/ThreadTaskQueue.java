@@ -7,6 +7,7 @@ import android.util.Log;
 import com.blackmoonit.androidbits.app.UITaskRunner;
 
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -24,6 +25,7 @@ public class ThreadTaskQueue extends ThreadInterruptable {
 	 * the task in the appropriate thread.
 	 */
 	static public class TaskDef {
+		public Long mId = null;
 		protected Runnable mTask = null;
 		protected String mName = null;
 		protected boolean bRunOnUi = false;
@@ -34,10 +36,19 @@ public class ThreadTaskQueue extends ThreadInterruptable {
 			super();
 		}
 
+		public TaskDef(Long aId) {
+			this();
+			mId = aId;
+		}
+
+		public TaskDef(String aName) {
+			this();
+			mName = aName;
+		}
+
 		static public TaskDef runThisTask(Runnable aTask, String aName) {
-			TaskDef theResult = new TaskDef();
+			TaskDef theResult = new TaskDef(aName);
 			theResult.mTask = aTask;
-			theResult.mName = aName;
 			return theResult;
 		}
 
@@ -59,21 +70,47 @@ public class ThreadTaskQueue extends ThreadInterruptable {
 
 	}
 
-	protected class TaskDefQueue extends LinkedBlockingQueue<TaskDef> {
+	static protected class TaskDefQueue extends LinkedBlockingQueue<TaskDef> {
 		private static final long serialVersionUID = 1997118084770061386L;
 
 		public TaskDefQueue() {
 			super();
 		}
+
+		public TaskDef findTaskById(Long aId) {
+			Iterator itr = iterator();
+			while (itr.hasNext()) {
+				TaskDef theTaskDef = (TaskDef)itr.next();
+				if (theTaskDef.mId==aId)
+					return theTaskDef;
+			}
+			return null;
+		}
+
+		public TaskDef findTaskByName(String aName) {
+			Iterator itr = iterator();
+			while (itr.hasNext()) {
+				TaskDef theTaskDef = (TaskDef)itr.next();
+				if (theTaskDef.mName==aName)
+					return theTaskDef;
+			}
+			return null;
+		}
 	}
 
 	protected String mQueueName = TaskDefQueue.class.getSimpleName();
-	protected TaskDefQueue mTaskDefQueue = new TaskDefQueue();
+	protected TaskDefQueue mTaskDefQueue = null;
 
 	public ThreadTaskQueue() {
+		super();
+		mTaskDefQueue = new TaskDefQueue();
 		setProcessName(mQueueName);
 		setProcessPriority(null);
 		setDaemon(true);
+	}
+
+	public TaskDef findTaskByName(String aName) {
+		return mTaskDefQueue.findTaskByName(aName);
 	}
 
 	@Override
@@ -116,7 +153,7 @@ public class ThreadTaskQueue extends ThreadInterruptable {
 	public ThreadTaskQueue queueTask(Runnable aTask, String aName) throws InterruptedException {
 		if (aTask==null)
 			throw new IllegalArgumentException("Queuing up a NULL task, the shame!");
-		mTaskDefQueue.put(TaskDef.runThisTask(aTask,aName));
+		mTaskDefQueue.put(TaskDef.runThisTask(aTask, aName));
 		return this;
 	}
 
