@@ -158,7 +158,11 @@ public class ThreadTaskQueue extends ThreadInterruptable {
 	 * Stops this thread after the current task is finished.
 	 */
 	public void closeTaskQueue() {
-		setDaemon(false);
+		//cannot setDaemon(false) after thread is started
+		//do not want to interrupt as that kills current task
+		//just set mBreakman to null and loop will end after
+		//  current task finishes and before another task is started.
+		mBreakman = null;
     }
 
 }

@@ -9,7 +9,7 @@ import java.util.concurrent.CancellationException;
  * @author Ryan Fischbach
  */
 public abstract class ThreadInterruptable extends Thread {
-	private volatile Thread mBreakman;
+	protected volatile Thread mBreakman;
 	/**
 	 * Daemons that want to sleep between task runs would set a positive value in miliseconds.
 	 */
