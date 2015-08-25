@@ -17,3 +17,14 @@ License for the specific language governing permissions and limitations
 under the License.
 
 -------------------------------------------------------------------------------
+
+This library depends on a package-name-changed 'gson.jar', a Java library
+that can be used to convert Java Objects into their JSON representation, 
+which can be obtained at:
+	* HOMEPAGE:
+		* https://github.com/google/gson
+	* LICENSE:
+		* LICENSE.gson.txt (Apache License 2.0)
+	* Reason for the package name change:
+		* https://github.com/google/gson/issues/255
+		
