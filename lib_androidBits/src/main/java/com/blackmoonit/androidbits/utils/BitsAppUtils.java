@@ -17,7 +17,10 @@ package com.blackmoonit.androidbits.utils;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -29,6 +32,7 @@ import android.telephony.TelephonyManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -192,5 +196,25 @@ public final class BitsAppUtils {
 				theResult = null;
 		}
 		return theResult;
+	}
+
+	/**
+	 * Return a list of the preferred activities for the given package name (or all if NULL).
+	 * @param aContext - the context to use.
+	 * @param aPackageName - (optional) the name of a specific package to filter by.
+	 * @return Returns the preferred activity list for the given package, or all if NULL.
+	 */
+	static public List<ComponentName> getPreferredActivities(Context aContext,
+			String aPackageName) {
+		IntentFilter theFilter = new IntentFilter(Intent.ACTION_MAIN);
+		theFilter.addCategory(Intent.CATEGORY_HOME);
+
+		List<IntentFilter> theFilterList = new ArrayList<IntentFilter>();
+		theFilterList.add(theFilter);
+
+		List<ComponentName> thePreferredActivities = new ArrayList<ComponentName>();
+		final PackageManager thePackageMgr = (PackageManager) aContext.getPackageManager();
+		thePackageMgr.getPreferredActivities(theFilterList, thePreferredActivities, aPackageName);
+		return thePreferredActivities;
 	}
 }
