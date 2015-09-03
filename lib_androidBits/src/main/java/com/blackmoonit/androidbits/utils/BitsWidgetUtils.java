@@ -22,6 +22,9 @@ public class BitsWidgetUtils {
 
 	protected BitsWidgetUtils() {}; //do not instantiate
 
+	/**
+	 * Text underline is not straightforward, set paint flags to underline text or not.
+	 */
 	static public void setTextUnderline(TextView v, boolean bUnderline) {
 		if (v!=null) {
 			if (bUnderline)
