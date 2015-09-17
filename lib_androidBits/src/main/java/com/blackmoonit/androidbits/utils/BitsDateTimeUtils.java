@@ -17,9 +17,14 @@ package com.blackmoonit.androidbits.utils;
 
 import com.blackmoonit.androidbits.database.DbDateTime;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
+/**
+ * Static utility methods for date/time functions.
+ */
 public class BitsDateTimeUtils extends DbDateTime {
 
 	protected BitsDateTimeUtils() {}; //do not instantiate
@@ -80,4 +85,30 @@ public class BitsDateTimeUtils extends DbDateTime {
 	static public String getTodaytoISO8601str() {
 		return toISO8601str(getToday());
 	}
+
+	/**
+	 * Format an ISO8601 datetime string into a local time with another format.
+	 * @param aISO8601str - the datetime string.
+	 * @param aFormat - the format to convert the datetime string into showing.
+	 * @return Returns the datetime as the new aFormatted string.
+	 */
+	static public CharSequence fromUTCtoLocalTimeStr(String aISO8601str, String aFormat) {
+		Calendar theTs = fromISO8601str(aISO8601str);
+		if (theTs!=null) {
+			theTs.setTimeZone(TimeZone.getDefault());
+			SimpleDateFormat iso8601Format = new SimpleDateFormat(aFormat, Locale.US);
+			iso8601Format.setCalendar(theTs); //O.o; needed, idk why, but w/e.
+			String theResult = iso8601Format.format(theTs.getTime());
+			/* milliseconds may have to use special handling if we want to show it
+			int theMs = theTs.get(Calendar.MILLISECOND);
+			if (theMs>0) {
+				theResult = theResult + "."+String.format(Locale.US,"%03d",theMs)+"000";
+			}
+			*/
+			return theResult;
+		}
+		return "";
+	}
+
+
 }
