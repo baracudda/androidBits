@@ -380,8 +380,8 @@ public class ProviderContract {
 	}
 
 	static public class TableProviderInfo {
-		protected final Database mDbContract;
-		protected final Table mTableContract;
+		protected final transient Database mDbContract;
+		protected final transient Table mTableContract;
 
 		public TableProviderInfo(Database aDbContract, Table aTableContract) {
 			mDbContract = aDbContract;
@@ -556,7 +556,9 @@ public class ProviderContract {
 						try {
 							this.myColNamesFromMyContract.add((String) theField.get(getTableContract()));
 						} catch (IllegalAccessException e) {
-							e.printStackTrace();
+							if (!theField.getName().toLowerCase(Locale.US).contains(" as "))
+							Log.e(TAG, "Could not access column definition as a field: "+
+									theField.getName(), e);
 						}
 					}
 				}
@@ -615,8 +617,8 @@ public class ProviderContract {
 	}
 
 	static public abstract class RowVar {
-		protected final TableProviderInfo myTableInfo;
-		protected final boolean bLogInsAndDel = false;
+		protected final transient TableProviderInfo myTableInfo;
+		protected final transient boolean bLogInsAndDel = false;
 		public Long _id = null; // used for _ID (which is a longint)
 
 		public RowVar(TableProviderInfo aTableInfo) {

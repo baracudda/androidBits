@@ -26,16 +26,41 @@ import android.util.Log;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 
+/**
+ * Static utility methods for database date/time functions.
+ */
 public class DbDateTime {
 
 	/**
 	 * Current UTC date and time to the second.
 	 * @return Returns the current date and time to the second.
 	 */
-	static public Calendar getNow() {
-		Calendar theCurrentDay = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		theCurrentDay.set(Calendar.MILLISECOND,0);
+	static public Calendar getNowAs(String aTimeZone, int aLeastSignificantTime) {
+		Calendar theCurrentDay = Calendar.getInstance(TimeZone.getTimeZone(aTimeZone));
+		switch (aLeastSignificantTime) {
+			case Calendar.YEAR:
+				theCurrentDay.set(Calendar.MONTH,0);
+			case Calendar.MONTH:
+				theCurrentDay.set(Calendar.DAY_OF_MONTH,0);
+			case Calendar.DAY_OF_MONTH:
+				theCurrentDay.set(Calendar.HOUR,0);
+			case Calendar.HOUR:
+				theCurrentDay.set(Calendar.MINUTE,0);
+			case Calendar.MINUTE:
+				theCurrentDay.set(Calendar.SECOND,0);
+			case Calendar.SECOND:
+				theCurrentDay.set(Calendar.MILLISECOND,0);
+			default:
+		}//switch
 		return theCurrentDay;
+	}
+
+	/**
+	 * Current UTC date and time to the second.
+	 * @return Returns the current date and time to the second.
+	 */
+	static public Calendar getNow() {
+		return getNowAs("UTC", Calendar.SECOND);
 	}
 
 	/**
@@ -43,8 +68,7 @@ public class DbDateTime {
 	 * @return Returns the current date and time to the millisecond.
 	 */
 	static public Calendar getNowMs() {
-		Calendar theCurrentDay = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		return theCurrentDay;
+		return Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 	}
 
 	/**
@@ -52,11 +76,7 @@ public class DbDateTime {
 	 * @return Returns the current date, but no time.
 	 */
 	static public Calendar getToday() {
-		Calendar theCurrentDay = getNow();
-		theCurrentDay.set(Calendar.HOUR,0);
-		theCurrentDay.set(Calendar.MINUTE,0);
-		theCurrentDay.set(Calendar.SECOND,0);
-		return theCurrentDay;
+		return getNowAs("UTC", Calendar.DAY_OF_MONTH);
 	}
 
 	/**
@@ -87,35 +107,53 @@ public class DbDateTime {
 	 * Convert the SQL date time string into a Calendar object.
 	 * @param aStr - SQL date time string.
 	 * @return Returns the Calendar representation of the db SQL string.
-	 * @throws org.apache.http.impl.cookie.DateParseException
+	 * @throws ParseException
 	 */
-	static public Calendar fromDbStr(String aStr) {
-		Calendar theCurrentDay = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+	static public Calendar fromISO8601str(String aStr) {
 		if (!TextUtils.isEmpty(aStr)) {
 			SimpleDateFormat iso8601Format;
+			int theLeastSignificantTime = Calendar.MILLISECOND;
 			if (aStr.contains(".")) {
 				iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
 			} else if (aStr.length() > 10) {
 				iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+				theLeastSignificantTime = Calendar.SECOND;
 			} else {
 				iso8601Format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+				theLeastSignificantTime = Calendar.DAY_OF_MONTH;
 			}
 			try {
 				//Java doesn't parse ISO dates correctly. We need to convert "Z" into +0000
 				String theStr = aStr.replaceAll("Z$", "+0000");
 				//additionally, we do not have microsecond resolution, so keep .### and remove .###xxx
 				theStr = theStr.replaceAll("(\\.\\d\\d\\d)\\d\\d\\d", "$1");
-				theCurrentDay.setTime(iso8601Format.parse(theStr));
+				Calendar theCal = getNowAs("UTC", theLeastSignificantTime);
+				theCal.setTime(iso8601Format.parse(theStr));
+				return theCal;
 			} catch (ParseException e) {
 				Log.e("androidBits.fromDbStr", "Failed to convert " + aStr + " into a UTC datetime.", e);
-				//means we do not modify the calendar at all, leaves it as "now"
+				return null;
 			}
 		}
-		return theCurrentDay;
+		return null;
 	}
 
 	/**
-	 * Returns the current time in the proper SQL Date format
+	 * Convert the SQL date time string into a Calendar object.
+	 * @param aStr - SQL date time string.
+	 * @return Returns the Calendar representation of the db SQL string.
+	 * @throws ParseException
+	 */
+	static public Calendar fromDbStr(String aStr) {
+		Calendar theCal = fromISO8601str(aStr);
+		if (theCal==null) {
+			theCal = getNowMs();
+		}
+		return theCal;
+	}
+
+	/**
+	 * Returns the current UTC time in the proper SQL Date format
 	 * @return Returns the String representation of the current datetime
 	 * @param bNowMs - boolean for getNow with Milliseconds or seconds
 	 */
