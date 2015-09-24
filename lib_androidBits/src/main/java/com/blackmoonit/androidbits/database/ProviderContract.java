@@ -821,6 +821,33 @@ public class ProviderContract {
 		}
 
 		/**
+		 * Helper method that will copy data found in the parameter to our RowVar's fields based
+		 * on the public vars defined.
+		 * @param aRowVar - the RowVar instance whose data we will copy to our fields.
+		 */
+		public <T extends RowVar> T setFromRowVar(RowVar aRowVar) {
+			if (aRowVar!=null) {
+				Field[] theRowVarFields = aRowVar.getClass().getFields();
+				for (Field theRowVarField : theRowVarFields) {
+					//inner loop vars used so multi-core processors with preditive branch
+					//  processing are not constrained by accessing a single var; results
+					//  in multiple loops being processed concurrently, thus enhancing speed
+					//  at the sacrifice of a bit of memory/garbage collecting
+					Field myField;
+					try {
+						myField = getRowField(theRowVarField.getName());
+						setRowField(myField, theRowVarField.get(aRowVar));
+					} catch (NoSuchFieldException e) {
+						//do not care
+					} catch (IllegalAccessException e) {
+						//do not care
+					}
+				}
+			}
+			return (T)this;
+		}
+
+		/**
 		 * Helper method to write a list of RowVars to a List of Bundles so they can be stored
 		 * as a ParcelableArray in a Bundle such as an Intent extra.
 		 * @param aRowVarList - the list to convert.
