@@ -103,4 +103,10 @@ public class ProviderDatabase extends SQLiteOpenHelper {
 		return theCR.delete(aUri, null, null);
 	}
 
+	public String sqlForAddColumn(ProviderContract.TableProviderInfo aTableInfo,
+			String aColumnName, String aColumnType) {
+		return "ALTER TABLE " + aTableInfo.getTableContract().getTableName()
+				+ " ADD COLUMN " + aColumnName + " " + aColumnType;
+	}
+
 }
