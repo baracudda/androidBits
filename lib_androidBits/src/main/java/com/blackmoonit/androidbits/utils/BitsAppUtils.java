@@ -217,4 +217,21 @@ public final class BitsAppUtils {
 		thePackageMgr.getPreferredActivities(theFilterList, thePreferredActivities, aPackageName);
 		return thePreferredActivities;
 	}
+
+	/**
+	 * Return the SIM's serial number, if it exists.
+	 * @param aContext - the context to use.
+	 * @return Returns the serial number of the SIM, if any.
+	 */
+	static public String getSimSerialNumber(Context aContext) {
+		TelephonyManager theTelephonyMgr = (TelephonyManager)
+				aContext.getSystemService(Context.TELEPHONY_SERVICE);
+		if (theTelephonyMgr!=null &&
+				theTelephonyMgr.getSimState()==TelephonyManager.SIM_STATE_READY) {
+			return theTelephonyMgr.getSimSerialNumber();
+		} else {
+			return null;
+		}
+	}
+
 }
