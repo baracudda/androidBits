@@ -936,23 +936,23 @@ public class ProviderContract {
 						else
 						//ContentValues does not have a generic PUT method, so need to check types
 						if (theRowFieldType.equals(String.class)) {
-							theResults.put(theRowFieldName, (String) theColValue);
+							theResults.put(theColName, (String) theColValue);
 						} else if (theRowFieldType.equals(Integer.TYPE) || theRowFieldType==Integer.class) {
-							theResults.put(theRowFieldName, (Integer) theColValue);
+							theResults.put(theColName, (Integer) theColValue);
 						} else if (theRowFieldType.equals(Long.TYPE) || theRowFieldType==Long.class) {
-							theResults.put(theRowFieldName, (Long) theColValue);
+							theResults.put(theColName, (Long) theColValue);
 						} else if (theRowFieldType.equals(Float.TYPE) || theRowFieldType==Float.class) {
-							theResults.put(theRowFieldName, (Float) theColValue);
+							theResults.put(theColName, (Float) theColValue);
 						} else if (theRowFieldType.equals(Double.TYPE) || theRowFieldType==Double.class) {
-							theResults.put(theRowFieldName, (Double) theColValue);
+							theResults.put(theColName, (Double) theColValue);
 						} else if (theRowFieldType.equals(Boolean.TYPE) || theRowFieldType==Boolean.class) {
-							theResults.put(theRowFieldName, (Boolean) theColValue);
+							theResults.put(theColName, (Boolean) theColValue);
 						} else if (theRowFieldType.equals(Character.TYPE) || theRowFieldType==Character.class) {
-							theResults.put(theRowFieldName, (String) theColValue);
+							theResults.put(theColName, (String) theColValue);
 						} else if (theRowFieldType.equals(Byte.TYPE) || theRowFieldType==Byte.class) {
-							theResults.put(theRowFieldName, (Byte) theColValue);
+							theResults.put(theColName, (Byte) theColValue);
 						} else if (theRowFieldType.equals(Short.TYPE) || theRowFieldType==Short.class) {
-							theResults.put(theRowFieldName, (Short) theColValue);
+							theResults.put(theColName, (Short) theColValue);
 						}
 					}
 				} catch (IllegalAccessException e) {
