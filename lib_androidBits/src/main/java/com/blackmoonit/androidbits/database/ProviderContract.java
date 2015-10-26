@@ -874,7 +874,7 @@ public class ProviderContract {
 				String theRowFieldName = cnvColNameToRowFieldName(theColName);
 				Field theRowField;
 				try {
-					theRowField = getRowField(cnvColNameToRowFieldName(theColName));
+					theRowField = getRowField(theRowFieldName);
 					Class<?> theRowFieldType = theRowField.getType();
 					//Bundle does not have a generic PUT method, so need to check types
 					if (theRowFieldType.equals(String.class)) {
@@ -927,7 +927,7 @@ public class ProviderContract {
 				Field theRowField;
 				Object theColValue;
 				try {
-					theRowField = getRowField(cnvColNameToRowFieldName(theColName));
+					theRowField = getRowField(theRowFieldName);
 					Class<?> theRowFieldType = theRowField.getType();
 					theColValue = theRowField.get(this);
 					if (theColValue!=null || !bOmitNulls) {
