@@ -108,8 +108,8 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	 * @param aContext - context to use.
 	 */
 	public ReportAnExceptionHandler(Context aContext) {
-		this( aContext, PreferenceManager.getDefaultSharedPreferences(aContext).getBoolean(
-				PREF_KEY_RELEASE_ONLY_EXCEPTION_REPORT, true) );
+		this(aContext, AppPreferenceBase.getPrefs(aContext).getBoolean(
+				PREF_KEY_RELEASE_ONLY_EXCEPTION_REPORT, true));
 	}
 
 	public Context getContext() {

@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import com.blackmoonit.androidbits.R;
 
@@ -170,7 +171,7 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 	 * @return Returns the SharedPreferences class.
 	 */
 	public SharedPreferences getPrefs() {
-		return PreferenceManager.getDefaultSharedPreferences(this);
+		return getPrefs(this);
 	}
 
 	/**
@@ -180,6 +181,23 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 	 * @return Returns the SharedPreferences class.
 	 */
 	static public SharedPreferences getPrefs(Context aContext) {
+    	String thePackageName = aContext.getString(R.string.pref_meta_prefs_package);
+    	String theFilename = aContext.getString(R.string.pref_meta_prefs_filename);
+        if (!TextUtils.isEmpty(theFilename)) {
+			Context theContext = null;
+			if (!TextUtils.isEmpty(thePackageName)) {
+				try {
+					theContext = aContext.createPackageContext(
+							thePackageName, Context.CONTEXT_IGNORE_SECURITY
+					);
+				} catch (NameNotFoundException e) {
+					theContext = aContext;
+				}
+			} else {
+				theContext = aContext;
+			}
+			return theContext.getSharedPreferences(theFilename, Context.MODE_PRIVATE);
+		}
 		return PreferenceManager.getDefaultSharedPreferences(aContext);
 	}
 
@@ -193,8 +211,17 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 	 * @param bResetPrefs - Use FALSE to only perform this if the entry does not exist yet.
 	 */
 	static public void setDefaultPrefs(Context aContext, int[] aPrefResourceIds, boolean bResetPrefs) {
-		for (int thePrefResId:aPrefResourceIds) {
-			PreferenceManager.setDefaultValues(aContext,thePrefResId,bResetPrefs);
+    	String theFilename = aContext.getString(R.string.pref_meta_prefs_filename);
+    	if (!TextUtils.isEmpty(theFilename)) {
+			for (int thePrefResId : aPrefResourceIds) {
+				PreferenceManager.setDefaultValues(aContext, theFilename,
+						Context.MODE_PRIVATE, thePrefResId, bResetPrefs
+				);
+			}
+		} else {
+			for (int thePrefResId : aPrefResourceIds) {
+				PreferenceManager.setDefaultValues(aContext, thePrefResId, bResetPrefs);
+			}
 		}
 	}
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- Pref meta information (DO NOT TRANSLATE) -->
+<string name="pref_meta_app_sharedUserId">bits</string>
+<string name="pref_meta_prefs_package"></string>
+<string name="pref_meta_prefs_filename"></string> <!-- blank => packageName+_preferences -->
+</resources>
