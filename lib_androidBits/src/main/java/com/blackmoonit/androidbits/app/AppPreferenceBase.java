@@ -63,7 +63,7 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 	}
 
 	protected int getResId(String aResType, String aResName) {
-		return getResId(this,aResType, aResName);
+		return getResId(this, aResType, aResName);
 	}
 
 	/**
@@ -109,9 +109,17 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 		return theRes;
 	}
 
+	/**
+	 * Allow decedents to define their own array, if desired.
+	 * @return Returns the resource IDs for what preference screens to load and display.
+	 */
+	protected int[] getPreferenceScreenDefinitionsResourceIds() {
+		return getResourceArray(getApplicationContext(), R.array.pref_screen_definitions);
+	}
+
 	@Override
 	public void onCreate(Bundle aSavedState) {
-		mAppPrefDefinitionsResourceIds = getResourceArray(getApplicationContext(), R.array.pref_screen_definitions);
+		mAppPrefDefinitionsResourceIds = getPreferenceScreenDefinitionsResourceIds();
 		if (mAppPrefDefinitionsResourceIds!=null)
 			mAppPrefHeaderDefinitionResourceId = getPreferenceHeaderDefinitionResourceId();
 		try {
