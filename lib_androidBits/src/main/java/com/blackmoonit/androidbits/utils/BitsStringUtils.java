@@ -112,6 +112,7 @@ public final class BitsStringUtils {
 	 * @return Returns the data imploded as one string.
 	 */
 	static public String implode(String separator, List<String> data) {
+		if (data==null || data.size()<1) return "";
 		StringBuilder sb = new StringBuilder();
 		//data.size() - 1 => to not add separator at the end
 		for (int i = 0; i < data.size() - 1; i++) {
@@ -122,6 +123,22 @@ public final class BitsStringUtils {
 			}
 		}
 		sb.append(data.get(data.size() - 1).trim());
+		return sb.toString();
+	}
+
+	/**
+	 * Construct the parameter list for use in a query's IN clause.
+	 * @param data - the String[] or data to implode.
+	 * @return Returns the placeholders created as one string.
+	 */
+	static public String implodeAsQueryPlaceholders(List<String> data) {
+		if (data==null || data.size()<1) return "";
+		StringBuilder sb = new StringBuilder();
+		//data.size() - 1 => to not add separator at the end
+		for (int i = 0; i < data.size() - 1; i++) {
+			sb.append("?, ");
+		}
+		sb.append("?");
 		return sb.toString();
 	}
 
