@@ -30,9 +30,11 @@ import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -232,6 +234,11 @@ public final class BitsAppUtils {
 		} else {
 			return null;
 		}
+	}
+
+	static public Date apkUpdateTime(PackageInfo pi) {
+		File apkFile = new File(pi.applicationInfo.sourceDir);
+		return apkFile.exists() ? new Date(apkFile.lastModified()) : null;
 	}
 
 }
