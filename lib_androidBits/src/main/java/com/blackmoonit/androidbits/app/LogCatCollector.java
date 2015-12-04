@@ -58,7 +58,7 @@ public class LogCatCollector {
 	}
 
 	public LogCatCollector showTimestamps() {
-		addArg("-v");
+		addArg("-v").addArg("time");
 		return this;
 	}
 
