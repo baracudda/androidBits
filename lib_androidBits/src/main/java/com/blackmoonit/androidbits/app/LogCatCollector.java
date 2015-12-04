@@ -52,6 +52,16 @@ public class LogCatCollector {
 		return this;
 	}
 
+	public LogCatCollector addArg(String aArg) {
+		mLogCatArguments.add(aArg);
+		return this;
+	}
+
+	public LogCatCollector showTimestamps() {
+		addArg("-v");
+		return this;
+	}
+
 	/**
 	 * Executes the logcat command with arguments taken from {@link #mLogCatArguments}
 	 * @return A {@link String} containing the latest lines of the output from "main" buffer.
