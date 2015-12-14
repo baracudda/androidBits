@@ -241,4 +241,17 @@ public final class BitsAppUtils {
 		return apkFile.exists() ? new Date(apkFile.lastModified()) : null;
 	}
 
+    /**
+     * Returns an {@link Intent} targeting the launch activity for the current
+     * application. A library that needs to launch the app's primary activity
+     * will not necessarily know this information.
+     * @param aContext the context to use
+     * @return an intent that targets the current app's launch activity
+     */
+    static public Intent getLaunchIntentForPackage( Context aContext )
+    {
+        final Context ctxApp = aContext.getApplicationContext() ;
+        final String sAppPkg = ctxApp.getPackageName() ;
+        return ctxApp.getPackageManager().getLaunchIntentForPackage(sAppPkg) ;
+    }
 }
