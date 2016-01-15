@@ -15,9 +15,6 @@ package com.blackmoonit.androidbits.widget;
  * limitations under the License.
  */
 
-import java.util.Arrays;
-import java.util.List;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -29,6 +26,9 @@ import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Custom preference that will toss up a slider dialog and store the result.<br>
@@ -43,7 +43,7 @@ import android.widget.TextView;
  * <br>
  * {@code android:positiveButtonText} &amp; {@code android:negativeButtonText} - optional,
  * {@literal @null} to hide the button, the resId if you want something other than
- * {@link android.R.string.ok} and {@link android.R.string.cancel}.<br>
+ * the standard "OK" and "CANCEL".<br>
  * <br>
  * {@code android:max} - optional max slider value. Default is 100. If entryValues are defined,
  * then the max is set to the number of entrys.<br>
@@ -51,8 +51,9 @@ import android.widget.TextView;
  * {@code android:dialogLayout} - optional in that if it is missing,
  * {@literal "@layout/dialog_pref_fontsize"} will be used.<br>
  * <br>
- * {@code android:dialogMessage} - optional in that if it is missing, the preference title
- * will be used.<br>
+ * {@code android:dialogMessage} &amp; {@code android:summary} &mdash;
+ *  optional; if missing, nothing will be displayed in the dialog above the
+ *  slider control.<br>
  * <br>
  * @author Ryan Fischbach
  */
@@ -90,17 +91,23 @@ public class SliderPreference extends DialogPreference implements OnSeekBarChang
 	}
 
 	/**
-	 * Descendants would override this method to expand the list of interested attributes.
-	 * Call super and expand on what it returns. Current list contains the entries:<br>
-	 * android.R.attr.entries<br>
-	 * android.R.attr.entryValues<br>
-	 * android.R.attr.defaultValue<br>
-	 * android.R.attr.positiveButtonText<br>
-	 * android.R.attr.negativeButtonText<br>
-	 * android.R.attr.max<br>
-	 * android.R.attr.dialogLayout<br>
-	 * android.R.attr.dialogMessage<br>
-	 *
+	 * Descendants would override this method to expand the list of interested
+     * attributes. Call {@code super.getAttrsWanted()} and expand on what it
+     * returns. Currently this list includes:
+     * <ul style="font-family:monospace">
+     * <li>android.R.attr.entries</li>
+     * <li>android.R.attr.entryValues</li>
+     * <li>android.R.attr.defaultValue</li>
+     * <li>android.R.attr.positiveButtonText</li>
+     * <li>android.R.attr.negativeButtonText</li>
+     * <li>android.R.attr.max</li>
+     * <li>android.R.attr.dialogLayout</li>
+     * </ul>
+	 * Note that there is an unresolved issue with some of the later items in
+     * this array, in that the resource IDs returned by the system are always
+     * the "default" (not found), even when those attributes are indeed supplied
+     * in the XML. One of these items, {@code dialogMessage}, has been removed
+     * as of 2016-01-15.
 	 * @return Complete list of attributes the class is interested in.
 	 */
 	protected int[] getAttrsWanted() {
@@ -111,8 +118,7 @@ public class SliderPreference extends DialogPreference implements OnSeekBarChang
 				android.R.attr.positiveButtonText,
 				android.R.attr.negativeButtonText,
 				android.R.attr.max,
-				android.R.attr.dialogLayout,
-				android.R.attr.dialogMessage,
+				android.R.attr.dialogLayout
 			};
 	}
 
@@ -122,8 +128,9 @@ public class SliderPreference extends DialogPreference implements OnSeekBarChang
 	 *
 	 * @param aAttrs - the attributes as defined in the xml file
 	 */
-	protected int processWantedAttributes(final TypedArray aAttrs) {
-		int i = 0;
+	protected int processWantedAttributes(final TypedArray aAttrs)
+    {
+        int i = 0;
 		R_array_pref_entries = aAttrs.getResourceId(i++,R_array_pref_entries);
 		R_array_pref_entryvalues = aAttrs.getResourceId(i++,R_array_pref_entryvalues);
 		if (mDefaultValue==null && aAttrs.peekValue(i)!=null)
@@ -133,12 +140,14 @@ public class SliderPreference extends DialogPreference implements OnSeekBarChang
 		setPositiveButtonText(aAttrs.getResourceId(i++,android.R.string.ok));
 		setNegativeButtonText(aAttrs.getResourceId(i++,android.R.string.cancel));
 		mSliderMaxValue = aAttrs.getInteger(i++,mSliderMaxValue);
-		setDialogLayoutResource(aAttrs.getResourceId(i++,getResId("layout","dialog_pref_slider")));
-		int theMsgResId = aAttrs.getResourceId(i++,-1);
-		if (theMsgResId==-1)
-			setDialogMessage(getTitle());
-		else
-			setDialogMessage(theMsgResId);
+		setDialogLayoutResource( aAttrs.getResourceId( i++,
+            getResId( "layout", "dialog_pref_slider" ) ) );
+        /*
+         * This method formerly tried to get things like the "dialogMessage" and
+         * "summary" but apparently those are intercepted and unavailable. Even
+         * the other attributes above, such as default value, are suspicious;
+         * "defaultValue" was also found to be unobtained.
+         */
 		return i;
 	}
 
