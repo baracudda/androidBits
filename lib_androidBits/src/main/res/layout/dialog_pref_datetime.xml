@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+	>
+
+<TextView android:id="@android:id/message" 
+	android:layout_height="wrap_content" android:layout_width="fill_parent" 
+	android:layout_alignParentTop="true"
+	android:paddingTop="8dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+	android:textColor="@android:color/primary_text_dark"
+	android:text="MessageText"
+	/>
+<TimePicker android:id="@+id/dialog_pref_datetime_timepicker"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:layout_below="@android:id/message"
+	android:timePickerMode="spinner"
+	android:scaleX="0.85"
+	android:scaleY="0.85"
+	/>
+<DatePicker android:id="@+id/dialog_pref_datetime_datepicker"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:layout_below="@id/dialog_pref_datetime_timepicker"
+	android:datePickerMode="spinner"
+	android:calendarViewShown="false"
+	android:scaleX="0.85"
+	android:scaleY="0.85"
+	/>
+</RelativeLayout>
