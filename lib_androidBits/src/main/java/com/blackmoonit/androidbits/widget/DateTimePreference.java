@@ -403,7 +403,7 @@ public class DateTimePreference
 
         // Prevent user from setting a time before current time.
         if ( mSelectedDateIsCurrentDate ) {
-            if (hourOfDay < currentHour) {
+            if (hourOfDay <= currentHour) {
                 hourOfDay = currentHour ;
                 view.setCurrentHour( currentHour ) ;
 
