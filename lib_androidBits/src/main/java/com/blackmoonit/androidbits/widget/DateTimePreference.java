@@ -19,7 +19,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Allows a user to set a preference where the stored value is a string
@@ -440,24 +439,6 @@ public class DateTimePreference
         }
     }
 
-	/**
-	 * Given a slider value, return the value that will be persisted.
-	 *
-	 * @param aSliderValue - the slider value
-	 * @return Returns the slider value or the entryValues[slidervalue] if defined.
-	 */
-/*	public Object getValueToSave(int aSliderValue) {
-		if (mPrefValues!=null) {
-			if (aSliderValue>=0 && aSliderValue<mPrefValues.size()) {
-				return mPrefValues.get(aSliderValue);
-			} else {
-				throw new IndexOutOfBoundsException("Slider Value outside entryValues index range.");
-			}
-		} else {
-			return (Integer)aSliderValue;
-		}
-	}
-*/
 	/**
 	 * Retrieves a timestamp parsed from the currently-saved string value in the
      * preferences.
