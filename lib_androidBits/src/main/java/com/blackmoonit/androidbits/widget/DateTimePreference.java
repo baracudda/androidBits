@@ -261,6 +261,7 @@ public class DateTimePreference
             this.setSelectedDateTime( this.getCurrentDateTimeAsLong(), true ) ;
         else
 		    this.setSelectedDateTime( mCurrentTimestamp, true ) ;
+        determineIfCurrentDate();
 	}
 
     /**
