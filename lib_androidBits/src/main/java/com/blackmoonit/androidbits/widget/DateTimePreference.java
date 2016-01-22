@@ -66,7 +66,7 @@ public class DateTimePreference
 	private int mSelectedMonth ;
 	private int mSelectedYear ;
 
-    private boolean mSelectedDateIsCurrentDate = false;
+    private boolean mSelectedDateIsCurrentDate = true;
     /** A default value indicating that the preference has not been set. */
     public static final long TIMESTAMP_NOT_SET = -1L ;
     /** The current value of the date/time preference as a UTC timestamp. */
