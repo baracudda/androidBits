@@ -10,4 +10,7 @@
 <string name="pref_title_debug_mode">Debug Mode</string>
 <string name="pref_summary_debug_mode">Send debug information to Android Logs.</string>
 
+<string name="datetime_pref_dialog_negative_button">Unset</string>
+<string name="datetime_pref_value_not_set">(not set)</string>
+
 </resources>
