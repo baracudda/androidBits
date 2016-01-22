@@ -66,6 +66,7 @@ public class DateTimePreference
 	private int mSelectedMonth ;
 	private int mSelectedYear ;
 
+    private boolean mSelectedDateIsCurrentDate = false;
     /** A default value indicating that the preference has not been set. */
     public static final long TIMESTAMP_NOT_SET = -1L ;
     /** The current value of the date/time preference as a UTC timestamp. */
@@ -380,9 +381,12 @@ public class DateTimePreference
 	@Override
 	public void onDateChanged( DatePicker view, int year, int monthOfYear, int dayOfMonth)
     {
-        mSelectedDay 		= dayOfMonth;
-        mSelectedMonth 	= monthOfYear;
-        mSelectedYear 	= year;
+        mSelectedDay 	= dayOfMonth ;
+        mSelectedMonth 	= monthOfYear ;
+        mSelectedYear 	= year ;
+
+        if( determineIfCurrentDate() == true )
+            updateTimePickerWithCurrentDate() ;
 	}
 
 	/**
@@ -393,23 +397,45 @@ public class DateTimePreference
 	@Override
 	public void onTimeChanged(TimePicker view, int hourOfDay, int minute)
     {
-        final int currentHour = getCurrentDateTime().get(Calendar.HOUR_OF_DAY);
-        final int currentMinute = getCurrentDateTime().get(Calendar.MINUTE);
+        final int currentHour = getCurrentDateTime().get( Calendar.HOUR_OF_DAY ) ;
+        final int currentMinute = getCurrentDateTime().get( Calendar.MINUTE ) ;
 
         // Prevent user from setting a time before current time.
-        if (hourOfDay < currentHour) {
-            hourOfDay = currentHour;
-            view.setCurrentHour(currentHour);
+        if ( mSelectedDateIsCurrentDate ) {
+            if (hourOfDay < currentHour) {
+                hourOfDay = currentHour ;
+                view.setCurrentHour( currentHour ) ;
 
-            if (minute < currentMinute) {
-                minute = currentMinute;
-                view.setCurrentMinute(currentMinute);
+                if (minute < currentMinute) {
+                    minute = currentMinute ;
+                    view.setCurrentMinute( currentMinute ) ;
+                }
             }
         }
 
-        mSelectedHour = hourOfDay;
-        mSelectedMinute = minute;
+        mSelectedHour = hourOfDay ;
+        mSelectedMinute = minute ;
 	}
+
+    private boolean determineIfCurrentDate() {
+        Calendar currentDateTime = getCurrentDateTime();
+
+        if( currentDateTime.get(Calendar.DAY_OF_MONTH) == mSelectedDay &&
+            currentDateTime.get(Calendar.MONTH) == mSelectedMonth &&
+            currentDateTime.get(Calendar.YEAR) == mSelectedYear)
+            mSelectedDateIsCurrentDate = true;
+        else
+            mSelectedDateIsCurrentDate = false;
+
+        return mSelectedDateIsCurrentDate;
+    }
+
+    private void updateTimePickerWithCurrentDate() {
+        mTimePicker.setCurrentMinute(
+                getCurrentDateTime().get( Calendar.MINUTE ) ) ;
+        mTimePicker.setCurrentHour(
+                getCurrentDateTime().get( Calendar.HOUR_OF_DAY ) ) ;
+    }
 
 	/**
 	 * Given a slider value, return the value that will be persisted.
