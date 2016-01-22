@@ -22,9 +22,9 @@ import java.util.List;
 
 public class DateTimePreference extends DialogPreference implements DatePicker.OnDateChangedListener, TimePicker.OnTimeChangedListener
 {
-	private final String LOG_TAG = this.getClass().getSimpleName();
-	private final SimpleDateFormat m_oSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-	private final SimpleDateFormat m_oVerySimpleDateFormat = new SimpleDateFormat("LLL d, yyyy h:mm:ss a");
+	private static final String LOG_TAG = DateTimePreference.class.getSimpleName();
+	private static final SimpleDateFormat m_oSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	private static final SimpleDateFormat m_oVerySimpleDateFormat = new SimpleDateFormat("LLL d, yyyy 'at' h:mm a");
 
 	protected String mDefaultValue; //set in onGetDefaultValue
 	protected List<String> mPrefEntries = null;
@@ -320,7 +320,7 @@ public class DateTimePreference extends DialogPreference implements DatePicker.O
 
 	public Calendar getSelectedCalendar() {
 		Calendar selectedCalendar = Calendar.getInstance();
-		selectedCalendar.set(m_nSelectedYear, m_nSelectedMonth, m_nSelectedDay, m_nSelectedHour, m_nSelectedMinute);
+		selectedCalendar.set(m_nSelectedYear, m_nSelectedMonth, m_nSelectedDay, m_nSelectedHour, m_nSelectedMinute, 0);
 
 		return selectedCalendar;
 	}
@@ -331,6 +331,26 @@ public class DateTimePreference extends DialogPreference implements DatePicker.O
 
 	public String getSelectedDateTimeAsString() {
 		return m_oSimpleDateFormat.format(getSelectedDateTime());
+	}
+
+	public static String getDateTimeAsString(final long dateTime) {
+		Calendar selectedCalendar = Calendar.getInstance();
+		selectedCalendar.setTimeInMillis(dateTime);
+		Date thisDateTime = selectedCalendar.getTime();
+		return m_oVerySimpleDateFormat.format(thisDateTime);
+	}
+
+	public static long getMillisecondsFromCurrentTime(final long dateTime) {
+		long now = System.currentTimeMillis();
+		long difference = dateTime - now;
+
+		Log.i(LOG_TAG, "---------------------------------------------");
+		Log.i(LOG_TAG, "time chosen: " + String.valueOf(dateTime));
+		Log.i(LOG_TAG, "time now   : " + String.valueOf(now));
+		Log.i(LOG_TAG, "difference : " + String.valueOf(difference));
+		Log.i(LOG_TAG, "---------------------------------------------");
+
+		return difference;
 	}
 
 	public long getSelectedTimeAsLong() {
