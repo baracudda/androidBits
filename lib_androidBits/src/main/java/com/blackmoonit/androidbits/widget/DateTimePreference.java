@@ -380,18 +380,9 @@ public class DateTimePreference
 	@Override
 	public void onDateChanged( DatePicker view, int year, int monthOfYear, int dayOfMonth)
     {
-        final Calendar now = this.getCurrentDateTime() ;
-        now.add( Calendar.SECOND, -1 ) ; // Prevent a race condition.
-        final Calendar selected = this.getSelectedCalendar() ;
-
-        if( selected.compareTo( now ) < 0 )
-            this.setSelectedDateTime( now, true ) ;
-        else
-        {
-            mSelectedDay = dayOfMonth;
-            mSelectedMonth = monthOfYear;
-            mSelectedYear = year;
-        }
+        mSelectedDay 		= dayOfMonth;
+        mSelectedMonth 	= monthOfYear;
+        mSelectedYear 	= year;
 	}
 
 	/**
@@ -402,17 +393,22 @@ public class DateTimePreference
 	@Override
 	public void onTimeChanged(TimePicker view, int hourOfDay, int minute)
     {
-        final Calendar now = this.getCurrentDateTime() ;
-        now.add( Calendar.SECOND, -1 ) ; // Prevent a race condition.
-        final Calendar selected = this.getSelectedCalendar() ;
+        final int currentHour = getCurrentDateTime().get(Calendar.HOUR_OF_DAY);
+        final int currentMinute = getCurrentDateTime().get(Calendar.MINUTE);
 
-        if( selected.compareTo( now ) < 0 )
-            this.setSelectedDateTime( now, true );
-        else
-        {
-            mSelectedHour = hourOfDay ;
-            mSelectedMinute = minute ;
+        // Prevent user from setting a time before current time.
+        if (hourOfDay < currentHour) {
+            hourOfDay = currentHour;
+            view.setCurrentHour(currentHour);
+
+            if (minute < currentMinute) {
+                minute = currentMinute;
+                view.setCurrentMinute(currentMinute);
+            }
         }
+
+        mSelectedHour = hourOfDay;
+        mSelectedMinute = minute;
 	}
 
 	/**
