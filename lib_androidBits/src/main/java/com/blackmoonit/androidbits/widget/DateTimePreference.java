@@ -66,7 +66,7 @@ public class DateTimePreference
 	private int mSelectedMonth ;
 	private int mSelectedYear ;
 
-    private boolean mSelectedDateIsCurrentDate = true;
+    private boolean mSelectedDateIsCurrentDate;
     /** A default value indicating that the preference has not been set. */
     public static final long TIMESTAMP_NOT_SET = -1L ;
     /** The current value of the date/time preference as a UTC timestamp. */
@@ -260,9 +260,8 @@ public class DateTimePreference
 		if( !bRestoreValue || mCurrentTimestamp == TIMESTAMP_NOT_SET )
             this.setSelectedDateTime( this.getCurrentDateTimeAsLong(), true ) ;
         else
-		    this.setSelectedDateTime( mCurrentTimestamp, true ) ;
-        determineIfCurrentDate();
-	}
+            this.setSelectedDateTime( mCurrentTimestamp, true ) ;
+    }
 
     /**
      * Tries to parse a long timestamp value from the given string.
@@ -292,16 +291,17 @@ public class DateTimePreference
 	@Override
 	protected void onBindDialogView(View v)
     {
-		super.onBindDialogView( v );
-		mDatePicker = (DatePicker) v.findViewById( mDatePickerResID );
-		mTimePicker = (TimePicker) v.findViewById( mTimePickerResID );
-		mDatePicker.init( mSelectedYear, mSelectedMonth, mSelectedDay, this );
-		mTimePicker.setOnTimeChangedListener( this );
-		mTimePicker.setCurrentHour( mSelectedHour );
-		mTimePicker.setCurrentMinute( mSelectedMinute );
-		if (Build.VERSION.SDK_INT >= 11)
-			mDatePicker.setMinDate(getCurrentDateTime().getTimeInMillis());
-	}
+        super.onBindDialogView(v);
+        determineIfCurrentDate();
+        mDatePicker = (DatePicker) v.findViewById( mDatePickerResID ) ;
+        mTimePicker = (TimePicker) v.findViewById( mTimePickerResID ) ;
+        mDatePicker.init( mSelectedYear, mSelectedMonth, mSelectedDay, this ) ;
+        mTimePicker.setCurrentHour( mSelectedHour ) ;
+        mTimePicker.setCurrentMinute( mSelectedMinute ) ;
+        mTimePicker.setOnTimeChangedListener( this ) ;
+        if ( Build.VERSION.SDK_INT >= 11 )
+            mDatePicker.setMinDate( getCurrentDateTime().getTimeInMillis() ) ;
+    }
 
     /**
      * Gets a string to be displayed in the dialog to represent the current
@@ -432,10 +432,12 @@ public class DateTimePreference
     }
 
     private void updateTimePickerWithCurrentDate() {
-        mTimePicker.setCurrentMinute(
-                getCurrentDateTime().get( Calendar.MINUTE ) ) ;
-        mTimePicker.setCurrentHour(
-                getCurrentDateTime().get( Calendar.HOUR_OF_DAY ) ) ;
+        if ( mTimePicker != null ) {
+            mTimePicker.setCurrentMinute(
+                    getCurrentDateTime().get( Calendar.MINUTE ) ) ;
+            mTimePicker.setCurrentHour(
+                    getCurrentDateTime().get( Calendar.HOUR_OF_DAY ) ) ;
+        }
     }
 
 	/**
@@ -536,12 +538,6 @@ public class DateTimePreference
 	public static long getMillisecondsFromCurrentTime(final long dateTime) {
 		long now = System.currentTimeMillis();
 		long difference = dateTime - now;
-
-		Log.i(LOG_TAG, "---------------------------------------------");
-		Log.i(LOG_TAG, "time chosen: " + String.valueOf(dateTime));
-		Log.i(LOG_TAG, "time now   : " + String.valueOf(now));
-		Log.i(LOG_TAG, "difference : " + String.valueOf(difference));
-		Log.i(LOG_TAG, "---------------------------------------------");
 
 		return difference;
 	}
