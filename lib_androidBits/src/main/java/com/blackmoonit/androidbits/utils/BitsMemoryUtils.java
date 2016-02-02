@@ -1,8 +1,5 @@
 package com.blackmoonit.androidbits.utils;
 
-import com.vladium.utils.IObjectProfileNode;
-import com.vladium.utils.ObjectProfiler;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -48,28 +45,6 @@ public final class BitsMemoryUtils {
     }
 
     /**
-     * ObjectProfiler's approach is not perfect. Besides the already explained
-     * ignorance of memory alignment, another obvious problem with it is that
-     * Java object instances can share nonstatic data, such as when instance
-     * fields point to global singletons and other shared content.
-     *
-     * Please see
-     * {@code http://www.javaworld.com/article/2077408/core-java/sizeof-for-java.html}
-     * for more information.
-     *
-     * @param object Object to get size of.
-     * @return Returns approximate size of object, in bytes.
-     */
-    public static int getDeepSize( final Object object )
-    {
-//        Field[] objectFields = object.getClass().getFields();
-//        Field[] declaredObjectFields = object.getClass().getDeclaredFields();
-
-        IObjectProfileNode profile = ObjectProfiler.profile( object ) ;
-        return profile.size() ;
-    }
-
-    /**
      * Converts bytes to kilobytes. Rounds to two decimal points, and considers
      * the magnitudes involved to be in terms memory. Ergo, 1 Kb = 1024B.
      * @param bytes Byte value to convert to kilobytes.
@@ -102,17 +77,6 @@ public final class BitsMemoryUtils {
     public static String getReadableSize ( final Object object ) {
         StringBuilder sb = new StringBuilder();
         final int objectSizeB = getSize(object);
-        final double objectSizeKb = convertToKb(objectSizeB);
-        sb.append(objectSizeKb);
-        sb.append(" Kb, (");
-        sb.append(objectSizeB);
-        sb.append(" bytes)");
-        return sb.toString();
-    }
-
-    public static String getReadableDeepSize ( final Object object ) {
-        StringBuilder sb = new StringBuilder();
-        final int objectSizeB = getDeepSize(object);
         final double objectSizeKb = convertToKb(objectSizeB);
         sb.append(objectSizeKb);
         sb.append(" Kb, (");
