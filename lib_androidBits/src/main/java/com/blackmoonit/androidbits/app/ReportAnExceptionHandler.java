@@ -25,7 +25,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.blackmoonit.androidbits.R;
@@ -40,6 +39,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -88,6 +88,14 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	 * If TRUE, will attempt to email the log at app start and when unhandled error is thrown.
 	 */
 	protected boolean bSendLog = true;
+	/**
+	 * Destination addresses for the crash report. This will default to the
+	 * value of the Android string resource
+	 * {@code R.string.postmortem_report_email_addresses} (which may be
+	 * overloaded by the consuming app), or set explicitly by the consumer with
+	 * {@link #setRecipientAddresses}.
+	 */
+	protected String mRecipientAddresses = null ;
 
 	/**
 	 * Construct the exception handler object.
@@ -97,8 +105,11 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	public ReportAnExceptionHandler(Context aContext, boolean bEmailOnlyIfNotDebuggable) {
 		mDefaultUEH = Thread.getDefaultUncaughtExceptionHandler();
 		mContext = new WeakReference<Context>(aContext);
-		if (aContext!=null) {
+		if( aContext!=null )
+		{
 			mContextClassName = aContext.getClass().getName();
+			mRecipientAddresses = aContext.getString(
+				R.string.postmortem_report_email_recipients ) ;
 		}
 		bSendLogOnlyIfNotDebuggable = bEmailOnlyIfNotDebuggable;
 	}
@@ -114,6 +125,63 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 
 	public Context getContext() {
 		return mContext.get();
+	}
+
+	/** Returns the recipient address list set in this handler. */
+	public String getRecipientAddresses()
+	{ return mRecipientAddresses ; }
+
+	/**
+	 * Naively verifies that an address list has been set, but does not try to
+	 * validate that they are actually email addresses.
+	 * @return {@code true} if any value has been set for the address list
+	 *  (whether valid or not)
+	 */
+	public boolean hasRecipientAddresses()
+	{ return( mRecipientAddresses != null && mRecipientAddresses.length() > 0 ) ; }
+
+	/**
+	 * Sets the list of recipient addresses for crash report emails.
+	 * Note that this method performs no validation on the input; it uses the
+	 * provided string as-is.
+	 * @param s a list of email addresses, separated by commas or semicolons
+	 * @return the handler itself, for fluid invocations
+	 * @see WebUtils#newEmailIntent(String)
+	 */
+	@SuppressWarnings( "unused" )
+	public ReportAnExceptionHandler setRecipientAddresses( String s )
+	{
+		this.mRecipientAddresses = s ;
+		return this ;
+	}
+
+	/**
+	 * Sets the list of recipient addresses for crash report emails.
+	 * Note that this method performs no validation on the input; it uses the
+	 * provided list of strings as-is. If the reference to the list is
+	 * {@code null}, then the handler's address list will be set to
+	 * {@code null}. However, if the list is nonnull but has no members, the
+	 * handler's address list will be a blank string.
+	 * @param aAddressList a list of email addresses
+	 * @return the handler itself, for fluid invocations
+	 * @see WebUtils#newEmailIntent(String)
+	 */
+	@SuppressWarnings( "unused" )
+	public ReportAnExceptionHandler setRecipientAddresses( Collection<String> aAddressList )
+	{
+		if( aAddressList == null )
+			this.mRecipientAddresses = null ;
+		else if( aAddressList.size() == 0 )
+			this.mRecipientAddresses = "" ;
+		else
+		{
+			StringBuffer sb = new StringBuffer() ;
+			for( String theAddress : aAddressList )
+				sb.append( theAddress ).append( ';' ) ;
+			this.mRecipientAddresses = sb.toString() ;
+		}
+
+		return this ;
 	}
 
 	/**
@@ -373,8 +441,12 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	 */
 	public boolean sendDebugReportToAuthor(String aReport) {
 		Context theContext = getContext();
-		if (theContext!=null && this.bSendLog && aReport!=null) {
-			Intent theIntent = WebUtils.newEmailIntent(theContext.getString(R.string.postmortem_report_email_recipients));
+		if (theContext!=null && this.bSendLog && aReport!=null)
+		{
+			if( ! this.hasRecipientAddresses() ) // short-circuit as unsendable
+				return this.bSendLog ;
+
+			Intent theIntent = WebUtils.newEmailIntent( mRecipientAddresses ) ;
 
 			if (!(theContext instanceof Activity))
 				theIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
