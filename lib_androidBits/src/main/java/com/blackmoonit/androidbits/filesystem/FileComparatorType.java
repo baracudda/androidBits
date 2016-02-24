@@ -19,7 +19,7 @@ package com.blackmoonit.androidbits.filesystem;
  * Type, followed by Alphabetical sort.
  * @see com.blackmoonit.androidbits.filesystem.FileComparatorAlpha
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FileComparatorType extends FileComparator {
 

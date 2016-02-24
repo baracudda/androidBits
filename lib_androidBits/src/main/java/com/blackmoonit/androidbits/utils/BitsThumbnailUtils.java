@@ -39,7 +39,7 @@ import java.lang.reflect.Method;
 /**
  * Static class for thumbnail utility functions.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 @TargetApi(10)
 public final class BitsThumbnailUtils {

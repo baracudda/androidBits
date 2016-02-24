@@ -31,7 +31,7 @@ import java.io.File;
 
 /**
  * Graphic utility class of static functions.
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public final class BitsGraphicsUtils {
 

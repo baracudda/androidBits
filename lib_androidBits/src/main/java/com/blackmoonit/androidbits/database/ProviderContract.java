@@ -46,7 +46,7 @@ import java.util.Locale;
  * turn allow use of a generic ContentProvider such as
  * {@link com.blackmoonit.androidbits.content.SqlContractProvider SqlContractProvider}.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class ProviderContract {
 	static public final String TAG = ProviderContract.class.getSimpleName();

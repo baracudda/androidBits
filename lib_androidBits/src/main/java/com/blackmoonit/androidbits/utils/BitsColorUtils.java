@@ -21,7 +21,7 @@ import android.graphics.ColorMatrix;
 /**
  * Color utility functions housed in a static class.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public final class BitsColorUtils {
 

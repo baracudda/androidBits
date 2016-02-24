@@ -32,7 +32,7 @@ import com.blackmoonit.androidbits.widget.ColorHueView.OnColorHueSelectedListene
 /**
  * Color picker dialog.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class PickColorDialog extends Dialog implements OnColorHueSelectedListener,
 		OnColorHueChangedListener, OnBrightnessChangedListener {

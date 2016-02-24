@@ -25,7 +25,7 @@ import android.widget.RelativeLayout;
 /**
  * Delegates the Checkable interface to the desired Checkable subview.
  * ListView uses the Checkable interface of its root ItemView to handle selected functionality.
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class RelativeListViewLayout extends RelativeLayout implements Checkable {
 	protected int mDelegatedCheckableViewId = 0;

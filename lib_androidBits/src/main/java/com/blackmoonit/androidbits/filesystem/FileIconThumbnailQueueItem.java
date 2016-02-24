@@ -25,7 +25,7 @@ import java.io.File;
 /**
  * Thumbnail queue item holding all data needed to retrieve and then set an image file's thumbnail.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FileIconThumbnailQueueItem implements Comparable<FileIconThumbnailQueueItem> {
 	//private static final AtomicLong seq = new AtomicLong();

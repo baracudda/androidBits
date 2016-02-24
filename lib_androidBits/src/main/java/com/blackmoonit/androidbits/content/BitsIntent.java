@@ -26,7 +26,7 @@ import android.net.Uri;
 /**
  * Android Intent related functions and definitions backward compatible with 1.5+
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public final class BitsIntent extends Intent {
 	private static Field mActionSendMultipleField = null;

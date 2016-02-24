@@ -47,7 +47,7 @@ import com.blackmoonit.androidbits.net.ssl.CustomSSLTrustManager.SSLContextExcep
  * web connection that may or may not require custom Certificate Authority chains
  * to authorize SSL connections with unknown or self-signed hosts.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 @SuppressWarnings({"Convert2Diamond", "TryFinallyCanBeTryWithResources", "UnnecessaryLocalVariable", "UnusedReturnValue"})
 public class WebConn {

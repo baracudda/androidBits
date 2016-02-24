@@ -30,7 +30,7 @@ import android.widget.Toast;
  * Item Progress Bar, Item Text, Cancel Progress mechanism. The UI implementation of these elements
  * is left for decendant classes that wish to implement the nested interfaces.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public abstract class UIMsgHandler extends Handler {
 	public static final int MSG_TOAST = 1;

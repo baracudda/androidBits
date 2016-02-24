@@ -33,7 +33,7 @@ import android.text.TextUtils;
  * Query Uris can use the LIMIT and OFFSET keywords in their query as long as they make them part
  * of the Uri query parameters {"content://blah/blah?limit=1&offset=5"} as lowercase keys.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public abstract class SqlContentProvider extends ContentProvider {
 	static public final String QUERY_LIMIT = "limit";

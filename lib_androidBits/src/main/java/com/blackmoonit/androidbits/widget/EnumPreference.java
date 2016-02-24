@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 /**
  * Automatically update the preference summary with the current value.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class EnumPreference extends ListPreference {
 

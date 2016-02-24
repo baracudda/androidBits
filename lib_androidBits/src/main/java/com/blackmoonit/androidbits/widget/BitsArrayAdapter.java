@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * BITS framework ideas around the ArrayAdapter.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public abstract class BitsArrayAdapter<T> extends ArrayAdapter<T> {
 	protected int mItemLayoutResId = 0;

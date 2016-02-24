@@ -21,7 +21,7 @@ import android.view.View;
 /**
  * Storage holder for findViewById() calls so that it can be conveniently placed in setTag().
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class ViewCacher {
 

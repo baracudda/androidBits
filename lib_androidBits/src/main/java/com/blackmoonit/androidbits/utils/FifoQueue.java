@@ -23,7 +23,7 @@ import java.util.Queue;
 /**
  * Queue that implements FIFO (first in, first out)
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FifoQueue<E> extends LinkedList<E> implements Queue<E> {
 	static private final long serialVersionUID = 1409271926562953991L;

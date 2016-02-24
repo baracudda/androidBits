@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#ensureContentUri(android.net.Uri)
  * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 @SuppressLint("UseSparseArrays")
 abstract public class SqlContractProvider extends SqlContentProvider {

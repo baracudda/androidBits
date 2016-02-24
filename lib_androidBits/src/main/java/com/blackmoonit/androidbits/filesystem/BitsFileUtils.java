@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  * That way, naming conventions like "copyFile" will only be for files, "copyFolder" will only apply to
  * folders and "copyFob" can take either a file or a folder.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public final class BitsFileUtils {
 	/**

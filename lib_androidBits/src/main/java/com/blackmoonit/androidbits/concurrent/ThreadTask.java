@@ -20,7 +20,7 @@ package com.blackmoonit.androidbits.concurrent;
  * background worker thread.<br>
  * Android has something similar, called AsyncTask, but this class is
  * designed to use Runnables instead of requiring subclasses to be defined.
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class ThreadTask extends ThreadInterruptable {
 	protected Runnable mTask = null;

@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Executes logcat commands and collects it's output.
  *
- * @author Kevin Gaudin, modifications by Ryan Fischbach
+ * @author Kevin Gaudin, modifications by baracudda
  */
 public class LogCatCollector {
 

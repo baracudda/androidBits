@@ -24,7 +24,7 @@ import android.view.View;
  * UI response time is not disrupted on potentially slow jobs - which would cause multiple click
  * events while the user keeps pressing the button/widget trying to make the UI respond.
  * Useful if you want cancellable slow tasks performed in the background.
- * @author Ryan Fischbach
+ * @author baracudda
  */
 @SuppressWarnings("WeakerAccess")
 public class OnClickTask implements View.OnClickListener, Runnable {

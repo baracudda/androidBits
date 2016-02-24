@@ -28,7 +28,7 @@ import android.graphics.drawable.BitmapDrawable;
 /**
  * Replacement for Android's MatrixCursor to add support for Blobs.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class TypedMatrixCursor extends AbstractCursor {
 	//private static final String TAG = "BITS.lib.database.TypedMatrixCursor";

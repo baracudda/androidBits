@@ -34,7 +34,7 @@ import com.google.bits_gson.JsonSyntaxException;
 
 /**
  * JSON utility functions utilizing GSON library (Google's JSON library).
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public final class WebUtils {
 	static private final String TAG = "androidBits."+WebUtils.class.getSimpleName();

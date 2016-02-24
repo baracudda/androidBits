@@ -29,7 +29,7 @@ import java.lang.ref.WeakReference;
 /**
  * Thumbnail thread used to generate live thumbnails and place them in their appropriate views.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FileIconThumbnailThread extends ThreadDaemon {
 	private final WeakReference<Activity> mApp;

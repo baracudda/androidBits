@@ -19,7 +19,7 @@ package com.blackmoonit.androidbits.map;
  * Utilities and Interface definitions pertaining to points and vectors in several dimensions.
  * 2D, 3D, GeoSpatial, as well as the vectors of each. All values are integers.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class SpatialInt {
 	/**

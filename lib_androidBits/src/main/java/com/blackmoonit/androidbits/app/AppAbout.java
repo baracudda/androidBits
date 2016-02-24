@@ -37,7 +37,7 @@ import com.blackmoonit.androidbits.net.WebUtils;
 /**
  * The About dialog for an app.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class AppAbout extends Activity implements View.OnClickListener {
 	static private final String TAG = "BITS.lib.app."+AppAbout.class.getSimpleName();

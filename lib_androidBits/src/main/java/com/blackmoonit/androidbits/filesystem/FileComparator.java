@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 /**
  * Abstract class implementing the various ways to sort a list of files.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public abstract class FileComparator implements Comparator<FileListAdapterElement> {
 	public int mSorterReverseFactor = 1;

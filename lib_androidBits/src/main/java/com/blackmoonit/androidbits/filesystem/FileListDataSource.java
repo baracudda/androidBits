@@ -32,7 +32,7 @@ import java.util.Collections;
  * DataSource supplying list of files on local filesystem.
  * Actions files can perform also defined here.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FileListDataSource extends ArrayList<FileListAdapterElement> {
 	static private final long serialVersionUID = 4362538043449602887L;

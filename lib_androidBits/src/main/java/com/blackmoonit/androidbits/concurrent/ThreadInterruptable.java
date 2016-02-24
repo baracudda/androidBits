@@ -21,7 +21,7 @@ import java.util.concurrent.CancellationException;
 
 /**
  * Thread mechanism to overcome the limitations and shortcomings of stopping java threads.
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public abstract class ThreadInterruptable extends Thread {
 	protected volatile Thread mBreakman;

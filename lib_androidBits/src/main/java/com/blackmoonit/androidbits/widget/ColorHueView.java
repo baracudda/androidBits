@@ -34,7 +34,7 @@ import com.blackmoonit.androidbits.utils.BitsColorUtils;
  * ColorHueView is a view used to pick different colors based on a color wheel concept.
  * The code is influenced from the Android API demo ColorPickerDialog, but made into a View.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class ColorHueView extends View {
 	private DisplayMetrics currDisplayMetrics = null;

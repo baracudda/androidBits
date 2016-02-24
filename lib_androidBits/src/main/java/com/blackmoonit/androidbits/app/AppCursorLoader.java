@@ -34,7 +34,7 @@ import com.blackmoonit.androidbits.concurrent.ThreadTask;
 /**
  * Class that can manage all the cursor loaders for spinner/list adapters in the app.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class AppCursorLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 	/**

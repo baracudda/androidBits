@@ -27,7 +27,7 @@ import com.blackmoonit.androidbits.widget.BitsArrayAdapter;
 /**
  * Adapter for a list of files.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 abstract public class FileListAdapter extends BitsArrayAdapter<FileListAdapterElement> {
 	protected final FileIcons mFileIcons;

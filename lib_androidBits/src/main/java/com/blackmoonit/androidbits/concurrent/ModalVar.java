@@ -34,7 +34,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * @param <V> - class of the value desired
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class ModalVar<V> {
 	/**

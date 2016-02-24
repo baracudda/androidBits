@@ -23,7 +23,7 @@ import java.util.Locale;
  * File adapters need some more meta file information to properly and quickly
  * sort and work with files on the local file system.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FileListAdapterElement extends File implements Serializable {
 	static private final long serialVersionUID = 5104958455676411709L;

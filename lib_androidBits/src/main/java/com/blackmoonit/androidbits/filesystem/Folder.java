@@ -22,7 +22,7 @@ import java.net.URI;
  * File object that will always only be a folder. If you try to assign a File object to it that is an
  * an actual file, it will instead assign itself to its parent folder containing said file.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class Folder extends File {
 	static private final long serialVersionUID = -7182124359991533310L;

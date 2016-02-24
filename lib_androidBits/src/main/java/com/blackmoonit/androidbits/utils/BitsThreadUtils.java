@@ -20,7 +20,7 @@ import java.util.concurrent.CancellationException;
 /**
  * Thread Utilities.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public final class BitsThreadUtils {
 

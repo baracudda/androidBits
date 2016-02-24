@@ -36,7 +36,7 @@ import java.util.regex.PatternSyntaxException;
  * Matcher used to take a user query and match it against file objects.
  * Supports REGEX!
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FileMatcher {
 	private static final int OP_NAME = 0;

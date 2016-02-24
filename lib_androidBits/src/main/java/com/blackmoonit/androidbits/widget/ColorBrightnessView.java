@@ -36,7 +36,7 @@ import com.blackmoonit.androidbits.utils.BitsColorUtils;
 /**
  * View that adjusts the brightness of a given color rather than the hue.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class ColorBrightnessView extends View {
 	private DisplayMetrics currDisplayMetrics = null;

@@ -24,7 +24,7 @@ import android.graphics.drawable.Drawable;
 /**
  * Thumbnail cache holding image file's thumbnail. Hashmap wrapper to help facilitate using file cache.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FileIconThumbnailCache extends HashMap<String, Drawable> {
 	static private final long serialVersionUID = 786992526469278470L;

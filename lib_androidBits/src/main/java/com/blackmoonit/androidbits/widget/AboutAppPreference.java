@@ -28,7 +28,7 @@ import com.blackmoonit.androidbits.app.AppPreferenceBase;
  * <br><br>
  * {@code android:title} - required format string {@literal "About %s"} which becomes the app name.<br>
  * {@code android:summary} - required attribute, usually {@literal "@string/version_name"}<br>
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class AboutAppPreference extends Preference {
 	private int mResIdAppName = 0;

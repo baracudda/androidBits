@@ -57,7 +57,7 @@ import java.util.Locale;
  * instead. A benefit to updating this code is that different apps can send emails to different
  * addresses instead of relying on one statically defined email address.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  *
  *  Source has been released to the public as is and without any warranty.
  */

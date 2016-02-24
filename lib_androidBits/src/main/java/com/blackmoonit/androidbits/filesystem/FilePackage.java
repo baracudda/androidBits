@@ -22,7 +22,7 @@ import java.util.Iterator;
 /**
  * Base class for archiving files.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 abstract public class FilePackage {
 	public File mPackageFile = null;

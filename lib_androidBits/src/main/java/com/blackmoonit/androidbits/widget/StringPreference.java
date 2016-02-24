@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 
 /**
  * Extend the default EditTextPreference to show the current value in the summary.
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class StringPreference extends EditTextPreference {
 

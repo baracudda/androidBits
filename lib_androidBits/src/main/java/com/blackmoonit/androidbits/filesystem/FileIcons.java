@@ -39,7 +39,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 /**
  * Manage icon retrieval for various file types. Folders are not handled.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FileIcons {
 	static private final long LOW_MEMORY_WARNING = 1024*64;

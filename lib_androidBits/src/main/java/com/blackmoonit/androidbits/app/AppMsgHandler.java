@@ -24,7 +24,7 @@ import android.os.Message;
 /**
  * Implement ToastMsgs interface and provide easy mechanism to handle progress msgs too.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class AppMsgHandler extends UIMsgHandler implements UIMsgHandler.ToastMsgs {
 	protected WeakReference<Context> wrContext;

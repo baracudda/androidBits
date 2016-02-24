@@ -29,7 +29,7 @@ import java.util.ListIterator;
  * FileOrchard is a managed set of files usually arranged as a bunch of ordered trees.
  * Thread-safe. Map within a map, outer map is the parent path, inner map is (filename, file object).
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FileOrchard {
 	//bundle/unbundle keys

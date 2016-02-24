@@ -24,7 +24,7 @@ import android.app.Activity;
  * background worker thread.<br>
  * The Daemon thread will continue to execute the Runnable task in an infinite loop.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class ThreadDaemon extends ThreadInterruptable {
 	protected Runnable mTask = null;

@@ -20,7 +20,7 @@ import java.util.Arrays;
 /**
  * Extending the static array functions.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public final class BitsArrayUtils {
 

@@ -27,7 +27,7 @@ import java.util.UUID;
  * DO NOT USE!!!
  * Provided as an example for future projects.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public final class ProviderContract_Sample extends ProviderContract implements ProviderContract.Database {
 	static public ProviderContract_Sample mDbContract = new ProviderContract_Sample();

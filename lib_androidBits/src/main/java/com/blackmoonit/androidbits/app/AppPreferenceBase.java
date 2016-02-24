@@ -47,7 +47,7 @@ import com.blackmoonit.androidbits.R;
  * Android v11+ on large screens (tablets, TVs, widescreen big phones, etc.)</li>
  * <li>string.prefs_name - filename of prefs (optional, uses getPackageName()+".prefs" otherwise).</li>
  * </ul>
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public abstract class AppPreferenceBase extends PreferenceActivity {
 	protected int[] mAppPrefDefinitionsResourceIds;

@@ -26,7 +26,7 @@ import android.net.Uri;
  * Self-data-change-registering class used for auto-populating display widgets when
  * data changes.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public abstract class BaseContentObserver extends ContentObserver {
 	private Context mContext = null; //force descendants to use get and swap methods

@@ -39,7 +39,7 @@ import java.util.List;
 
 /**
  * Utility functions that deal mainly with app-wide settings or values.
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public final class BitsAppUtils {
 

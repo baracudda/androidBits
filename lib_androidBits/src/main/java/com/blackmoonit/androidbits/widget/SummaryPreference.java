@@ -20,7 +20,7 @@ import android.util.AttributeSet;
 
 /**
  * Non-editable preference that exists solely to show the current value in the summary.
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class SummaryPreference extends StringPreference {
 

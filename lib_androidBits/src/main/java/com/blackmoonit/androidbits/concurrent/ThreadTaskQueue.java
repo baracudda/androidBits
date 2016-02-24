@@ -30,7 +30,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * queue, in FIFO order, and keep doing so as they come in.  An empty queue blocks this thread
  * until a task is submitted, waking it up.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class ThreadTaskQueue extends ThreadInterruptable {
 

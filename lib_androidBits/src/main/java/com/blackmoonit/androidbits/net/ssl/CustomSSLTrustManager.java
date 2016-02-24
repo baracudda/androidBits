@@ -43,7 +43,7 @@ import android.util.Log;
  * In order to load certs for these kinds of connections,
  * you need to use a class like this one that will load
  * the cert and create special TrustManagers with it.
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class CustomSSLTrustManager {
 	static private final String TAG = "androidBits."+CustomSSLTrustManager.class.getSimpleName();

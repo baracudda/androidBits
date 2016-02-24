@@ -50,7 +50,7 @@ import android.os.Message;
  * }
  * </pre><br>
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class ActivityResult {
 

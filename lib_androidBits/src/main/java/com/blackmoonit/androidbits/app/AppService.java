@@ -30,7 +30,7 @@ import android.widget.Toast;
 /**
  * Service class compatible with pre-Android 2.0 devices and 3.0+ devices (.setForeground() removed)
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public abstract class AppService extends Service {
 	private static final String TAG = "androidBits.AppService";

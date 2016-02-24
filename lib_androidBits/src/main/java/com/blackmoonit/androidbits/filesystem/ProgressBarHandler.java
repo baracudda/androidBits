@@ -28,7 +28,7 @@ import java.util.UUID;
  * Item Progress Bar, Item Text, Cancel Progress mechanism. The UI implementation of these elements
  * is left for decendant classes.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public abstract class ProgressBarHandler extends Handler {
 	public static final int MSG_PROGRESS_START = 1;

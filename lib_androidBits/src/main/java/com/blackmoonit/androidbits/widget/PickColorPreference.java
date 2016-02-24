@@ -27,7 +27,7 @@ import com.blackmoonit.androidbits.dialog.PickColorDialog.OnColorPickedListener;
 /**
  * Custom preference that will toss up a color picker dialog and store the result.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class PickColorPreference extends Preference implements OnColorPickedListener {
 	//private static final String androidns = "android";

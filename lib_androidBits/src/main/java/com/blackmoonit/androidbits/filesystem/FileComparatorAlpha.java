@@ -18,7 +18,7 @@ package com.blackmoonit.androidbits.filesystem;
 /**
  * Alphabetical sort that first removes the extension before comparing.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FileComparatorAlpha extends FileComparator {
 

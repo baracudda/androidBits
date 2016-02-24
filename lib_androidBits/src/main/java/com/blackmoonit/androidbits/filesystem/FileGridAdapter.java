@@ -21,7 +21,7 @@ import android.widget.ImageView;
 /**
  * Adapter for a grid-style view of files.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 abstract public class FileGridAdapter extends FileListAdapter {
 

@@ -39,7 +39,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * Zip archive descendant of {@link FilePackage}
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class FilePackageZip extends FilePackage {
 	protected byte[] mBuffer = null;

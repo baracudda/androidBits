@@ -55,7 +55,7 @@ import java.util.List;
  *  optional; if missing, nothing will be displayed in the dialog above the
  *  slider control.<br>
  * <br>
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public class SliderPreference extends DialogPreference implements OnSeekBarChangeListener {
 	protected int mSliderValue = 0;

@@ -27,7 +27,7 @@ import android.net.Uri;
 /**
  * MIME type map class returning MIME types given filenames based mostly on the extension.<br>
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public final class MIMEtypeMap extends TreeMap<String, Integer> {
 	static private final long serialVersionUID = 6907911910402699271L;

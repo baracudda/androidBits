@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * String Utilities.
  *
- * @author Ryan Fischbach
+ * @author baracudda
  */
 public final class BitsStringUtils {
 
