@@ -39,6 +39,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -166,7 +167,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 	 * @see WebUtils#newEmailIntent(String)
 	 */
 	@SuppressWarnings( "unused" )
-	public ReportAnExceptionHandler setRecipientAddresses( List<String> aAddressList )
+	public ReportAnExceptionHandler setRecipientAddresses( Collection<String> aAddressList )
 	{
 		if( aAddressList == null )
 			this.mRecipientAddresses = null ;
