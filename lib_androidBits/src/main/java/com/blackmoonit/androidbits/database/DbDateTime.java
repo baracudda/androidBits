@@ -114,17 +114,20 @@ public class DbDateTime {
 			SimpleDateFormat iso8601Format;
 			int theLeastSignificantTime = Calendar.MILLISECOND;
 			if (aStr.contains(".")) {
-				iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
-			} else if (aStr.length() > 10) {
-				iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
-				theLeastSignificantTime = Calendar.SECOND;
+                iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+            } else if (aStr.length() > 10) {
+                iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                theLeastSignificantTime = Calendar.SECOND;
 			} else {
 				iso8601Format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 				theLeastSignificantTime = Calendar.DAY_OF_MONTH;
 			}
+            iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
 			try {
 				//Java doesn't parse ISO dates correctly. We need to convert "Z" into +0000
 				String theStr = aStr.replaceAll("Z$", "+0000");
+                //Also, something is wrong with Ts in the dates (if they are there?), so that needs to be turned into a space 
+                theStr = theStr.replaceAll("T", " ");
 				//additionally, we do not have microsecond resolution, so keep .### and remove .###xxx
 				theStr = theStr.replaceAll("(\\.\\d\\d\\d)\\d\\d\\d", "$1");
 				Calendar theCal = getNowAs("UTC", theLeastSignificantTime);
