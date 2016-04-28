@@ -122,7 +122,6 @@ public class DbDateTime {
 				iso8601Format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 				theLeastSignificantTime = Calendar.DAY_OF_MONTH;
 			}
-            iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
 			try {
 				//Java doesn't parse ISO dates correctly. We need to convert "Z" into +0000
 				String theStr = aStr.replaceAll("Z$", "+0000");
