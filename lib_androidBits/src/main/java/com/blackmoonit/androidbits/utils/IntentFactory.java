@@ -156,6 +156,9 @@ public abstract class IntentFactory
     /** Compatibility: Provides intent category for apps prior to API 15. */
     public static final String CATEGORY_APP_MESSAGING =
         "android.intent.category.APP_MESSAGING" ;
+    /** Compatibility: Provides intent category for apps prior to API 22. */
+    public static final String EXTRA_REFERRER_NAME =
+        "android.intent.extra.REFERRER_NAME" ;
 
     /** Should not be instantiated. */
     protected IntentFactory() {}

@@ -25,13 +25,12 @@ import android.net.Uri;
 
 /**
  * Android Intent related functions and definitions backward compatible with 1.5+
- *
- * @author baracudda
  */
-public final class BitsIntent extends Intent {
+public class BitsIntent extends Intent {
 	private static Field mActionSendMultipleField = null;
 	private static final String cIntent_ACTION_SEND_MULTIPLE = "android.intent.action.SEND_MULTIPLE";
 	private static final String cIntent_EXTRA_FROM_COMPONENT_NAME = "android.intent.extra.from_component_name";
+	private static final String cIntent_EXTRA_REFERRER_NAME = "android.intent.extra.REFERRER_NAME";
 	/**
 	 * String extra containing the path to a folder.
 	 */
@@ -125,6 +124,15 @@ public final class BitsIntent extends Intent {
 	 */
 	static public String Intent_EXTRA_FROM_COMPONENT_NAME() {
 		return cIntent_EXTRA_FROM_COMPONENT_NAME;
+	}
+
+	/**
+	 * Used for backward compatibility with Android 1.5
+	 *
+	 * @return Returns value of EXTRA_REFERRER_NAME.
+	 */
+	static public String Intent_EXTRA_REFERRER_NAME() {
+		return cIntent_EXTRA_REFERRER_NAME;
 	}
 
 	/**
