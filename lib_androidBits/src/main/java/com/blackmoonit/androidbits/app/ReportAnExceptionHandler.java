@@ -449,7 +449,10 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			Intent theIntent = WebUtils.newEmailIntent( mRecipientAddresses ) ;
 
 			if (!(theContext instanceof Activity))
-				theIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				theIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+						| Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT
+						| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+				);
 
 			String theSubject = theContext.getString(R.string.postmortem_report_email_subject,
 					Utils.getAppName(getContext()));
