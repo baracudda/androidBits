@@ -32,6 +32,7 @@ import android.util.Log;
 import com.blackmoonit.androidbits.R;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -683,7 +684,8 @@ public class ProviderContract {
 			try {
 				aRowField.set(this, aRowFieldValue);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				if ( !Modifier.isFinal(aRowField.getModifiers()) )
+					e.printStackTrace();
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
