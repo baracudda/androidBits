@@ -5,5 +5,6 @@
 <string name="sql_content_provider_msg_insert_fail">Failed to insert row into %s</string>
 <string name="sql_contract_provider_msg_insert_success">Successfully inserted %s</string>
 <string name="sql_contract_provider_msg_delete_result">Delete Uri %1$s result = %2$d, (>0=success)</string>
+<string name="sql_contract_provider_msg_uri_no_match">Uri [%1$s] does not match any known table</string>
 
 </resources>

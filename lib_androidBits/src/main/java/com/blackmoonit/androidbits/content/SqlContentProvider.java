@@ -27,6 +27,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.blackmoonit.androidbits.R;
+
 /**
  * Ancestor content provider that handles many of the mundane operations in a uniform way so that
  * any provider based on it will function similarly and with minimal hassle.
@@ -72,8 +74,8 @@ public abstract class SqlContentProvider extends ContentProvider {
 
 	@Override
 	public boolean onCreate() {
-		R_string_sql_content_provider_msg_insert_failed = getResId("string","sql_content_provider_msg_column_missing");
-		R_string_sql_content_provider_msg_column_missing = getResId("string","R_string_sql_content_provider_msg_column_missing");
+		R_string_sql_content_provider_msg_insert_failed = getResId("string","sql_content_provider_msg_insert_failed");
+		R_string_sql_content_provider_msg_column_missing = getResId("string","sql_content_provider_msg_column_missing");
 		mUriMatcher = buildUriMatcher();
 		mDb = newDbInstance(getContext());
 		return (mDb!=null);
@@ -167,6 +169,10 @@ public abstract class SqlContentProvider extends ContentProvider {
 	public Cursor query(Uri aUri, String[] aProjection, String aSelection,
 			String[] aSelectionArgs, String aSortOrder) {
 		int theMatchId = mUriMatcher.match(aUri);
+		if (theMatchId==UriMatcher.NO_MATCH)
+			throw new UnsupportedOperationException(getContext().getString(
+					R.string.sql_contract_provider_msg_uri_no_match, aUri
+			));
 		if (TextUtils.isEmpty(aSortOrder)) {
 			aSortOrder = getDefaultSortOrder(theMatchId);
 		}
@@ -204,6 +210,10 @@ public abstract class SqlContentProvider extends ContentProvider {
 	@Override
 	public Uri insert(Uri aUri, ContentValues aValues) {
 		int theMatchId = mUriMatcher.match(aUri);
+		if (theMatchId==UriMatcher.NO_MATCH)
+			throw new UnsupportedOperationException(getContext().getString(
+					R.string.sql_contract_provider_msg_uri_no_match, aUri
+			));
 		long theRowIdAdded = -1L;
 		ContentValues theValues = (aValues!=null) ? aValues : new ContentValues();
 		for (String theColumnName : getRequiredColumns(theMatchId)) {
@@ -236,6 +246,10 @@ public abstract class SqlContentProvider extends ContentProvider {
 	@Override
 	public int delete(Uri aUri, String aSelection, String[] aSelectionArgs) {
 		int theMatchId = mUriMatcher.match(aUri);
+		if (theMatchId==UriMatcher.NO_MATCH)
+			throw new UnsupportedOperationException(getContext().getString(
+					R.string.sql_contract_provider_msg_uri_no_match, aUri
+			));
 		int theNumDel = 0;
 		aSelection = appendSelection(aUri, theMatchId, aSelection);
 		aSelectionArgs = appendSelArgs(aUri, theMatchId, aSelectionArgs);
@@ -253,6 +267,10 @@ public abstract class SqlContentProvider extends ContentProvider {
 	@Override
 	public int update(Uri aUri, ContentValues aValues, String aSelection, String[] aSelectionArgs) {
 		int theMatchId = mUriMatcher.match(aUri);
+		if (theMatchId==UriMatcher.NO_MATCH)
+			throw new UnsupportedOperationException(getContext().getString(
+					R.string.sql_contract_provider_msg_uri_no_match, aUri
+			));
 		int theNumUpdated = 0;
 		aSelection = appendSelection(aUri, theMatchId, aSelection);
 		aSelectionArgs = appendSelArgs(aUri, theMatchId, aSelectionArgs);
