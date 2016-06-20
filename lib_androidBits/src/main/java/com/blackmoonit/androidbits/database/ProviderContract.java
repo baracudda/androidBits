@@ -113,7 +113,7 @@ public class ProviderContract {
 		public int getDbVersion();
 
 		/**
-		 * Data actions are specified in the username@authority section of an
+		 * Data actions are specified in the authority:port section of an
 		 * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_INSERT
@@ -123,7 +123,7 @@ public class ProviderContract {
 		 */
 		static public final String DATA_ACTION_NULL = "";
 		/**
-		 * Data actions are specified in the username@authority section of an
+		 * Data actions are specified in the authority:port section of an
 		 * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
@@ -131,9 +131,9 @@ public class ProviderContract {
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
 		 */
-		static public final String DATA_ACTION_INSERT = "insert@";
+		static public final String DATA_ACTION_INSERT = ":insert";
 		/**
-		 * Data actions are specified in the username@authority section of an
+		 * Data actions are specified in the authority:port section of an
 		 * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
@@ -141,9 +141,9 @@ public class ProviderContract {
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_DELETE
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
 		 */
-		static public final String DATA_ACTION_UPDATE = "update@";
+		static public final String DATA_ACTION_UPDATE = ":update";
 		/**
-		 * Data actions are specified in the username@authority section of an
+		 * Data actions are specified in the authority:port section of an
 		 * ObserverUri. Use DATA_ACTION_NULL for a standard ContentUri.
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.TableProviderInfo#getObserverUri(String)
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_NULL
@@ -151,7 +151,7 @@ public class ProviderContract {
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.Database#DATA_ACTION_UPDATE
 		 * @see com.blackmoonit.androidbits.database.ProviderContract.DbProviderInfo#ensureContentUri(android.net.Uri)
 		 */
-		static public final String DATA_ACTION_DELETE = "delete@";
+		static public final String DATA_ACTION_DELETE = ":delete";
 
 		/**
 		 * MIME category used for returning a set of records.
@@ -274,9 +274,9 @@ public class ProviderContract {
 			if (aUri!=null) {
 				String theAuthority = aUri.getAuthority();
 				if (theAuthority!=null) {
-					int idx = theAuthority.indexOf("@");
+					int idx = theAuthority.indexOf(":");
 					if (idx>=0) {
-						aUri = aUri.buildUpon().encodedAuthority(theAuthority.substring(idx+1)).build();
+						aUri = aUri.buildUpon().encodedAuthority(theAuthority.substring(0,idx)).build();
 					}
 				}
 			}
@@ -435,8 +435,8 @@ public class ProviderContract {
 		 * @return Returns the Uri to register to observe particular Provider actions.
 		 */
 		public Uri getObserverUri(String aDataAction) {
-			Uri theUri = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + aDataAction +
-					mDbContract.getDbInfo().getAuthority() + "/" +
+			Uri theUri = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" +
+					mDbContract.getDbInfo().getAuthority() + aDataAction + "/" +
 					mTableContract.getTableName());
 			return theUri;
 		}
@@ -451,7 +451,7 @@ public class ProviderContract {
 		 */
 		static public Uri cnvContentUriToObserverUri(Uri aUri, String aDataAction) {
 			if (aUri!=null) {
-				return aUri.buildUpon().encodedAuthority(aDataAction+aUri.getAuthority()).build();
+				return aUri.buildUpon().encodedAuthority(aUri.getAuthority()+aDataAction).build();
 			}
 			return null;
 		}
