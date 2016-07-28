@@ -3,6 +3,8 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 24
     buildToolsVersion '24.0.1'
+    publishNonDefault true
+
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 24
@@ -16,11 +18,24 @@ android {
         }
     }
     productFlavors {
+        pre23 {
+            minSdkVersion 9
+        }
+        post23 {
+            minSdkVersion 21
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_6
         targetCompatibility JavaVersion.VERSION_1_6
     }
+}
+
+configurations {
+    pre23DebugCompile
+    pre23ReleaseCompile
+    post23DebugCompile
+    post23ReleaseCompile
 }
 
 dependencies {
