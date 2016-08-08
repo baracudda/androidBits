@@ -15,15 +15,7 @@ package com.blackmoonit.androidbits.net;
  * limitations under the License.
  */
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Base64;
@@ -31,6 +23,11 @@ import android.util.Log;
 
 import com.google.bits_gson.Gson;
 import com.google.bits_gson.JsonSyntaxException;
+
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.URLEncoder;
+import java.util.Map;
 
 /**
  * JSON utility functions utilizing GSON library (Google's JSON library).
@@ -89,9 +86,9 @@ public final class WebUtils {
 	 * @param aValue - POST variable value.
 	 * @return Returns the aParamList for chaining purposes.
 	 */
-	static public List<NameValuePair> addParam(List<NameValuePair> aParamList, String aName, String aValue) {
-		List<NameValuePair> theParams = (aParamList!=null) ? aParamList : new ArrayList<NameValuePair>();
-		theParams.add(new BasicNameValuePair(aName,aValue));
+	static public ContentValues addParam(ContentValues aParamList, String aName, String aValue) {
+		ContentValues theParams = (aParamList!=null) ? aParamList : new ContentValues();
+		theParams.put(aName, aValue);
 		return theParams;
 	}
 
@@ -100,12 +97,12 @@ public final class WebUtils {
 	 * @param aParamList - POST variable param list.
 	 * @return
 	 */
-	static public String cnvPostParamsToString(List<NameValuePair> aParamList) {
+	static public String cnvPostParamsToString(ContentValues aParamList) {
 		String theResult = "";
 		if (aParamList.size()>0) try {
-			for (NameValuePair thePair : aParamList) {
-				theResult = theResult + URLEncoder.encode(thePair.getName(),WEB_CHARSET)+"="+
-						URLEncoder.encode(thePair.getValue(),WEB_CHARSET)+"&";
+			for (Map.Entry<String, Object> thePair : aParamList.valueSet()) {
+				theResult = theResult + URLEncoder.encode(thePair.getKey(), WEB_CHARSET) + "=" +
+						URLEncoder.encode(thePair.getValue().toString(), WEB_CHARSET) + "&";
 			}
 			theResult = theResult.substring(0,theResult.length()-1);
 		} catch (UnsupportedEncodingException e) {
