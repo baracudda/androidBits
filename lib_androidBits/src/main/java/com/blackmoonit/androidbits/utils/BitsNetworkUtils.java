@@ -231,8 +231,8 @@ public class BitsNetworkUtils
 
     /**
      * Returns the list of access points found in the most recent scan detected
-     * by device, even on those running Android API 23. Location must be enabled
-     * on device.
+     * by device, even on those running Android API 23. For those devices on
+     * Android API 23, Location must be enabled to have accurate results returned.
      * <p/>
      * This method makes calls that require
      * android.Manifest.permission.ACCESS_WIFI_STATE.
@@ -240,11 +240,11 @@ public class BitsNetworkUtils
      * In addition, calling application must have either
      * android.Manifest.permission.ACCESS_COARSE_LOCATION or
      * android.Manifest.permission.ACCESS_FINE_LOCATION in order to get valid
-     * results. Without one of these two permissions, and Location enabled on
-     * device, this method will return an empty list.
+     * results.
      * @param ctx Context Calling context.
-     * @return List<ScanResult> with found results, or empty list if needed
-     * permission(s) and location not enabled.
+     * @return List<ScanResult> with found results, or empty list on API 23
+     * devices if needed one of the needed permission(s) and location are not
+     * enabled.
      */
     public static List<ScanResult> getWifiScanResults( Context ctx )
     {
