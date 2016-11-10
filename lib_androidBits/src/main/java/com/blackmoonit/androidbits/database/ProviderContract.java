@@ -613,6 +613,11 @@ public class ProviderContract {
 
 		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			String theTableName = getTableContract().getTableName();
+			Log.i(TAG, new StringBuilder()
+					.append("db downgrade on [")
+					.append(theTableName).append("], from [")
+					.append(oldVersion).append("] to [").append(newVersion)
+					.append("]").toString());
 			ArrayList<RowVar> theRows = new ArrayList<RowVar>();
 			try {
 				//copy data into memory
