@@ -6,7 +6,7 @@ package com.blackmoonit.androidbits.database;
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *	  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -611,8 +612,50 @@ public class ProviderContract {
 		}
 
 		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			//just wipe it out for now
+			String theTableName = getTableContract().getTableName();
+			Log.i(TAG, new StringBuilder()
+					.append("db downgrade on [")
+					.append(theTableName).append("], from [")
+					.append(oldVersion).append("] to [").append(newVersion)
+					.append("]").toString());
+			ArrayList<RowVar> theRows = new ArrayList<RowVar>();
+			try {
+				//copy data into memory
+				Cursor theRowSet = null;
+				try {
+					theRowSet = db.query(theTableName,
+							null, null, null, null, null, null);
+					if (theRowSet != null && theRowSet.moveToFirst()) do {
+						theRows.add(newRowVar(theRowSet));
+					} while (theRowSet.moveToNext());
+				} finally {
+					if (theRowSet != null)
+						theRowSet.close();
+				}
+			} catch (SQLiteException sqle) {
+				//if error, continue on with whatever data we managed to save
+				Log.w(TAG, new StringBuilder()
+						.append("db downgrade copy fail on [")
+						.append(theTableName).append("]: ")
+						.append(sqle.getMessage())
+						.toString());
+			}
+			//drop/recreate table
 			onUpgrade(db, oldVersion, newVersion);
+			//re-add the data
+			try {
+				for (RowVar theRow : theRows) {
+					ContentValues aValues = theRow.toContentValues(true);
+					db.insert(theTableName, null, aValues);
+				}
+			} catch (SQLiteException sqle) {
+				//if error, continue on with whatever data we managed to save
+				Log.w(TAG, new StringBuilder()
+						.append("db downgrade paste fail on [")
+						.append(theTableName).append("]: ")
+						.append(sqle.getMessage())
+						.toString());
+			}
 		}
 
 	}
