@@ -16,6 +16,7 @@ package com.blackmoonit.androidbits.utils;
  */
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -41,6 +42,7 @@ import java.util.List;
  * Utility functions that deal mainly with app-wide settings or values.
  * @author baracudda
  */
+@SuppressWarnings("unused")
 public final class BitsAppUtils {
 
 	private BitsAppUtils() {} //do not instantiate this class
@@ -57,6 +59,7 @@ public final class BitsAppUtils {
 	 * @param aContext - context to use to aquire said value.
 	 * @return Returns the 64 bit number as a hex string (16 chars)
 	 */
+	@SuppressLint("HardwareIds")
 	static public String getAndroidID(Context aContext) {
 		if (Build.VERSION.SDK_INT >= 9) {
 			//API 9+: ANDROID_ID (may be NULL or may be non-unique across a mfg model (known bugs))
@@ -81,12 +84,12 @@ public final class BitsAppUtils {
 	 * @param aContext - the context to use.
 	 * @return Returns as unique a string per device as possible.
 	 */
+	@SuppressLint("HardwareIds")
 	static public String getDeviceID(Context aContext) {
 		String theResult = null;
 
 		//IMEI or similar cellular ID, if available
-		if (theResult==null &&
-			aContext.checkCallingOrSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+		if (aContext.checkCallingOrSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
 			TelephonyManager thePhoneMgr = (TelephonyManager) aContext.getSystemService(Context.TELEPHONY_SERVICE);
 			theResult = thePhoneMgr.getDeviceId()+"1";
 		}
@@ -103,7 +106,7 @@ public final class BitsAppUtils {
 
 		//fallback
 		if (theResult==null) {
-			theResult = Build.FINGERPRINT;
+			theResult = Build.FINGERPRINT+"F";
 		}
 
 		return theResult;
@@ -178,9 +181,10 @@ public final class BitsAppUtils {
 	 * @param aForgetBeforeThisTimestamp - forget data older than this timestamp in milliseconds.
 	 * @return Returns the Location object if its found recent enough to use.
 	 */
+	@SuppressWarnings("MissingPermission")
 	static public Location getLastKnownLocation(Context aContext, Long aForgetBeforeThisTimestamp) {
 		Location theResult = null;
-		LocationManager theLocMgr = null;
+		LocationManager theLocMgr;
 		String thePermission = Manifest.permission.ACCESS_FINE_LOCATION;
 		if (aContext.checkCallingOrSelfPermission(thePermission) == PackageManager.PERMISSION_GRANTED) {
 			theLocMgr = (LocationManager) aContext.getSystemService(Context.LOCATION_SERVICE);
@@ -215,7 +219,7 @@ public final class BitsAppUtils {
 		theFilterList.add(theFilter);
 
 		List<ComponentName> thePreferredActivities = new ArrayList<ComponentName>();
-		final PackageManager thePackageMgr = (PackageManager) aContext.getPackageManager();
+		final PackageManager thePackageMgr = aContext.getPackageManager();
 		thePackageMgr.getPreferredActivities(theFilterList, thePreferredActivities, aPackageName);
 		return thePreferredActivities;
 	}
@@ -225,6 +229,7 @@ public final class BitsAppUtils {
 	 * @param aContext - the context to use.
 	 * @return Returns the serial number of the SIM, if any.
 	 */
+	@SuppressLint("HardwareIds")
 	static public String getSimSerialNumber(Context aContext) {
 		TelephonyManager theTelephonyMgr = (TelephonyManager)
 				aContext.getSystemService(Context.TELEPHONY_SERVICE);

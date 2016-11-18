@@ -15,14 +15,14 @@ package com.blackmoonit.androidbits.app;
  * limitations under the License.
  */
 
-import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Message;
+import android.util.SparseArray;
+
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Automatically map and manage startActivityForResult calls and returned results.
@@ -32,8 +32,8 @@ import android.os.Message;
  * would be with some kind of manager that can dynamically create result codes that do not conflict
  * with any defined constants in the Activity and manage those results as needed.<br>
  * <br>
- * Create an instance of this class and then override {@link android.app.Activity.onActivityResult(int, int, android.content.Intent)}
- * so that it will call the same method of the {@link com.blackmoonit.androidbits.app.ActivityResult.Manager} class.
+ * Create an instance of this class and then override {@link Activity#onActivityResult(int, int, Intent)}
+ * so that it will call the same method of the {@link ActivityResult.Manager} class.
  * Example usage after such a setup:<br>
  * <pre class="prettyprint">
  * Intent theOtherActivityIntent = … {create as needed} …
@@ -55,14 +55,14 @@ import android.os.Message;
 public class ActivityResult {
 
 	/**
-	 * Handler class to simplify writing handlers for {@link com.blackmoonit.androidbits.app.ActivityResult.Manager}.
+	 * Handler class to simplify writing handlers for {@link ActivityResult.Manager}.
 	 */
 	static public abstract class Handler extends android.os.Handler {
 
 		@Override
 		public void handleMessage(Message aMsg) {
 			handleResultCode(aMsg.what,(Intent)aMsg.obj);
-		};
+		}
 
 		public void handleResultCode(int aResultCode, Intent aData) {
 			switch (aResultCode) {
@@ -89,6 +89,7 @@ public class ActivityResult {
 		 * Called when the Activity result code is Activity.RESULT_CANCELED.
 		 * @param aData - the returned Intent data
 		 */
+		@SuppressWarnings("unused")
 		public void handleResultCanceled(Intent aData) {
 			//default is to do nothing
 		}
@@ -97,6 +98,7 @@ public class ActivityResult {
 		 * Called when the Activity result code is something other than OK or CANCELED.
 		 * @param aData - the returned Intent data
 		 */
+		@SuppressWarnings("unused")
 		public void handleResultCustom(Intent aData) {
 			//default is to do nothing
 		}
@@ -105,17 +107,17 @@ public class ActivityResult {
 	static public class Manager {
 		protected static final AtomicInteger mRequestCode = new AtomicInteger();
 		protected final WeakReference<Activity> mAct;
+		protected final SparseArray<Handler> mHandlerMap;
 		protected int[] mRequestCodeExcludes = null;
-		protected HashMap<Integer, Handler> mHandlerMap;
 
 		/**
-		 * A RequestCode manager for dynamic startActivityForResult calls so that static reqeustCodes do
-		 * not need to be defined.
-		 * @param anAct
+		 * A RequestCode manager for dynamic startActivityForResult calls so that static
+		 * requestCodes do not need to be defined.
+		 * @param anAct - the Activity waiting for a result.
 		 */
 		public Manager(Activity anAct) {
 			mAct = new WeakReference<Activity>(anAct);
-			mHandlerMap = new HashMap<Integer, Handler>();
+			mHandlerMap = new SparseArray<Handler>();
 		}
 
 		public Activity getActivity() {
@@ -127,6 +129,7 @@ public class ActivityResult {
 		 * Used in cases where this class is being introduced into existing Activities.
 		 * @param aExclusionMap - array of integers that are already in use
 		 */
+		@SuppressWarnings("unused")
 		public void setRequestCodeExclusionMap(int[] aExclusionMap) {
 			mRequestCodeExcludes = aExclusionMap;
 			Arrays.sort(mRequestCodeExcludes);
@@ -138,17 +141,15 @@ public class ActivityResult {
 		 * @return Returns TRUE if excluded, FALSE otherwise.
 		 */
 		protected boolean isRequestCodeExcluded(int aRequestCode) {
-			if (mRequestCodeExcludes!=null)
-				return (Arrays.binarySearch(mRequestCodeExcludes,aRequestCode)>=0);
-			else
-				return false;
+			return mRequestCodeExcludes != null &&
+					(Arrays.binarySearch(mRequestCodeExcludes, aRequestCode) >= 0);
 		}
 
 		/**
 		 * Register a result handler and return the Request Code that should be passed to the called activity.
 		 * @param aResultHandler - user defined request handler
-		 * @return Returns the request code that must be used in calling {@link #startActivityForResult(android.content.Intent,int)} or
-		 * {@link android.app.Activity#startActivityForResult(android.content.Intent,int)}
+		 * @return Returns the request code that must be used in calling {@link #startActivityForResult(Intent,int)} or
+		 * {@link Activity#startActivityForResult(Intent,int)}
 		 */
 		public int registerResultHandler(Handler aResultHandler) {
 			int theRequestCode;
@@ -158,7 +159,7 @@ public class ActivityResult {
 					if (theRequestCode<1) //handle int overflow
 						theRequestCode = 1;
 				} while (isRequestCodeExcluded(theRequestCode) ||
-						mHandlerMap.containsKey(theRequestCode));
+						mHandlerMap.indexOfKey(theRequestCode)>=0);
 				mHandlerMap.put(theRequestCode,aResultHandler);
 			}
 			return theRequestCode;
@@ -171,7 +172,9 @@ public class ActivityResult {
 		 */
 		public Handler unregisterResultHandler(int aRequestCode) {
 			synchronized (mHandlerMap) {
-				return mHandlerMap.remove(aRequestCode);
+				Handler theResult = mHandlerMap.get(aRequestCode);
+				mHandlerMap.remove(aRequestCode);
+				return theResult;
 			}
 		}
 
@@ -190,13 +193,11 @@ public class ActivityResult {
 		 * @param aResultCode - the resultCode of the Activity that returned the data
 		 * @param aData - the data returned by the called Activity, may be NULL
 		 */
-		public void onActivityResult(int aRequestCode, int aResultCode, Intent aData){
-			if (mHandlerMap!=null) {
-				Handler theHandler = mHandlerMap.get(aRequestCode);
-				if (theHandler!=null)
-					theHandler.dispatchMessage(theHandler.obtainMessage(aResultCode,aData));
-				unregisterResultHandler(aRequestCode);
-			}
+		public void onActivityResult(int aRequestCode, int aResultCode, Intent aData) {
+			Handler theHandler = mHandlerMap.get(aRequestCode);
+			if (theHandler!=null)
+				theHandler.dispatchMessage(theHandler.obtainMessage(aResultCode,aData));
+			unregisterResultHandler(aRequestCode);
 		}
 
 	}
