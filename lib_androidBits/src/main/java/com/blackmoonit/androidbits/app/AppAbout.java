@@ -39,6 +39,7 @@ import com.blackmoonit.androidbits.net.WebUtils;
  *
  * @author baracudda
  */
+@SuppressWarnings("unused, deprecation")
 public class AppAbout extends Activity implements View.OnClickListener {
 	static private final String TAG = "BITS.lib.app."+AppAbout.class.getSimpleName();
 

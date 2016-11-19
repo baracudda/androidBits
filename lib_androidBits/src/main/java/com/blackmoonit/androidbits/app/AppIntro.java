@@ -26,6 +26,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 
+@SuppressWarnings("unused")
 public class AppIntro extends Dialog {
 	protected int mLayoutRes = 0;
 	protected int mAnimRes = 0;

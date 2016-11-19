@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 /**
  * Allows a non-Activity context to execute a runnable on the UI thread.
- * Created by ryanf on 6/24/15.
  */
 public class UITaskRunner extends Handler {
 

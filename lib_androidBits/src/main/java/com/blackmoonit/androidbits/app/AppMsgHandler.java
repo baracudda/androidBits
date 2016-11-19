@@ -26,6 +26,7 @@ import android.os.Message;
  *
  * @author baracudda
  */
+@SuppressWarnings("unused")
 public class AppMsgHandler extends UIMsgHandler implements UIMsgHandler.ToastMsgs {
 	protected WeakReference<Context> wrContext;
 
@@ -40,8 +41,8 @@ public class AppMsgHandler extends UIMsgHandler implements UIMsgHandler.ToastMsg
 
 	/**
 	 * Build-chain friendly method to set the context reference.
-	 * @param aContext
-	 * @return
+	 * @param aContext - the context to use.
+	 * @return Returns THIS for chaining.
 	 */
 	public AppMsgHandler setContext(Context aContext) {
 		wrContext = new WeakReference<Context>(aContext);

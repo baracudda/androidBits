@@ -15,10 +15,7 @@ package com.blackmoonit.androidbits.app;
  * limitations under the License.
  */
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Iterator;
-
+import android.annotation.TargetApi;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -31,11 +28,16 @@ import android.widget.CursorAdapter;
 
 import com.blackmoonit.androidbits.concurrent.ThreadTask;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+
 /**
  * Class that can manage all the cursor loaders for spinner/list adapters in the app.
  *
  * @author baracudda
  */
+@SuppressWarnings("unused")
+@TargetApi(11)
 public class AppCursorLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 	/**
 	 * URI the Cursor will use. A default URI will be used if this is null. OPTIONAL.
@@ -50,7 +52,7 @@ public class AppCursorLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 	 */
 	public static final String KEY_SELECTION = "bundle_key_selection";
 	/**
-	 * Cursor selection arguements. OPTIONAL.
+	 * Cursor selection arguments. OPTIONAL.
 	 */
 	public static final String KEY_SELECTION_ARGS = "bundle_selection_args";
 	/**
@@ -61,21 +63,21 @@ public class AppCursorLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 	/**
 	 * Called after the loader finishes loading and swapping the cursor into the adapter.
 	 */
-	static public interface OnLoadFinishedListener {
+	public interface OnLoadFinishedListener {
 		void onLoadFinished(AppCursorLoader anAppLoader, int aCursorId, Cursor aCursor);
 	}
 
 	/**
 	 * Called after the loader finishes swapping the cursor to NULL in the adapter.
 	 */
-	static public interface OnLoadResetListener {
+	public interface OnLoadResetListener {
 		void onLoadReset(AppCursorLoader anAppLoader, int aCursorId);
 	}
 
 	/**
 	 * Called when using {@link #createCursorInfo(int)} method.
 	 */
-	static public interface OnCreateCursorInfo {
+	public interface OnCreateCursorInfo {
 		Bundle onCreateCursorInfo(AppCursorLoader anAppLoader, int aCursorId);
 	}
 
@@ -167,10 +169,10 @@ public class AppCursorLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 	}
 
 	/**
-	 * Helper for {@link #restartLoader()} so that adapters with OnCreateCursorInfo implemented
+	 * Helper for {@link #restartLoader} so that adapters with OnCreateCursorInfo implemented
 	 * actually define the cursor to be created.
 	 * @param aCursorId - cursor's ID
-	 * @return - Bundle to be used during {@link #onCreateLoader()}.
+	 * @return - Bundle to be used during {@link #onCreateLoader}.
 	 */
 	public Bundle createCursorInfo(int aCursorId) {
 		OnCreateCursorInfo doCreateCursorInfo = mCreateCursorInfoMap.get(aCursorId);
@@ -183,9 +185,9 @@ public class AppCursorLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	/**
 	 * Helper function to create a bundle with the Uri as the only info needed for the cursor.
-	 * This info gets passed into the {@link #onCreateLoader()} method so that a cursor is created from it.
+	 * This info gets passed into the {@link #onCreateLoader} method so that a cursor is created from it.
 	 * @param aCursorUri - cursor's Uri
-	 * @return Returns the bundle needed by the {@link android.app.LoaderManager#initLoader()} method.
+	 * @return Returns the bundle needed by the {@link LoaderManager#initLoader} method.
 	 */
 	public Bundle createCursorInfo(Uri aCursorUri) {
 		Bundle theResult = new Bundle();
@@ -227,9 +229,8 @@ public class AppCursorLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 		ThreadTask t = new ThreadTask(new Runnable() {
 			@Override
 			public void run() {
-				Iterator<OnLoadFinishedListener> theHandlers = mLoadFinishedHandlers.iterator();
-				while (theHandlers!=null && theHandlers.hasNext()) {
-					theHandlers.next().onLoadFinished(AppCursorLoader.this,theLoaderId,aCursor);
+				for (OnLoadFinishedListener theHandler : mLoadFinishedHandlers) {
+					theHandler.onLoadFinished(AppCursorLoader.this, theLoaderId, aCursor);
 				}
 			}
 		},"onLoadFinished-"+theLoaderId,Thread.NORM_PRIORITY);
@@ -246,9 +247,8 @@ public class AppCursorLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 		ThreadTask t = new ThreadTask(new Runnable() {
 			@Override
 			public void run() {
-				Iterator<OnLoadResetListener> theHandlers = mLoadResetHandlers.iterator();
-				while (theHandlers!=null && theHandlers.hasNext()) {
-					theHandlers.next().onLoadReset(AppCursorLoader.this,theLoaderId);
+				for (OnLoadResetListener theHandler : mLoadResetHandlers) {
+					theHandler.onLoadReset(AppCursorLoader.this, theLoaderId);
 				}
 			}
 		},"onLoadReset-"+theLoaderId,Thread.NORM_PRIORITY);
