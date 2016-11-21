@@ -19,6 +19,6 @@ import android.os.Handler;
 
 public interface ContextCourier {
 
-	public Handler getHandler();
+	Handler getHandler();
 
 }

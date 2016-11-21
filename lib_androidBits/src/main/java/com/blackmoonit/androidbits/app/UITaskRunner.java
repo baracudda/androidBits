@@ -46,7 +46,6 @@ public class UITaskRunner extends Handler {
 	 * Non-activies cannot easily show UI widgets like toast, this helper
 	 * method will show a constructed Toast object on the UI thread.
 	 * @param aToastToShow - constructed Toast: e.g. pass in Toast.makeToast().
-	 * @return Returns "this" for chaining purposes.
 	 */
 	static public void showToast( final Toast aToastToShow ) {
 		if (aToastToShow!=null) {

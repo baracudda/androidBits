@@ -30,7 +30,7 @@ public class AppPrefsDebug extends AppPreferenceBase {
 	}
 
 	static public boolean isDebugMode() {
-		return (bDebugMode != null && bDebugMode == true);
+		return (bDebugMode != null && bDebugMode);
 	}
 
 	static public void setDebugMode(Boolean value) {

@@ -16,6 +16,7 @@ import java.util.List;
  *
  * @author Kevin Gaudin, modifications by baracudda
  */
+@SuppressWarnings("unused, StatementWithEmptyBody, ReturnInsideFinallyBlock")
 public class LogCatCollector {
 
 	/**

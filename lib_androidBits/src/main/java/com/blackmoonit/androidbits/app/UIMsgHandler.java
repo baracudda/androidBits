@@ -24,6 +24,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.blackmoonit.androidbits.filesystem.ProgressBarHandler;
+
 /**
  * Handler containing specific values and functions related to generic toast & progress bar UI handling.
  * Supported Progress Events: ActionText (Event title), Overall Progress Bar, Overall Text,
@@ -32,6 +34,7 @@ import android.widget.Toast;
  *
  * @author baracudda
  */
+@SuppressWarnings("unused")
 public abstract class UIMsgHandler extends Handler {
 	public static final int MSG_TOAST = 1;
 	public static final int MSG_PROGRESS_START = 2;
@@ -66,11 +69,11 @@ public abstract class UIMsgHandler extends Handler {
 	 */
 	public interface ToastMsgs {
 		//get msgs to send
-		public Message getMsgToast(String aStr);
-		public Message getMsgToast(Integer aResourceID);
+		Message getMsgToast(String aStr);
+		Message getMsgToast(Integer aResourceID);
 
 		//handle received msgs
-		public void onMsgToast(Message aMsg);
+		void onMsgToast(Message aMsg);
 	}
 
 	/**
@@ -78,25 +81,25 @@ public abstract class UIMsgHandler extends Handler {
 	 */
 	public interface ProgressBarMsgs {
 		//get msgs to send
-		public Message getMsgProgressStart(Object aProgressID, String aTotalText, Long aTotalSize);
-		public Message getMsgProgressCancel(Object aProgressID);
-		public Message getMsgProgressCancel(Object aProgressID, Serializable aExtraData);
-		public Message getMsgProgressFinish(Object aProgressID);
-		public Message getMsgProgressTotalUpdate(Object aProgressID, String aProgressItemText, Long aIncrement);
-		public Message getMsgProgressIncreaseTotal(Object aProgressID, Long aIncrement);
-		public Message getMsgProgressItemStart(Object aProgressID, Long aItemSize);
-		public Message getMsgProgressItemUpdate(Object aProgressID, Long aIncrement);
-		public Message getMsgProgressItemFinish(Object aProgressID);
+		Message getMsgProgressStart(Object aProgressID, String aTotalText, Long aTotalSize);
+		Message getMsgProgressCancel(Object aProgressID);
+		Message getMsgProgressCancel(Object aProgressID, Serializable aExtraData);
+		Message getMsgProgressFinish(Object aProgressID);
+		Message getMsgProgressTotalUpdate(Object aProgressID, String aProgressItemText, Long aIncrement);
+		Message getMsgProgressIncreaseTotal(Object aProgressID, Long aIncrement);
+		Message getMsgProgressItemStart(Object aProgressID, Long aItemSize);
+		Message getMsgProgressItemUpdate(Object aProgressID, Long aIncrement);
+		Message getMsgProgressItemFinish(Object aProgressID);
 
 		//handle received msgs
-		public void onMsgProgressStart(Message aMsg);
-		public void onMsgProgressTotalIncMax(Message aMsg);
-		public void onMsgProgressTotalUpdate(Message aMsg);
-		public void onMsgProgressCancel(Message aMsg);
-		public void onMsgProgressFinish(Message aMsg);
-		public void onMsgProgressItemStart(Message aMsg);
-		public void onMsgProgressItemUpdate(Message aMsg);
-		public void onMsgProgressItemFinish(Message aMsg);
+		void onMsgProgressStart(Message aMsg);
+		void onMsgProgressTotalIncMax(Message aMsg);
+		void onMsgProgressTotalUpdate(Message aMsg);
+		void onMsgProgressCancel(Message aMsg);
+		void onMsgProgressFinish(Message aMsg);
+		void onMsgProgressItemStart(Message aMsg);
+		void onMsgProgressItemUpdate(Message aMsg);
+		void onMsgProgressItemFinish(Message aMsg);
 	}
 
 	@Override
@@ -167,8 +170,9 @@ public abstract class UIMsgHandler extends Handler {
 	 * @param aContext - the UI context.
 	 * @param aMsg - the message being handled.
 	 */
+	@SuppressWarnings("WrongConstant")
 	static public void onMsgToast(Context aContext, Message aMsg) {
-		String theMsg = null;
+		String theMsg;
 		int theDuration = Toast.LENGTH_LONG;
 		try {
 			if (aMsg.arg2!=0) {
@@ -182,9 +186,7 @@ public abstract class UIMsgHandler extends Handler {
 		} catch (Exception e) {
 			return; //no msg to display, just exit now
 		}
-		if (theMsg!=null) {
-			Toast.makeText(aContext,theMsg,theDuration).show();
-		}
+		Toast.makeText(aContext,theMsg,theDuration).show();
 	}
 
 	/*========================================================================
@@ -193,8 +195,8 @@ public abstract class UIMsgHandler extends Handler {
 
 	/**
 	 * Get the UUID stored within the message. (msg.obj)
-	 * @param aMsg
-	 * @return
+	 * @param aMsg - the Message with the progress ID.
+	 * @return Returns the progress ID or NULL.
 	 */
 	static public UUID getProgressID(Message aMsg) {
 		return (aMsg!=null)?(UUID)aMsg.obj:null;
@@ -210,8 +212,10 @@ public abstract class UIMsgHandler extends Handler {
 	static public long getProgressAmount(Message aMsg) {
 		if (aMsg!=null && aMsg.peekData()!=null) {
 			return aMsg.getData().getLong(KEY_PROGRESS_AMOUNT,aMsg.arg2);
-		} else {
+		} else if (aMsg!=null) {
 			return aMsg.arg2;
+		} else {
+			return 0L;
 		}
 	}
 
@@ -232,7 +236,7 @@ public abstract class UIMsgHandler extends Handler {
 
 	/**
 	 * Initialize a newly Created progress event with specifics like text and size.
-	 * @param aProgressID - progress event ID (result of {@link #createNewProgressEvent()}).
+	 * @param aProgressID - progress event ID (result of {@link ProgressBarHandler#createNewProgressEvent}).
 	 * @param aTotalText - string displayed for the overall progress event
 	 * @param aTotalSize - size of the event to track (can be increased at a later time)
 	 * @return Returns the Message to be sent.
@@ -250,7 +254,7 @@ public abstract class UIMsgHandler extends Handler {
 
 	/**
 	 * Returns the message used to cancel a progress event before it completes.
-	 * @param aProgressID - progress event ID (result of {@link #createNewProgressEvent()}).
+	 * @param aProgressID - progress event ID (like the result of {@link ProgressBarHandler#createNewProgressEvent}).
 	 * @return Returns the Message to be sent.
 	 */
 	public Message getMsgProgressCancel(Object aProgressID) {
@@ -259,7 +263,7 @@ public abstract class UIMsgHandler extends Handler {
 
 	/**
 	 * Returns the message used to cancel a progress event before it completes.
-	 * @param aProgressID - progress event ID (result of {@link #createNewProgressEvent()}).
+	 * @param aProgressID - progress event ID (like the result of {@link ProgressBarHandler#createNewProgressEvent}).
 	 * @param aExtraData - custom data the handler may wish to know.
 	 * @return Returns the Message to be sent.
 	 */
@@ -273,7 +277,7 @@ public abstract class UIMsgHandler extends Handler {
 
 	/**
 	 * Returns the message used to end a progress event.
-	 * @param aProgressID - progress event ID (result of {@link #createNewProgressEvent()}).
+	 * @param aProgressID - progress event ID (like the result of {@link ProgressBarHandler#createNewProgressEvent}).
 	 * @return Returns the Message to be sent.
 	 */
 	public Message getMsgProgressFinish(Object aProgressID) {
@@ -282,7 +286,7 @@ public abstract class UIMsgHandler extends Handler {
 
 	/**
 	 * Returns the message used to update the overall progress by aIncrement and set new item text.
-	 * @param aProgressID - progress event ID (result of {@link #createNewProgressEvent()}).
+	 * @param aProgressID - progress event ID (like the result of {@link ProgressBarHandler#createNewProgressEvent}).
 	 * @param aProgressItemText - text to show as the new item being processed.
 	 * @param aIncrement - amount to increment total completed, null means no increment.
 	 * @return Returns the Message to be sent.
@@ -302,7 +306,7 @@ public abstract class UIMsgHandler extends Handler {
 	 * towards that max amount.
 	 * Example usage: When it is discovered that a subfolder needs to be processed,
 	 * use this message to increase to total size of work that needs to be done.
-	 * @param aProgressID - progress event ID (result of {@link #createNewProgressEvent()}).
+	 * @param aProgressID - progress event ID (like the result of {@link ProgressBarHandler#createNewProgressEvent}).
 	 * @param aIncrement - amount to increment total size
 	 */
 	public Message getMsgProgressIncreaseTotal(Object aProgressID, Long aIncrement) {
@@ -317,7 +321,7 @@ public abstract class UIMsgHandler extends Handler {
 
 	/**
 	 * Returns the message used to reset item progress with a new max value.
-	 * @param aProgressID - progress event ID (result of {@link #createNewProgressEvent()}).
+	 * @param aProgressID - progress event ID (like the result of {@link ProgressBarHandler#createNewProgressEvent}).
 	 * @param aItemSize - new max value.
 	 * @return Returns the Message to be sent.
 	 */
@@ -333,7 +337,7 @@ public abstract class UIMsgHandler extends Handler {
 
 	/**
 	 * Returns the message used to update the item progress amount.
-	 * @param aProgressID - progress event ID (result of {@link #createNewProgressEvent()}).
+	 * @param aProgressID - progress event ID (like the result of {@link ProgressBarHandler#createNewProgressEvent}).
 	 * @param aIncrement - amount to move the item progress towards item max value.
 	 * @return Returns the Message to be sent.
 	 */
@@ -349,7 +353,7 @@ public abstract class UIMsgHandler extends Handler {
 
 	/**
 	 * Returns the message used to complete the current item progress, but not the overall event.
-	 * @param aProgressID - progress event ID (result of {@link #createNewProgressEvent()}).
+	 * @param aProgressID - progress event ID (like the result of {@link ProgressBarHandler#createNewProgressEvent}).
 	 * @return Returns the Message to be sent.
 	 */
 	public Message getMsgProgressItemFinish(Object aProgressID) {

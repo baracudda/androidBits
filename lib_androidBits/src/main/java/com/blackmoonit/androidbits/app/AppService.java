@@ -15,23 +15,22 @@ package com.blackmoonit.androidbits.app;
  * limitations under the License.
  */
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Service class compatible with pre-Android 2.0 devices and 3.0+ devices (.setForeground() removed)
  *
  * @author baracudda
  */
+@SuppressWarnings("unused, deprecation, unchecked")
 public abstract class AppService extends Service {
 	private static final String TAG = "androidBits.AppService";
 	protected NotificationManager mNotificationMgr = null;
@@ -64,7 +63,7 @@ public abstract class AppService extends Service {
 	protected void startForegroundCompat(int id, Notification aNotification) {
 		// If we have the new startForeground API, then use it. 2.0+
 		if (mStartForeground != null) {
-			mStartForegroundArgs[0] = Integer.valueOf(id);
+			mStartForegroundArgs[0] = id;
 			mStartForegroundArgs[1] = aNotification;
 			invokeMethod(mStartForeground, mStartForegroundArgs);
 		} else if (mSetForeground!=null) {
@@ -130,7 +129,7 @@ public abstract class AppService extends Service {
 		handleCommand(aIntent);
 		// We want this service to continue running until it is explicitly
 		// stopped, so return sticky.
-		return 1;//START_STICKY;
+		return START_STICKY;
 	}
 
 	/**

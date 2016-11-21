@@ -49,6 +49,7 @@ import com.blackmoonit.androidbits.R;
  * </ul>
  * @author baracudda
  */
+@SuppressWarnings("unused, EmptyCatchBlock")
 public abstract class AppPreferenceBase extends PreferenceActivity {
 	protected int[] mAppPrefDefinitionsResourceIds;
 	protected int mAppPrefHeaderDefinitionResourceId = 0;
@@ -165,7 +166,7 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
 		if (mAppPrefHeaderDefinitionResourceId ==0 || mLoadHeaders==null)
 			return;
 		try {
-			mLoadHeaders.invoke(this,new Object[]{mAppPrefHeaderDefinitionResourceId,aTarget});
+			mLoadHeaders.invoke(this, mAppPrefHeaderDefinitionResourceId, aTarget);
 		} catch (IllegalArgumentException e) {
 		} catch (IllegalAccessException e) {
 		} catch (InvocationTargetException e) {
@@ -192,7 +193,7 @@ public abstract class AppPreferenceBase extends PreferenceActivity {
     	String thePackageName = aContext.getString(R.string.pref_meta_prefs_package);
     	String theFilename = aContext.getString(R.string.pref_meta_prefs_filename);
         if (!TextUtils.isEmpty(theFilename)) {
-			Context theContext = null;
+			Context theContext;
 			if (!TextUtils.isEmpty(thePackageName)) {
 				try {
 					theContext = aContext.createPackageContext(

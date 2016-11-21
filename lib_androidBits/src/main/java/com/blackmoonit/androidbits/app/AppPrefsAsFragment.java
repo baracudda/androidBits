@@ -23,6 +23,7 @@ import android.preference.PreferenceFragment;
  * AppPreferenceBase as a Fragment loader Activity, basically
  * uses a stub layout to change out with PreferenceFragments.
  */
+@SuppressWarnings("unused")
 @TargetApi(11)
 abstract public class AppPrefsAsFragment extends AppPreferenceBase {
 

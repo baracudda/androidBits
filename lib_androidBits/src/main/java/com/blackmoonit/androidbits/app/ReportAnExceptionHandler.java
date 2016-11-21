@@ -61,6 +61,7 @@ import java.util.Locale;
  *
  *  Source has been released to the public as is and without any warranty.
  */
+@SuppressWarnings("unused")
 public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler, Runnable {
 	static public final String PREF_KEY_RELEASE_ONLY_EXCEPTION_REPORT =
 			"email_unhandled_exception_only_if_not_debuggable";
@@ -175,7 +176,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			this.mRecipientAddresses = "" ;
 		else
 		{
-			StringBuffer sb = new StringBuffer() ;
+			StringBuilder sb = new StringBuilder() ;
 			for( String theAddress : aAddressList )
 				sb.append( theAddress ).append( ';' ) ;
 			this.mRecipientAddresses = sb.toString() ;
@@ -312,8 +313,8 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 					Bundle theExtras = theIntent.getExtras();
 					if (theExtras!=null) {
 						for (String theKey : theExtras.keySet()) {
-							String theVal = (theExtras.get(theKey) != null)
-									? theExtras.get(theKey).toString() : "";
+							Object theExtra = theExtras.get(theKey);
+							String theVal = (theExtra != null) ? theExtra.toString() : "";
 							theTraceLine += ", [" + theKey + "=>" + theVal + "]";
 						}
 					}
@@ -531,6 +532,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 		 * @param aContext - the context to use.
 		 * @return Returns a string with the device info used for debugging.
 		 */
+		@SuppressWarnings("deprecation")
 		static public String getDeviceEnvironment(Context aContext) {
 			if (aContext==null)
 				return "";
@@ -555,7 +557,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 			s += aContext.getString(R.string.postmortem_report_env_model,	Build.MODEL)+"\n";
 			s += aContext.getString(R.string.postmortem_report_env_product,	Build.PRODUCT)+"\n";
 			s += aContext.getString(R.string.postmortem_report_env_app,
-					pi.packageName, pi.versionName, pi.versionCode )+"\n";
+					pi.packageName, pi.versionName, Integer.toString(pi.versionCode) )+"\n";
 			s += aContext.getString(R.string.postmortem_report_env_locale,
 					theResources.getConfiguration().locale.getDisplayName() )+"\n";
 			s += aContext.getString(R.string.postmortem_report_env_display,
@@ -654,7 +656,7 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 		/**
 		 * Submits the Iterator objects.toString() to the Log.d() method.
 		 * @param aTag - tag used in Log.d().
-		 * @param aTrace - interator to dump to the log.
+		 * @param aTrace - iterator to dump to the log.
 		 */
 		static public void logDebugTrace(String aTag, Iterator<?> aTrace) {
 			while (aTrace!=null && aTrace.hasNext()) {
@@ -674,7 +676,9 @@ public class ReportAnExceptionHandler implements Thread.UncaughtExceptionHandler
 				String theKey;
 				while (theKeys.hasNext()) {
 					theKey = theKeys.next();
-					theEntries.add(theKey + "=" + aBundle.get(theKey).toString());
+					Object theItem = aBundle.get(theKey);
+					String theVal = (theItem != null) ? theItem.toString() : "";
+					theEntries.add(theKey + "=" + theVal);
 				}
 				logDebugTrace(aTag, theEntries.iterator());
 			} else {
