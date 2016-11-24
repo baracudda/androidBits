@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="class_for_auth_device_info">com.blackmoonit.androidbits.auth.BroadwayAuthDeviceInfo</string>
+    <string name="class_for_activity_login">com.blackmoonit.androidbits.auth.ActivityLogin</string>
+
+    <string name="account_auth_name_in_android_manager">Blackmoon Info Tech Services</string>
+    <string name="account_auth_label_auth_token">BitsTheater Server</string>
+
+    <string name="account_auth_type">com.blackmoonit.androidbits.broadway</string>
+    <string name="account_auth_validation_ping">pInG</string>
+
+    <string name="prefs_act_auth_settings_title">Account Settings</string>
+    <string name="prefs_act_auth_settings_summary">Server connection properties</string>
+</resources>
