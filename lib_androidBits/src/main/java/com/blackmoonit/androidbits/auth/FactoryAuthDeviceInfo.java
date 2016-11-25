@@ -28,7 +28,8 @@ final public class FactoryAuthDeviceInfo
 		return (IBroadwayAuthDeviceInfo) BitsAppUtils.obtainInstanceOfClassName( aContext,
 				aContext.getString(R.string.class_for_auth_device_info),
 				IBroadwayAuthDeviceInfo.class,
-				FactoryAuthDeviceInfo.class.getSimpleName()
+				FactoryAuthDeviceInfo.class.getSimpleName(),
+				aContext
 		);
 	}
 

@@ -272,19 +272,31 @@ public final class BitsAppUtils {
 	}
 
 	static public Object obtainInstanceOfClassName(Context aContext, String aClassName,
-			Class<?> anAncestorClassOrInterface, String aTAG)
+			Class<?> anAncestorClassOrInterface, String aTAG, Object... aConstructorParams)
 	{
 		try {
 			Class<?> theClass = obtainClassForName(aContext, aClassName, aTAG);
 			if (theClass!=null) {
 				if (anAncestorClassOrInterface != null)
 					anAncestorClassOrInterface.isAssignableFrom(theClass);
-				return theClass.newInstance();
+				if (aConstructorParams!=null && aConstructorParams.length>0) {
+					Class[] theConParamClasses = new Class[aConstructorParams.length];
+					for (int i = 0; i < aConstructorParams.length; i++) {
+						theConParamClasses[i] = aConstructorParams[i].getClass();
+					}
+					return theClass.getConstructor(theConParamClasses).newInstance(aConstructorParams);
+				}
+				else
+					return theClass.newInstance();
 			}
 		} catch (InstantiationException e) {
 			Log.e(aTAG, "cannot instantiate: " + aClassName, e);
 		} catch (IllegalAccessException e) {
 			Log.e(aTAG, "cannot access: " + aClassName, e);
+		} catch (NoSuchMethodException e) {
+			Log.e(aTAG, "no consructor matching params for: " + aClassName, e);
+		} catch (InvocationTargetException e) {
+			Log.e(aTAG, "consructor failed for: " + aClassName, e);
 		}
 		return null;
 	}
