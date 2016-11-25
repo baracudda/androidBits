@@ -33,6 +33,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -274,17 +275,38 @@ public final class BitsAppUtils {
 	static public Object obtainInstanceOfClassName(Context aContext, String aClassName,
 			Class<?> anAncestorClassOrInterface, String aTAG, Object... aConstructorParams)
 	{
+		Class[] theConParamClasses = null;
 		try {
 			Class<?> theClass = obtainClassForName(aContext, aClassName, aTAG);
 			if (theClass!=null) {
 				if (anAncestorClassOrInterface != null)
 					anAncestorClassOrInterface.isAssignableFrom(theClass);
 				if (aConstructorParams!=null && aConstructorParams.length>0) {
-					Class[] theConParamClasses = new Class[aConstructorParams.length];
+					//get the classes of each construction param
+					theConParamClasses = new Class[aConstructorParams.length];
 					for (int i = 0; i < aConstructorParams.length; i++) {
 						theConParamClasses[i] = aConstructorParams[i].getClass();
 					}
-					return theClass.getConstructor(theConParamClasses).newInstance(aConstructorParams);
+					//cannot just use getConstructor(theConParamClasses) as that will
+					//  only find a constructor with class declared as the type
+					//  given to us rather than also any ancestor class or interface
+					for (Constructor theCon : theClass.getConstructors()) {
+						Class<?>[] theDeclaredParams = theCon.getParameterTypes();
+						if (theDeclaredParams.length == theConParamClasses.length) {
+							boolean bMatchesParams = true;
+							for (int i=0; i<theDeclaredParams.length; i++) {
+								bMatchesParams = bMatchesParams && (
+										theDeclaredParams[i].isAssignableFrom(
+												theConParamClasses[i]
+										)
+								);
+							}
+							if (bMatchesParams)
+								return theCon.newInstance(aConstructorParams);
+						}
+					}
+					//if we get here... error
+					throw new NoSuchMethodException();
 				}
 				else
 					return theClass.newInstance();
@@ -294,7 +316,17 @@ public final class BitsAppUtils {
 		} catch (IllegalAccessException e) {
 			Log.e(aTAG, "cannot access: " + aClassName, e);
 		} catch (NoSuchMethodException e) {
-			Log.e(aTAG, "no consructor matching params for: " + aClassName, e);
+			StringBuilder theMsg = new StringBuilder()
+				.append("no public constructor for: ").append(aClassName)
+				.append(" matching (")
+				;
+			if (theConParamClasses.length>0) {
+				for (Class theClass : theConParamClasses)
+					theMsg.append(theClass.getSimpleName()).append(',');
+				theMsg.deleteCharAt(theMsg.length()-1);
+			}
+			theMsg.append(")");
+			Log.e(aTAG, theMsg.toString(), e);
 		} catch (InvocationTargetException e) {
 			Log.e(aTAG, "consructor failed for: " + aClassName, e);
 		}
