@@ -117,19 +117,6 @@ public class ABroadwayAuthenticator extends AbstractAccountAuthenticator
 	}
 
 	/**
-	 * Convenience method for creating a new object needed for a Broadway Auth REST client.
-	 */
-	protected IBroadwayAuthDeviceInfo obtainAuthDeviceInfo()
-	{
-		Context theContext = getContext();
-		return (IBroadwayAuthDeviceInfo) BitsAppUtils.obtainInstanceOfClassName( theContext,
-				theContext.getString(R.string.class_for_auth_device_info),
-				IBroadwayAuthDeviceInfo.class,
-				TAG
-		);
-	}
-
-	/**
 	 * OVERRIDE ME IN YOUR DESCENDANT!
 	 * Use this method to actually talk to the server to obtain an auth token.
 	 * @param aAcctMgr - the Android Account Manager.

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_entries_server_url_validated">
+        <item>URL is invalid</item>
+        <item>URL is validated!</item>
+        <item>URL is being validated…</item>
+    </string-array>
+    <string-array name="pref_entryvalues_server_url_validated">
+        <item>false</item>
+        <item>true</item>
+        <item>in_progress</item>
+    </string-array>
+
+</resources>
