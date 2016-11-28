@@ -34,11 +34,11 @@ public class BroadwayAuthDeviceInfo implements IBroadwayAuthDeviceInfo
 	/**
 	 * Fingerprint separator can be custom. ", " is the default expected by server.
 	 */
-	protected String FINGERPRINT_SEPARATOR = ", ";
+	private static final String FINGERPRINT_SEPARATOR = ", ";
 	/**
 	 * Circumstance separator can be custom. ", " is the default expected by server.
 	 */
-	protected String CIRCUMSTANCE_SEPARATOR = ", ";
+	private static final String CIRCUMSTANCE_SEPARATOR = ", ";
 
 	/** the cached context to use */
 	protected Context mContext;
@@ -142,22 +142,37 @@ public class BroadwayAuthDeviceInfo implements IBroadwayAuthDeviceInfo
 	@Override
 	public StringBuilder composeBroadwayAuthData(StringBuilder aStrBldr)
 	{
+		final String theFingerprintSeparator = this.getFingerprintSeparator() ;
+		final String theCircumstanceSeparator = this.getCircumstanceSeparator();
 		if (aStrBldr==null)
 			aStrBldr = new StringBuilder() ;
 		//if using the default separator of ", ", then we do not need to specify it
-		if (!", ".equals(FINGERPRINT_SEPARATOR))
-			aStrBldr.append( "fsep=\"" ).append( FINGERPRINT_SEPARATOR ).append( "\"," );
+		if (!", ".equals( theFingerprintSeparator ))
+			aStrBldr.append( "fsep=\"" ).append( theFingerprintSeparator ).append( "\"," );
 		aStrBldr.append( "fingerprints=\"" )
-			.append( TextUtils.join( FINGERPRINT_SEPARATOR, getDeviceFingerprints() ) )
+			.append( TextUtils.join( theFingerprintSeparator, getDeviceFingerprints() ) )
 			.append( "\"," )
 			;
-		if (!", ".equals(CIRCUMSTANCE_SEPARATOR))
-			aStrBldr.append( "csep=\"" ).append( CIRCUMSTANCE_SEPARATOR ).append( "\"," );
+		if (!", ".equals( theCircumstanceSeparator ))
+			aStrBldr.append( "csep=\"" ).append( theCircumstanceSeparator ).append( "\"," );
 		aStrBldr.append( "circumstances=\"" )
-			.append( TextUtils.join( CIRCUMSTANCE_SEPARATOR, getDeviceCircumstances() ) )
+			.append( TextUtils.join( theCircumstanceSeparator, getDeviceCircumstances() ) )
 			.append( "\"" )
 			;
 		return aStrBldr ;
 	}
 
+	/**
+	 * Descendants may override this method with a custom separator.
+	 * @return the separator string for fields in the "circumstances".
+     */
+	protected String getCircumstanceSeparator()
+	{ return CIRCUMSTANCE_SEPARATOR ; }
+
+	/**
+	 * Descendants may override this method with a custom separator.
+	 * @return the separator string for fields in the "fingerprints".
+     */
+	protected String getFingerprintSeparator()
+	{ return FINGERPRINT_SEPARATOR ; }
 }
