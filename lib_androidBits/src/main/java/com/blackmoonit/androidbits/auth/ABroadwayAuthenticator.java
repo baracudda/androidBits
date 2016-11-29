@@ -62,6 +62,7 @@ public class ABroadwayAuthenticator extends AbstractAccountAuthenticator
 
 	/**
 	 * Android Authenticator requires the Authenticator class to be a Locally Bound service.
+	 * NOTE: RECREATE THIS SERVICE CLASS IN ANY DESCENDANT USING YOUR DESCENDANT CLASS.
 	 */
 	static public class ServiceAuthenticator extends Service {
 		@Override
