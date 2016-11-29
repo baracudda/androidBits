@@ -28,7 +28,6 @@ import android.os.IBinder;
 import android.text.TextUtils;
 
 import com.blackmoonit.androidbits.R;
-import com.blackmoonit.androidbits.utils.BitsAppUtils;
 
 /**
  * Android Account Manager descendant for working with Broadway Auth REST server.
@@ -89,10 +88,7 @@ public class ABroadwayAuthenticator extends AbstractAccountAuthenticator
 	{
 		Context theContext = getContext();
 		final Intent theIntent = new Intent( theContext,
-				BitsAppUtils.obtainClassForName( theContext,
-						theContext.getString(R.string.class_for_activity_login),
-						TAG
-				)
+				FactoriesForBroadwayAuth.obtainLoginActivityClass( theContext )
 		);
 		theIntent.putExtra(EXTRA_ACCOUNT_TYPE, aAccountType);
 		theIntent.putExtra(EXTRA_AUTHTOKEN_KIND, aAuthTokenType);
@@ -168,10 +164,7 @@ public class ABroadwayAuthenticator extends AbstractAccountAuthenticator
 		//If we get here, then we need to re-prompt them for their credentials.
 		//  We do that by creating an intent to display our authenticator login activity.
 		final Intent theResultIntent = new Intent( theContext,
-				BitsAppUtils.obtainClassForName( theContext,
-						theContext.getString(R.string.class_for_activity_login),
-						TAG
-				)
+				FactoriesForBroadwayAuth.obtainLoginActivityClass( theContext )
 		);
 		theResultIntent.putExtra(EXTRA_ACCOUNT_NAME, theAcct.name);
 		theResultIntent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, aResponse);
