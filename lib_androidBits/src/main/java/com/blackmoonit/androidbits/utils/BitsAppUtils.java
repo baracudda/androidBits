@@ -6,7 +6,7 @@ package com.blackmoonit.androidbits.utils;
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *	  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,8 +30,10 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -112,31 +114,31 @@ public final class BitsAppUtils {
 		return theResult;
 	}
 
-    static private Method mActMgr_GetMemoryClass = null;
-    static private int myMemoryClassValue = 0;
-    /**
-     * Wrapper for {@link android.app.ActivityManager#getMemoryClass()}.
-     * @param aContext - an Activity
-     * @return Returns the number of megs available per app.
-     */
-    static public int getMemoryClass(Context aContext) {
-        if (myMemoryClassValue==0) {
-            myMemoryClassValue = 16; //16 megs is the Java heap size in older phones
-            ActivityManager theActMgr = (ActivityManager)aContext.getSystemService(Context.ACTIVITY_SERVICE);
-            if (mActMgr_GetMemoryClass!=null) {
-                try {
-                    myMemoryClassValue = (Integer)mActMgr_GetMemoryClass.invoke(theActMgr, (Object[])null);
-                } catch (IllegalArgumentException e) {
-                    //leave default value
-                } catch (IllegalAccessException e) {
-                    //leave default value
-                } catch (InvocationTargetException e) {
-                    //leave default value
-                }
-            }
-        }
-        return myMemoryClassValue;
-    }
+	static private Method mActMgr_GetMemoryClass = null;
+	static private int myMemoryClassValue = 0;
+	/**
+	 * Wrapper for {@link android.app.ActivityManager#getMemoryClass()}.
+	 * @param aContext - an Activity
+	 * @return Returns the number of megs available per app.
+	 */
+	static public int getMemoryClass(Context aContext) {
+		if (myMemoryClassValue==0) {
+			myMemoryClassValue = 16; //16 megs is the Java heap size in older phones
+			ActivityManager theActMgr = (ActivityManager)aContext.getSystemService(Context.ACTIVITY_SERVICE);
+			if (mActMgr_GetMemoryClass!=null) {
+				try {
+					myMemoryClassValue = (Integer)mActMgr_GetMemoryClass.invoke(theActMgr, (Object[])null);
+				} catch (IllegalArgumentException e) {
+					//leave default value
+				} catch (IllegalAccessException e) {
+					//leave default value
+				} catch (InvocationTargetException e) {
+					//leave default value
+				}
+			}
+		}
+		return myMemoryClassValue;
+	}
 
 	/**
 	 * Returns the current app's package information (package name, version info, etc.)
@@ -163,8 +165,8 @@ public final class BitsAppUtils {
 	 *
 	 * @param aContext - application context
 	 * @return
-	 *      Returns the version name as defined by the application. Appends an "*" if the
-	 *      application is also debuggable.
+	 *	  Returns the version name as defined by the application. Appends an "*" if the
+	 *	  application is also debuggable.
 	 */
 	static public String getAppVersionName(Context aContext) {
 		PackageInfo pi = getAppPackageInfo(aContext,0);
@@ -246,17 +248,89 @@ public final class BitsAppUtils {
 		return apkFile.exists() ? new Date(apkFile.lastModified()) : null;
 	}
 
-    /**
-     * Returns an {@link Intent} targeting the launch activity for the current
-     * application. A library that needs to launch the app's primary activity
-     * will not necessarily know this information.
-     * @param aContext the context to use
-     * @return an intent that targets the current app's launch activity
-     */
-    static public Intent getLaunchIntentForPackage( Context aContext )
-    {
-        final Context ctxApp = aContext.getApplicationContext() ;
-        final String sAppPkg = ctxApp.getPackageName() ;
-        return ctxApp.getPackageManager().getLaunchIntentForPackage(sAppPkg) ;
-    }
+	/**
+	 * Returns an {@link Intent} targeting the launch activity for the current
+	 * application. A library that needs to launch the app's primary activity
+	 * will not necessarily know this information.
+	 * @param aContext the context to use
+	 * @return an intent that targets the current app's launch activity
+	 */
+	static public Intent getLaunchIntentForPackage( Context aContext )
+	{
+		final Context ctxApp = aContext.getApplicationContext() ;
+		final String sAppPkg = ctxApp.getPackageName() ;
+		return ctxApp.getPackageManager().getLaunchIntentForPackage(sAppPkg) ;
+	}
+
+	static public Class<?> obtainClassForName(Context aContext, String aClassName, String aTAG)
+	{
+		try {
+			return Class.forName(aClassName, true, aContext.getClassLoader());
+		} catch (ClassNotFoundException e) {
+			Log.e(aTAG, "class not found: " + aClassName, e);
+		}
+		return null;
+	}
+
+	static public Object obtainInstanceOfClassName(Context aContext, String aClassName,
+			Class<?> anAncestorClassOrInterface, String aTAG, Object... aConstructorParams)
+	{
+		Class[] theConParamClasses = null;
+		try {
+			Class<?> theClass = obtainClassForName(aContext, aClassName, aTAG);
+			if (theClass!=null) {
+				if (anAncestorClassOrInterface != null)
+					anAncestorClassOrInterface.isAssignableFrom(theClass);
+				if (aConstructorParams!=null && aConstructorParams.length>0) {
+					//get the classes of each construction param
+					theConParamClasses = new Class[aConstructorParams.length];
+					for (int i = 0; i < aConstructorParams.length; i++) {
+						theConParamClasses[i] = aConstructorParams[i].getClass();
+					}
+					//cannot just use getConstructor(theConParamClasses) as that will
+					//  only find a constructor with class declared as the type
+					//  given to us rather than also any ancestor class or interface
+					for (Constructor theCon : theClass.getConstructors()) {
+						Class<?>[] theDeclaredParams = theCon.getParameterTypes();
+						if (theDeclaredParams.length == theConParamClasses.length) {
+							boolean bMatchesParams = true;
+							for (int i=0; i<theDeclaredParams.length; i++) {
+								bMatchesParams = bMatchesParams && (
+										theDeclaredParams[i].isAssignableFrom(
+												theConParamClasses[i]
+										)
+								);
+							}
+							if (bMatchesParams)
+								return theCon.newInstance(aConstructorParams);
+						}
+					}
+					//if we get here... error
+					throw new NoSuchMethodException();
+				}
+				else
+					return theClass.newInstance();
+			}
+		} catch (InstantiationException e) {
+			Log.e(aTAG, "cannot instantiate: " + aClassName, e);
+		} catch (IllegalAccessException e) {
+			Log.e(aTAG, "cannot access: " + aClassName, e);
+		} catch (NoSuchMethodException e) {
+			StringBuilder theMsg = new StringBuilder()
+				.append("no public constructor for: ").append(aClassName)
+				.append(" matching (")
+				;
+			if (theConParamClasses.length>0) {
+				for (Class theClass : theConParamClasses)
+					theMsg.append(theClass.getSimpleName()).append(',');
+				theMsg.deleteCharAt(theMsg.length()-1);
+			}
+			theMsg.append(")");
+			Log.e(aTAG, theMsg.toString(), e);
+		} catch (InvocationTargetException e) {
+			Log.e(aTAG, "consructor failed for: " + aClassName, e);
+		}
+		return null;
+	}
+
 }

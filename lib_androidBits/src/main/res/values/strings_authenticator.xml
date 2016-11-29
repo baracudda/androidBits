@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="class_for_auth_device_info">com.blackmoonit.androidbits.auth.BroadwayAuthDeviceInfo</string>
+    <string name="class_for_activity_login">com.blackmoonit.androidbits.auth.ActivityLogin</string>
+
+    <string name="account_auth_name_in_android_manager">Blackmoon Info Tech Services</string>
+    <string name="account_auth_label_auth_token">BitsTheater Server</string>
+
+    <string name="account_auth_type">com.blackmoonit.androidbits.broadway</string>
+    <string name="account_auth_validation_ping">pInG</string>
+
+    <string name="prefs_act_auth_settings_title">Account Settings</string>
+    <string name="prefs_act_auth_settings_summary">Server connection properties</string>
+
+    <string name="ACTION_prefs_auth_settings_changed">com.blackmoonit.androidbits.authprefs.SETTINGS_CHANGED</string>
+
+    <string name="pref_title_server_url">Server URL</string>
+    <string name="pref_default_server_url"></string>
+    <string name="pref_default_server_url_debug"></string>
+
+    <!-- server_url_validated is not its own displayed setting, little need for strings -->
+
+    <string name="msg_url_validated">URL validated!</string>
+    <string name="msg_url_validate_failed">URL did not validate</string>
+
+</resources>
