@@ -14,15 +14,18 @@
      so let us just add it so the IDE will stfu about it.
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    android:key="account_settings"
-    android:title="@string/prefs_act_auth_settings_title"
-    android:summary="@string/prefs_act_auth_settings_summary"
- >
-	<intent
-		android:action="android.authenticator.account.PREFS"
-		android:targetPackage="com.blackmoonit.androidbits"
-		android:targetClass="com.blackmoonit.androidbits.AppPreferenceBase">
-	</intent>
+	android:layout_height="wrap_content" android:layout_width="wrap_content"
+>
+	<!-- The nested PreferenceScreens are required by Android's Account Manager for some reason -->
+	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+		android:key="account_settings"
+		android:title="@string/prefs_act_auth_settings_title"
+		android:summary="@string/prefs_act_auth_settings_summary"
+	 >
+		<intent
+			android:action="android.authenticator.account.PREFS"
+			android:targetPackage="com.blackmoonit.androidbits"
+			android:targetClass="com.blackmoonit.androidbits.AppPreferenceBase">
+		</intent>
+	</PreferenceScreen>
 </PreferenceScreen>
