@@ -34,7 +34,6 @@ public interface IBroadwayAuthDeviceInfo {
 	 * Composes the data to be used in an Authorization header string.
 	 * @param aStrBldr - the StringBuilder to use, if NULL, a new one is created.
 	 * @return The passed in StringBuilder with the data fields of an auth header.
-	 * @since 5.3.15
      */
 	StringBuilder composeBroadwayAuthData(StringBuilder aStrBldr);
 

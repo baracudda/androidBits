@@ -43,7 +43,7 @@ public class UITaskRunner extends Handler {
 	}
 
 	/**
-	 * Non-activies cannot easily show UI widgets like toast, this helper
+	 * Non-activities cannot easily show UI widgets like toast, this helper
 	 * method will show a constructed Toast object on the UI thread.
 	 * @param aToastToShow - constructed Toast: e.g. pass in Toast.makeToast().
 	 */
@@ -53,6 +53,27 @@ public class UITaskRunner extends Handler {
 				@Override
 				public void run() {
 					aToastToShow.show();
+				}
+			});
+		}
+	}
+
+	/**
+	 * Some non-activities cannot even create the Toast to show as they instead get
+	 * <pre>RuntimeException: Can't create handler inside thread that has not called Looper.prepare()</pre>;
+	 * this helper method will construct the Toast object and then show it on the UI thread.
+	 * @param aContext - the context to use.
+	 * @param aMsg - the message to show as a Toast.
+	 * @param aToastLength - the length to show the toast.
+	 */
+	static public void showMsgAsToast(final Context aContext,
+			final CharSequence aMsg, final int aToastLength )
+	{
+		if (aContext!=null && aMsg!=null) {
+			new UITaskRunner(aContext).post(new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(aContext, aMsg, aToastLength).show();
 				}
 			});
 		}
