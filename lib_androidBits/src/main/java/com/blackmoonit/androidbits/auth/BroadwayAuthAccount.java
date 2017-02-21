@@ -305,4 +305,17 @@ public class BroadwayAuthAccount extends Account
 				Base64.NO_WRAP).trim() ).toString() ;
 	}
 
+	/**
+	 * Do we have enough information in this Account object to attempt an
+	 * automatic re-authorization from the server?
+	 * @param aAcctMgr - Android's Account Manager.
+	 * @return Returns TRUE if we have enough info to attempt a re-auth.
+	 */
+	public boolean canAutoAuth(AccountManager aAcctMgr)
+	{
+		return !TextUtils.isEmpty(this.getAcctAuthId()) &&
+				aAcctMgr!=null &&
+				!TextUtils.isEmpty(this.getAcctUserToken(aAcctMgr));
+	}
+
 }
