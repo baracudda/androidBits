@@ -17,10 +17,17 @@ package com.blackmoonit.androidbits.auth;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Account information used for HTTP Authentication, Broadway scheme.
@@ -62,6 +69,55 @@ public class BroadwayAuthAccount extends Account
 			theAccount.setAcctAuthToken(aAuthToken);
 		}
 		return theAccount;
+	}
+	
+	static public class RemoveAccountResult implements AccountManagerFuture<Boolean>
+	{
+		private final Boolean mResult;
+		
+		public RemoveAccountResult( boolean aResult )
+		{ mResult = aResult; }
+		
+		@Override
+		public boolean cancel(boolean mayInterruptIfRunning)
+		{ return false; }
+		
+		@Override
+		public boolean isCancelled()
+		{ return false; }
+		
+		@Override
+		public boolean isDone()
+		{ return true; }
+		
+		@Override
+		public Boolean getResult()
+		throws OperationCanceledException, IOException, AuthenticatorException
+		{ return mResult; }
+		
+		@Override
+		public Boolean getResult(long timeout, TimeUnit unit)
+		throws OperationCanceledException, IOException, AuthenticatorException
+		{ return mResult; }
+	}
+	
+	/**
+	 * Remove this Android account as the server does not recognize it anymore.
+	 * @param aAcctMgr - the Android Account Manager object.
+	 * @return Returns a future boolean when <22, else TRUE/FALSE right away on success/fail.
+	 */
+	public AccountManagerFuture<Boolean> explicitlyRemoveAccount( AccountManager aAcctMgr )
+	{
+		if ( aAcctMgr!=null ) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) //5.1+
+				return new RemoveAccountResult( aAcctMgr.removeAccountExplicitly( this ) );
+			else {
+				return aAcctMgr.removeAccount(this, null, null);
+			}
+		}
+		else {
+			return new RemoveAccountResult( false );
+		}
 	}
 
 	/**
