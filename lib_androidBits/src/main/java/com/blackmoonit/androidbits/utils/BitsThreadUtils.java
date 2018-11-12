@@ -24,7 +24,7 @@ import java.util.concurrent.CancellationException;
  */
 public final class BitsThreadUtils {
 
-	private BitsThreadUtils() {} //do not instanciate this class
+	private BitsThreadUtils() {} //do not instantiate this class
 
 	/**
 	 * Determine if the current thread is the Android activity's UI thread.
@@ -36,7 +36,7 @@ public final class BitsThreadUtils {
 
 	/**
 	 * Check to see if we've been interrupted, stop if so.
-	 * @throws java.util.concurrent.CancellationException
+	 * @throws java.util.concurrent.CancellationException if current thread has been interrupted.
 	 */
 	static public void ifInterruptedStop() throws CancellationException {
 	    Thread.yield();
