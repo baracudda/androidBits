@@ -81,15 +81,32 @@ public class TaskToRun extends ThreadTask implements Comparable<TaskToRun>
 		return this;
 	}
 	
+	/**
+	 * Get he task ID used to determine uniqueness in the queue.
+	 * @return Returns the string used to determine uniqueness.
+	 */
 	public String getTaskID()
 	{ return mTaskID; }
 	
+	/**
+	 * Set the task ID used to determine uniqueness in the queue.
+	 * @return Returns this object so that a chain-call can be continued.
+	 */
 	public TaskToRun setTaskID( String aID )
 	{ mTaskID = aID; return this; }
 	
+	/**
+	 * Get the task name used to determine queue sort order, if necessary.
+	 * @return Returns the string used to determine possible queue sort order.
+	 */
 	public String getTaskName()
 	{ return mTaskName; }
 	
+	/**
+	 * Set the task name used to determine queue sort order, if necessary.
+	 * @param aName - the name to use for sort ordering inside the queue, if needed.
+	 * @return Returns this object so that a chain-call can be continued.
+	 */
 	public TaskToRun setTaskName( String aName )
 	{ return setProcessName(aName); }
 	

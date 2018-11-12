@@ -86,7 +86,7 @@ public class ThreadTaskDaemon extends ThreadInterruptable
 	 */
 	public TaskToRun findTaskByID( String aID )
 	{
-		if ( aID != null ) {
+		if ( aID != null && mTaskQueue != null ) {
 			for (TaskToRun theTask : mTaskQueue) {
 				if ( aID.equals(theTask.getTaskID()) ) {
 					return theTask;
@@ -103,7 +103,7 @@ public class ThreadTaskDaemon extends ThreadInterruptable
 	 */
 	public TaskToRun findTaskByName( String aName )
 	{
-		if ( aName!=null ) {
+		if ( aName != null && mTaskQueue != null ) {
 			for (TaskToRun theTask : mTaskQueue) {
 				if ( aName.equals(theTask.getTaskName()) ) {
 					return theTask;
@@ -160,10 +160,21 @@ public class ThreadTaskDaemon extends ThreadInterruptable
 			Log.i(getName(), "Thread was interrupted.");
 		}
 	}
-
+	
+	/**
+	 * Stops this thread after the current task is finished.
+	 */
+	public void closeTaskQueue() {
+		//cannot setDaemon(false) after thread is started
+		//do not want to interrupt as that kills current task
+		//just set mBreakman to null and loop will end after
+		//  current task finishes and before another task is started.
+		mBreakman = null;
+    }
+	
 	/**
 	 * Add task to the queue. Builder-chain friendly.
-	 * @param aTask - runnable to loop endlessly
+	 * @param aTask - the task to add to the queue
 	 * @return Returns this object so that a chain-call can be continued.
 	 * @throws InterruptedException a blocking queue might get interrupted.
 	 */
@@ -175,7 +186,7 @@ public class ThreadTaskDaemon extends ThreadInterruptable
 
 	/**
 	 * Add task that needs to be run on the UI thread to the queue. Builder-chain friendly.
-	 * @param aTask - runnable to loop endlessly
+	 * @param aTask - the task to add to the queue
 	 * @param aAct - Activity of the UI thread.
 	 * @return Returns this object so that a chain-call can be continued.
 	 * @throws InterruptedException a blocking queue might get interrupted.
@@ -191,7 +202,7 @@ public class ThreadTaskDaemon extends ThreadInterruptable
 
 	/**
 	 * Add task that needs to be run on the UI thread to the queue. Builder-chain friendly.
-	 * @param aTask - runnable to loop endlessly
+	 * @param aTask - the task to add to the queue
 	 * @param aContext - Context needed to determine the UI thread.
 	 * @return Returns this object so that a chain-call can be continued.
 	 * @throws InterruptedException a blocking queue might get interrupted.
@@ -204,16 +215,85 @@ public class ThreadTaskDaemon extends ThreadInterruptable
 		pushTask(TaskToRun.prepThisTaskOnUI(aTask, aContext));
 		return this;
 	}
+	
+	/**
+	 * Check if a task is already in the queue by locating its ID.
+	 * @param aTaskID - the task ID to check.
+	 * @return Returns TRUE if the task ID is found in the queue already.
+	 */
+	protected boolean isTaskQueued( String aTaskID )
+	{ return (findTaskByID(aTaskID)!=null); }
 
 	/**
-	 * Stops this thread after the current task is finished.
+	 * Queue the task into our task queue by first checking to make sure it isn't already
+	 * there.  Ensure other threads aren't adding to our queue by synchronizing the method.
+	 * @param aTask - the task to add to the queue
+	 * @param aTaskID - the task ID which determined uniqueness.
+	 * @param aTaskName - the task name which determines priority sort order, if necessary.
+	 * @return Returns this object so that a chain-call can be continued.
 	 */
-	public void closeTaskQueue() {
-		//cannot setDaemon(false) after thread is started
-		//do not want to interrupt as that kills current task
-		//just set mBreakman to null and loop will end after
-		//  current task finishes and before another task is started.
-		mBreakman = null;
-    }
+	public synchronized ThreadTaskDaemon queueUniqueTask( Runnable aTask,
+			String aTaskID, String aTaskName )
+	{
+		if ( isTaskQueued(aTaskID) ) {
+			Log.w(getName(), "[" + aTaskID + "] already exists in task queue, ignoring.");
+			return this;
+		}
+		try {
+			pushTask(TaskToRun.prepThisTask(aTask, aTaskName).setTaskID(aTaskID));
+			Log.i(getName(), "[" + aTaskID + "] was added to the task queue.");
+		} catch (InterruptedException e) {
+			Log.w(getName(), "[" + aTaskID + "] avoided the task queue: interrupted (non-fatal exception).");
+		}
+		return this;
+	}
+
+	/**
+	 * Queue the task into our task queue by first checking to make sure it isn't already
+	 * there.  Ensure other threads aren't adding to our queue by synchronizing the method.
+	 * @param aTask - the task to add to the queue
+	 * @param aTaskID - the task ID which determined uniqueness.
+	 * @param aTaskName - the task name which determines priority sort order, if necessary.
+	 * @param aAct - Activity of the UI thread.
+	 * @return Returns this object so that a chain-call can be continued.
+	 */
+	public synchronized ThreadTaskDaemon queueUniqueTaskOnUI( Runnable aTask,
+			String aTaskID, String aTaskName, Activity aAct )
+	{
+		if ( isTaskQueued(aTaskID) ) {
+			Log.w(getName(), "[" + aTaskID + "] already exists in task queue, ignoring.");
+			return this;
+		}
+		try {
+			pushTask(TaskToRun.prepThisTaskOnUI(aTask, aAct).setTaskName(aTaskName).setTaskID(aTaskID));
+		} catch (InterruptedException e) {
+			Log.w(getName(), "[" + aTaskID + "] avoided the task queue: interrupted (non-fatal exception).");
+		}
+		return this;
+	}
+
+	/**
+	 * Queue the task into our task queue by first checking to make sure it isn't already
+	 * there.  Ensure other threads aren't adding to our queue by synchronizing the method.
+	 * @param aTask - the task to add to the queue
+	 * @param aTaskID - the task ID which determined uniqueness.
+	 * @param aTaskName - the task name which determines priority sort order, if necessary.
+	 * @param aContext - Context needed to determine the UI thread.
+	 * @return Returns this object so that a chain-call can be continued.
+	 */
+	public synchronized ThreadTaskDaemon queueUniqueTaskOnUI( Runnable aTask,
+			String aTaskID, String aTaskName, Context aContext )
+	{
+		if ( isTaskQueued(aTaskID) ) {
+			Log.w(getName(), "[" + aTaskID + "] already exists in task queue, ignoring.");
+			return this;
+		}
+		try {
+			pushTask(TaskToRun.prepThisTaskOnUI(aTask, aContext).setTaskName(aTaskName).setTaskID(aTaskID));
+		} catch (InterruptedException e) {
+			Log.w(getName(), "[" + aTaskID + "] avoided the task queue: interrupted (non-fatal exception).");
+		}
+		return this;
+	}
 
 }
