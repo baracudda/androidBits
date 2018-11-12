@@ -17,61 +17,76 @@ package com.blackmoonit.androidbits.concurrent;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * ThreadTaskDaemon is a Daemon thread that will continue to execute the Runnable tasks in its
  * queue, and keeps doing so as the queue gets filled. If you use a queue that implements
  * BlockingQueue, then an empty queue will block this thread until a task is submitted,
  * waking it up.
- * @param <Q> the type of AbstractQueue used by this daemon
  */
-@SuppressWarnings("unused")
-public class ThreadTaskDaemon<Q extends AbstractQueue<TaskToRun>> extends ThreadInterruptable
+@SuppressWarnings("unused, UnusedReturnValue")
+public class ThreadTaskDaemon extends ThreadInterruptable
 {
-	protected String mQueueName;
-	protected final Constructor<? extends Q> ctor;
-	protected Q mTaskQueue;
+	protected AbstractQueue<TaskToRun> mTaskQueue;
+	
+	/** @return Creates and returns the queue instance to use if none has been set, yet. */
+	protected AbstractQueue<TaskToRun> createNewQueue()
+	{ return new LinkedBlockingQueue<TaskToRun>(); }
 	
 	/**
-	 * Prepare the queue by instantiating it and setting our thread to its name.
-	 * @return Returns TRUE if all is well.
+	 * Set our specific queue instance to be used for determining task order.
+	 * @param aQueue - the instance of AbstractQueue to be used by this daemon.
+	 * @return Returns this object so that a chain-call can be continued.
 	 */
-	protected boolean prepNewQueue()
+	protected ThreadTaskDaemon setQueueToUse( AbstractQueue<TaskToRun> aQueue )
 	{
-		try {
-			mTaskQueue = ctor.newInstance();
-			mQueueName = mTaskQueue.getClass().getSimpleName();
-			setProcessName(mQueueName);
-			return true;
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+		if ( !isAlive() ) {
+			mTaskQueue = aQueue;
+			if (aQueue != null && TextUtils.isEmpty(getName())) {
+				setProcessName(aQueue.getClass().getSimpleName());
+			}
 		}
-		return false;
+		return this;
 	}
-
-	public ThreadTaskDaemon(Class<? extends Q> impl) throws NoSuchMethodException
+	
+	public ThreadTaskDaemon()
 	{
 		super();
-		ctor = impl.getConstructor();
-		if ( prepNewQueue() ) {
-			setProcessPriority(null);
-			setDaemon(true);
-		}
+		setDaemon(true);
 	}
-
-	public TaskToRun findTaskByID(Long aID)
+	
+	/**
+	 * Create the deamon thread queue using this specific queue object.
+	 * @param aQueue - the specific queue object to use.
+	 */
+	public ThreadTaskDaemon( AbstractQueue<TaskToRun> aQueue )
 	{
-		if ( aID!=null ) {
+		super();
+		setQueueToUse(aQueue);
+	}
+	
+	@Override
+	public void run()
+	{
+		if ( mTaskQueue == null )
+		{ setQueueToUse(createNewQueue()); }
+		super.run();
+	}
+	
+	/**
+	 * Find a specific task in the queue and return it.
+	 * @param aID - the ID of the task to search for.
+	 * @return Returns the TaskToRun, if found.
+	 */
+	public TaskToRun findTaskByID( String aID )
+	{
+		if ( aID != null ) {
 			for (TaskToRun theTask : mTaskQueue) {
 				if ( aID.equals(theTask.getTaskID()) ) {
 					return theTask;
@@ -81,7 +96,12 @@ public class ThreadTaskDaemon<Q extends AbstractQueue<TaskToRun>> extends Thread
 		return null;
 	}
 
-	public TaskToRun findTaskByName(String aName)
+	/**
+	 * Find a specific task in the queue and return it.
+	 * @param aName - the name of the task to search for.
+	 * @return Returns the TaskToRun, if found.
+	 */
+	public TaskToRun findTaskByName( String aName )
 	{
 		if ( aName!=null ) {
 			for (TaskToRun theTask : mTaskQueue) {
@@ -121,6 +141,7 @@ public class ThreadTaskDaemon<Q extends AbstractQueue<TaskToRun>> extends Thread
 	@SuppressWarnings("unchecked cast,UnusedReturnValue")
 	public TaskToRun pullTask() throws InterruptedException
 	{
+		if ( mTaskQueue == null ) halt();
 		if ( mTaskQueue instanceof BlockingQueue<?> ) {
 			return ((BlockingQueue<TaskToRun>)mTaskQueue).take();
 		}
@@ -136,7 +157,7 @@ public class ThreadTaskDaemon<Q extends AbstractQueue<TaskToRun>> extends Thread
 			TaskToRun theTask = pullTask();
 			if ( theTask != null ) theTask.execute();
 		} catch (InterruptedException ie) {
-			Log.i(getName(), mQueueName+" was interrupted.");
+			Log.i(getName(), "Thread was interrupted.");
 		}
 	}
 
@@ -161,10 +182,9 @@ public class ThreadTaskDaemon<Q extends AbstractQueue<TaskToRun>> extends Thread
 	 */
 	public ThreadTaskDaemon queueTaskForUI(Runnable aTask, Activity aAct) throws InterruptedException
 	{
-		if ( aTask == null )
+		if ( aTask == null ) {
 			throw new IllegalArgumentException("Queuing up a NULL task, the shame!");
-		if ( aAct == null )
-			throw new IllegalArgumentException("Activity cannot be null");
+		}
 		pushTask(TaskToRun.prepThisTaskOnUI(aTask, aAct));
 		return this;
 	}
@@ -178,10 +198,9 @@ public class ThreadTaskDaemon<Q extends AbstractQueue<TaskToRun>> extends Thread
 	 */
 	public ThreadTaskDaemon queueTaskForUI(Runnable aTask, Context aContext) throws InterruptedException
 	{
-		if ( aTask == null )
+		if ( aTask == null ) {
 			throw new IllegalArgumentException("Queuing up a NULL task, the shame!");
-		if ( aContext == null )
-			throw new IllegalArgumentException("Context cannot be null");
+		}
 		pushTask(TaskToRun.prepThisTaskOnUI(aTask, aContext));
 		return this;
 	}

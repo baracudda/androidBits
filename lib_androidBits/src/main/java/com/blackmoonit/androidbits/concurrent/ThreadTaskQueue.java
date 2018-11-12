@@ -15,27 +15,22 @@ package com.blackmoonit.androidbits.concurrent;
  * limitations under the License.
  */
 
-import com.blackmoonit.androidbits.concurrent.TaskToRun;
-
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * ThreadTaskQueue is a Daemon thread that will continue to execute the Runnable tasks in its
  * queue, in FIFO order, and keep doing so as they come in.  An empty queue blocks this thread
  * until a task is submitted, waking it up.
- *
+ * @deprecated use ThreadTaskDaemon instead.
  * @author baracudda
  */
-public class ThreadTaskQueue extends ThreadTaskDaemon<LinkedBlockingQueue<TaskToRun>>
+public class ThreadTaskQueue extends ThreadTaskDaemon
 {
 
-	public ThreadTaskQueue()
-	{
-		try {
-			super( ((LinkedBlockingQueue<TaskToRun>)Class).getClass() );
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
+	public ThreadTaskQueue() {
+		super();
 	}
+	
+	//left for backward compatibility
 
 }

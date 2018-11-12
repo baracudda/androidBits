@@ -21,18 +21,22 @@ import android.content.Context;
 import com.blackmoonit.androidbits.app.UITaskRunner;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A thread worker thread class that might run in the background or in the main thread.<br>
  * This class is designed to use Runnables instead of requiring subclasses to be defined.
  * @author baracudda
  */
-public class TaskToRun extends ThreadTask
+@SuppressWarnings("unused, UnusedReturnValue")
+public class TaskToRun extends ThreadTask implements Comparable<TaskToRun>
 {
+	static protected final AtomicLong autoIDgen = new AtomicLong(1);
 	protected boolean bRunOnUi = false;
 	protected WeakReference<Activity> wrAct = null;
 	protected WeakReference<Context> wrContext = null;
-	protected Long mTaskID = null;
+	/** Task ID defaults to an auto-generated INT, but can be overridden as an UUID. */
+	protected String mTaskID = String.valueOf(autoIDgen.getAndAdd(1));
 	protected String mTaskName = null;
 	
 	public TaskToRun(Runnable aTask)
@@ -45,10 +49,42 @@ public class TaskToRun extends ThreadTask
 		return (TaskToRun)super.setProcessName(aName);
 	}
 	
-	public Long getTaskID()
+	/**
+	 * Execute this task on the UI thread using the parameter as context.
+	 * @param aAct - the Activity to use as a context for executing the task on the UI thread.
+	 * @return Returns this object so that a chain-call can be continued.
+	 * @throws IllegalArgumentException if the param is null.
+	 */
+	public TaskToRun setTaskToRunOnUI( Activity aAct )
+	{
+		if ( aAct == null ) {
+			throw new IllegalArgumentException("Activity is required to queue UI tasks.");
+		}
+		wrAct = new WeakReference<Activity>(aAct);
+		bRunOnUi = true;
+		return this;
+	}
+	
+	/**
+	 * Execute this task on the UI thread using the parameter as context.
+	 * @param aContext - the context to use for executing the task on the UI thread.
+	 * @return Returns this object so that a chain-call can be continued.
+	 * @throws IllegalArgumentException if the param is null.
+	 */
+	public TaskToRun setTaskToRunOnUI( Context aContext )
+	{
+		if ( aContext == null ) {
+			throw new IllegalArgumentException("Context is required to queue UI tasks.");
+		}
+		wrContext = new WeakReference<Context>(aContext);
+		bRunOnUi = true;
+		return this;
+	}
+	
+	public String getTaskID()
 	{ return mTaskID; }
 	
-	public TaskToRun setTaskID( Long aID )
+	public TaskToRun setTaskID( String aID )
 	{ mTaskID = aID; return this; }
 	
 	public String getTaskName()
@@ -58,7 +94,7 @@ public class TaskToRun extends ThreadTask
 	{ return setProcessName(aName); }
 	
 	@Override
-	public void runTask() throws InterruptedException
+	public void runTask()
 	{
 		if ( mTask == null ) return;
 		//we have a task to run, see if it needs to run on UI thread
@@ -76,33 +112,59 @@ public class TaskToRun extends ThreadTask
 		}
 	}
 	
-	static public TaskToRun prepThisTask(Runnable aTask, String aName)
-	{
-		TaskToRun theResult = new TaskToRun(aTask);
-		theResult.setProcessName(aName).setProcessPriority(NORM_PRIORITY);
-		return theResult;
+	@Override
+	public int compareTo(TaskToRun o) {
+		if ( mTaskName != null )
+		{ return mTaskName.compareTo(o.getTaskName()); }
+		else if ( mTaskID != null )
+		{ return mTaskID.compareTo(o.getTaskID()); }
+		else
+		{ return 0; }
 	}
+	
+	static public TaskToRun prepThisTask(Runnable aTask, String aName)
+	{ return (new TaskToRun(aTask)).setProcessName(aName); }
 	
 	static public TaskToRun prepThisTaskOnUI(Runnable aTask, Activity aAct)
-	{
-		TaskToRun theResult = new TaskToRun(aTask);
-		theResult.bRunOnUi = true;
-		theResult.wrAct = new WeakReference<Activity>(aAct);
-		return theResult;
-	}
+	{ return (new TaskToRun(aTask)).setTaskToRunOnUI(aAct); }
 	
 	static public TaskToRun prepThisTaskOnUI(Runnable aTask, Context aContext)
-	{
-		TaskToRun theResult = new TaskToRun(aTask);
-		theResult.bRunOnUi = true;
-		theResult.wrContext = new WeakReference<Context>(aContext);
-		return theResult;
-	}
+	{ return (new TaskToRun(aTask)).setTaskToRunOnUI(aContext); }
 	
+	/**
+	 * Immediately start executing this task.
+	 * @param aTask - the task to run.
+	 * @return Returns the task wrapper created.
+	 */
+	static public TaskToRun runThisTask(Runnable aTask)
+	{ return (TaskToRun) (new TaskToRun(aTask)).execute(); }
+	
+	/**
+	 * Immediately start executing this task.
+	 * @param aTask - the task to run.
+	 * @param aName - the name of the task thread to use.
+	 * @return Returns the task wrapper created.
+	 */
 	static public TaskToRun runThisTask(Runnable aTask, String aName)
 	{ return (TaskToRun)prepThisTask(aTask, aName).execute(); }
+	
+	/**
+	 * Immediately start executing this task after a set delay.
+	 * @param aTask - the task to run.
+	 * @param aDelayInMilliseconds - the ms delay before execution starts.
+	 * @return Returns the task wrapper created.
+	 */
+	static public TaskToRun runThisTask(Runnable aTask, Long aDelayInMilliseconds)
+	{ return (TaskToRun) (new TaskToRun(aTask)).executeDelayed(aDelayInMilliseconds); }
 
+	/**
+	 * Immediately start executing this task after a set delay.
+	 * @param aTask - the task to run.
+	 * @param aName - the name of the task thread to use.
+	 * @param aDelayInMilliseconds - the ms delay before execution starts.
+	 * @return Returns the task wrapper created.
+	 */
 	static public TaskToRun runThisTask(Runnable aTask, String aName, Long aDelayInMilliseconds)
 	{ return (TaskToRun)prepThisTask(aTask, aName).executeDelayed(aDelayInMilliseconds); }
-
+	
 }
