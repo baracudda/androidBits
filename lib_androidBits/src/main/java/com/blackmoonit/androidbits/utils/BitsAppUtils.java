@@ -96,13 +96,13 @@ public final class BitsAppUtils {
 			theResult = thePhoneMgr.getDeviceId()+"1";
 		}
 		//ANDROID_ID, if available
-		if (Build.VERSION.SDK_INT >= 9 &&
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD &&
 				( theResult==null || theResult.contains("*") || theResult.contains("000000000000000")) ) {
 			//API 9+: ANDROID_ID (may be NULL or may be non-unique across a mfg model (known bugs))
 			theResult = getAndroidID(aContext)+"2";
 		}
 		//SERIAL#, if available
-		if (theResult==null && Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
+		if (theResult==null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 			theResult = Build.SERIAL+"3";
 		}
 

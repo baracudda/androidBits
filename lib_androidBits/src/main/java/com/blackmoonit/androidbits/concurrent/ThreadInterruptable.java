@@ -23,7 +23,8 @@ import java.util.concurrent.CancellationException;
  * Thread mechanism to overcome the limitations and shortcomings of stopping java threads.
  * @author baracudda
  */
-public abstract class ThreadInterruptable extends Thread {
+public abstract class ThreadInterruptable extends Thread
+{
 	protected volatile Thread mBreakman;
 	/**
 	 * Daemons that want to sleep between task runs would set a positive value in miliseconds.
@@ -66,7 +67,7 @@ public abstract class ThreadInterruptable extends Thread {
 
 	/**
 	 * Task to perform while this thread is active.
-	 * @throws InterruptedException
+	 * @throws InterruptedException a blocking queue might get interrupted.
 	 */
 	abstract public void runTask() throws InterruptedException;
 
@@ -85,7 +86,7 @@ public abstract class ThreadInterruptable extends Thread {
 
 	/**
 	 * Check to see if we've been interrupted, stop if so.
-	 * @throws java.util.concurrent.CancellationException
+	 * @throws java.util.concurrent.CancellationException if current thread has been interrupted.
 	 */
 	static protected void ifInterruptedStop() throws CancellationException {
 		BitsThreadUtils.ifInterruptedStop();
@@ -97,6 +98,14 @@ public abstract class ThreadInterruptable extends Thread {
 	 */
 	static public boolean isUiThread() {
 		return BitsThreadUtils.isUiThread();
+	}
+
+	/**
+	 * Determine if the current thread is the Android activity's UI thread.
+	 * @return Returns TRUE if the current thread is the main UI thread.
+	 */
+	static public boolean isBackgroundThread() {
+		return !BitsThreadUtils.isUiThread();
 	}
 
 	/**
@@ -128,7 +137,7 @@ public abstract class ThreadInterruptable extends Thread {
 	 * Checks to see if the thread is not alive before calling start().
 	 */
 	public ThreadInterruptable execute() {
-		if (!isAlive()) {
+		if ( !isAlive() ) {
 			start();
 		}
 		return this;
@@ -139,7 +148,7 @@ public abstract class ThreadInterruptable extends Thread {
 	 * @param aDelayInMilliseconds - start task after a delay (in milliseconds).
 	 */
 	public ThreadInterruptable executeDelayed(long aDelayInMilliseconds) {
-		if (!isAlive()) {
+		if ( !isAlive() ) {
 			mDelayTask = aDelayInMilliseconds;
 			start();
 		}
