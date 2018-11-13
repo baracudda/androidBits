@@ -127,6 +127,9 @@ public class TaskToRun extends ThreadTask implements Comparable<TaskToRun>
 				}
 			}
 		}
+		else {
+			mTask.run();
+		}
 	}
 	
 	@Override

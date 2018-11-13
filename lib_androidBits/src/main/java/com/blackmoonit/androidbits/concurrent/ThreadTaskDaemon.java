@@ -34,6 +34,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ThreadTaskDaemon extends ThreadInterruptable
 {
 	protected AbstractQueue<TaskToRun> mTaskQueue;
+	protected boolean bExecuteTaskAsSeparateThread = false;
 	
 	/** @return Creates and returns the queue instance to use if none has been set, yet. */
 	protected AbstractQueue<TaskToRun> createNewQueue()
@@ -67,9 +68,21 @@ public class ThreadTaskDaemon extends ThreadInterruptable
 	 */
 	public ThreadTaskDaemon( AbstractQueue<TaskToRun> aQueue )
 	{
-		super();
+		this();
 		setQueueToUse(aQueue);
 	}
+	
+	/** @return Returns TRUE if tasks are run in their own thread. */
+	public boolean isTaskRunAsThread()
+	{ return bExecuteTaskAsSeparateThread; }
+	
+	/**
+	 * Tasks are either executed in their own thread or via the queue thread (or UI thread).
+	 * @param bRunAsThread - should task be executed in its own thread or not (default: TRUE)
+	 * @return Returns this object so that a chain-call can be continued.
+	 */
+	public ThreadTaskDaemon setRunTaskAsThread( boolean bRunAsThread )
+	{ bExecuteTaskAsSeparateThread = bRunAsThread; return this; }
 	
 	@Override
 	public void run()
@@ -155,7 +168,14 @@ public class ThreadTaskDaemon extends ThreadInterruptable
 	{
 		if ( !isInterrupted() ) try {
 			TaskToRun theTask = pullTask();
-			if ( theTask != null ) theTask.execute();
+			if ( theTask != null ) {
+				if ( bExecuteTaskAsSeparateThread ) {
+					theTask.execute();
+				}
+				else {
+					theTask.runTask();
+				}
+			}
 		} catch (InterruptedException ie) {
 			Log.i(getName(), "Thread was interrupted.");
 		}
