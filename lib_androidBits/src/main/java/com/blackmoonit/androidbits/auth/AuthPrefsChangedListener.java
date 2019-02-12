@@ -68,6 +68,41 @@ public class AuthPrefsChangedListener
 		String thePrefKey = theContext.getString(R.string.pref_key_server_url_validated);
 		aSettings.edit().putString(thePrefKey, theSettingValue).commit();
 	}
+	
+	static final class ValidateUrl extends AsyncTask<SharedPreferences, Object, Boolean> {
+		protected final AuthPrefsChangedListener mListener;
+		protected final SharedPreferences mSettings;
+		
+		public ValidateUrl(final AuthPrefsChangedListener aListener, final SharedPreferences aSettings) {
+			mListener = aListener;
+			mSettings = aSettings;
+		}
+	
+		@Override
+		protected Boolean doInBackground(SharedPreferences... params) {
+			SharedPreferences theSettings = null;
+			if (params!=null && params.length>0)
+				theSettings = params[0];
+			return (mListener.mTaskToValidateURL!=null) &&
+				mListener.mTaskToValidateURL.onURLChange( mListener.mContext, theSettings );
+		}
+
+		@SuppressLint("ShowToast")
+		@Override
+		protected void onPostExecute(Boolean bUrlValidated) {
+			if (mListener.mContext!=null) {
+				mListener.updateUrlValidated(mSettings, bUrlValidated);
+				if (bUrlValidated) {
+					UITaskRunner.showToast(Toast.makeText(mListener.mContext,
+							R.string.msg_url_validated, Toast.LENGTH_SHORT));
+				} else {
+					UITaskRunner.showToast(Toast.makeText(mListener.mContext,
+							R.string.msg_url_validate_failed, Toast.LENGTH_LONG));
+				}
+			}
+		}
+
+	}
 
 	/**
 	 * Called when settings have either changed or are being initialized on start.
@@ -80,33 +115,7 @@ public class AuthPrefsChangedListener
 		if (aPrefKey==null || aPrefKey.equals(theContext.getString(R.string.pref_key_server_url))) {
 			updateUrlValidated(aSettings, null);
 			//validate the new url setting and display toast on succeed/fail
-			(new AsyncTask<SharedPreferences, Object, Boolean>(){
-
-				@Override
-				protected Boolean doInBackground(SharedPreferences... params) {
-					SharedPreferences theSettings = null;
-					if (params!=null && params.length>0)
-						theSettings = params[0];
-					return (mTaskToValidateURL!=null) &&
-						mTaskToValidateURL.onURLChange( theContext, theSettings );
-				}
-
-				@SuppressLint("ShowToast")
-				@Override
-				protected void onPostExecute(Boolean bUrlValidated) {
-					if (theContext!=null) {
-						updateUrlValidated(aSettings, bUrlValidated);
-						if (bUrlValidated) {
-							UITaskRunner.showToast(Toast.makeText(theContext,
-									R.string.msg_url_validated, Toast.LENGTH_SHORT));
-						} else {
-							UITaskRunner.showToast(Toast.makeText(theContext,
-									R.string.msg_url_validate_failed, Toast.LENGTH_LONG));
-						}
-					}
-				}
-
-			}).execute(aSettings);
+			(new ValidateUrl(this, aSettings)).execute(aSettings);
 		}
 		theContext.sendBroadcast(new Intent(SETTINGS_CHANGED_INTENT));
 	}
