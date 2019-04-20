@@ -297,7 +297,7 @@ public class SliderPreference extends DialogPreference implements OnSeekBarChang
 		if (shouldPersist()) {
 			if (mPrefValues!=null) {
 				try {
-					return mPrefValues.indexOf(getPersistedString(Integer.toString(aDefaultValue)));
+					return mPrefValues.indexOf(getPersistedString(mDefaultValue));
 				} catch (Exception e) {
 					return aDefaultValue;
 				}
