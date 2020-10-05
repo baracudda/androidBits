@@ -17,6 +17,7 @@ package com.blackmoonit.androidbits.utils;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -30,6 +31,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -74,8 +76,10 @@ public final class BitsAppUtils {
 	 * API 8+ A hardware serial number, if available. Alphanumeric only, case-insensitive.
 	 * @return Returns the defined serial number or NULL if not available.
 	 */
+	@SuppressLint("HardwareIds")
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	static public String getSerialNumber() {
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
+		if ( Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO && Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 ) {
 			return Build.SERIAL;
 		} else
 			return null;
@@ -86,29 +90,43 @@ public final class BitsAppUtils {
 	 * @param aContext - the context to use.
 	 * @return Returns as unique a string per device as possible.
 	 */
-	@SuppressLint("HardwareIds")
+	@SuppressLint({"HardwareIds", "MissingPermission"})
 	static public String getDeviceID(Context aContext) {
 		String theResult = null;
-
-		//IMEI or similar cellular ID, if available
-		if (aContext.checkCallingOrSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-			TelephonyManager thePhoneMgr = (TelephonyManager) aContext.getSystemService(Context.TELEPHONY_SERVICE);
-			theResult = thePhoneMgr.getDeviceId()+"1";
+		try {
+			//IMEI or similar cellular ID, if available
+			int thePermState = aContext.checkCallingOrSelfPermission(Manifest.permission.READ_PHONE_STATE);
+			if ( thePermState == PackageManager.PERMISSION_GRANTED ) {
+				TelephonyManager thePhoneMgr = (TelephonyManager) aContext.getSystemService(Context.TELEPHONY_SERVICE);
+				theResult = ( thePhoneMgr != null ) ? thePhoneMgr.getDeviceId() : null;
+				if ( !TextUtils.isEmpty(theResult) ) {
+					theResult += "1";
+				}
+			}
+			if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD ) {
+				//ANDROID_ID, if available
+				if ( theResult == null || theResult.contains("*") || theResult.contains("000000000000000") ) {
+					//API 9+: ANDROID_ID (may be NULL or may be non-unique across a mfg model (known bugs))
+					theResult = getAndroidID(aContext);
+					if ( !TextUtils.isEmpty(theResult) ) {
+						theResult += "2";
+					}
+				}
+				//SERIAL#, if available
+				if ( TextUtils.isEmpty(theResult) ) {
+					theResult = getSerialNumber();
+					if ( !TextUtils.isEmpty(theResult) ) {
+						theResult += "3";
+					}
+				}
+			}
+			//fallback
+			if (theResult==null) {
+				theResult = Build.FINGERPRINT+"F";
+			}
 		}
-		//ANDROID_ID, if available
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD &&
-				( theResult==null || theResult.contains("*") || theResult.contains("000000000000000")) ) {
-			//API 9+: ANDROID_ID (may be NULL or may be non-unique across a mfg model (known bugs))
-			theResult = getAndroidID(aContext)+"2";
-		}
-		//SERIAL#, if available
-		if (theResult==null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			theResult = Build.SERIAL+"3";
-		}
-
-		//fallback
-		if (theResult==null) {
-			theResult = Build.FINGERPRINT+"F";
+		catch ( SecurityException sx ) {
+			theResult = getAndroidID(aContext);
 		}
 
 		return theResult;
@@ -231,12 +249,10 @@ public final class BitsAppUtils {
 	 * @param aContext - the context to use.
 	 * @return Returns the serial number of the SIM, if any.
 	 */
-	@SuppressLint("HardwareIds")
+	@SuppressLint({"HardwareIds", "MissingPermission"})
 	static public String getSimSerialNumber(Context aContext) {
-		TelephonyManager theTelephonyMgr = (TelephonyManager)
-				aContext.getSystemService(Context.TELEPHONY_SERVICE);
-		if (theTelephonyMgr!=null &&
-				theTelephonyMgr.getSimState()==TelephonyManager.SIM_STATE_READY) {
+		TelephonyManager theTelephonyMgr = (TelephonyManager) aContext.getSystemService(Context.TELEPHONY_SERVICE);
+		if ( theTelephonyMgr != null && theTelephonyMgr.getSimState() == TelephonyManager.SIM_STATE_READY) {
 			return theTelephonyMgr.getSimSerialNumber();
 		} else {
 			return null;

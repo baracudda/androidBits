@@ -2,14 +2,14 @@ apply plugin: 'com.android.library'
 //apply from: 'maven-push.gradle'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 28
 
     defaultConfig {
 	    //Cannot have a minSdkVersion lower than 8 at least until android.util.Base64 is supported.
         minSdkVersion 8
-        targetSdkVersion 24
-        versionCode 7
-        versionName '1.0.7'
+        targetSdkVersion 28
+        versionCode 8
+        versionName '1.0.8'
     }
     buildTypes {
         release {
