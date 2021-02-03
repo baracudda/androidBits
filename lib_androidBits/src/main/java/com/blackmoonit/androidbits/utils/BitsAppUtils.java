@@ -127,6 +127,9 @@ public final class BitsAppUtils {
 		}
 		catch ( SecurityException sx ) {
 			theResult = getAndroidID(aContext);
+			if ( !TextUtils.isEmpty(theResult) ) {
+				theResult += "2";
+			}
 		}
 
 		return theResult;
