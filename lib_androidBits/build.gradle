@@ -8,7 +8,7 @@ android {
 	    //Cannot have a minSdkVersion lower than 8 at least until android.util.Base64 is supported.
         minSdkVersion 8
         targetSdkVersion 28
-        versionCode 8
+        versionCode 9
         versionName '1.0.9'
     }
     buildTypes {
@@ -28,4 +28,8 @@ android {
 
 dependencies {
     implementation files('libs/bits_gson-2.1.jar')
+}
+
+task wrapper(type: Wrapper){
+    gradleVersion = '6.5'
 }
