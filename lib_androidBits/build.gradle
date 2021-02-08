@@ -8,8 +8,8 @@ android {
 	    //Cannot have a minSdkVersion lower than 8 at least until android.util.Base64 is supported.
         minSdkVersion 8
         targetSdkVersion 28
-        versionCode 9
-        versionName '1.0.9'
+        versionCode 10
+        versionName '1.1.0'
     }
     buildTypes {
         release {
